@@ -34,16 +34,6 @@ The Stripe API is organized around REST. Our API has predictable resource-orient
     export packagePAT=<Personal access token>
     ```
 
-### Generating the client using OpenAPI tool
-
-The following command was used to generate the Ballerina client from the OpenAPI specification. The command should be executed from the repository root directory.
-
-```bash
-bal openapi -i docs/spec/openapi.yml --mode client --license docs/license.txt -o ballerina
-```
-
-Note: The license year is hardcoded to 2024, change if necessary.
-
 ### Build options
 
 Execute the commands below to build from the source.
