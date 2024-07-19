@@ -20,8 +20,6 @@
 import ballerina/constraint;
 import ballerina/http;
 
-public type id_fail_bodyExpandItemsString string;
-
 # Represents the Queries record for the operation: GetIssuingAuthorizations
 public type GetIssuingAuthorizationsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -45,6 +43,8 @@ public type GetIssuingAuthorizationsQueries record {
     # Only return authorizations with the given status. One of `pending`, `closed`, or `reversed`.
     "closed"|"pending"|"reversed" status?;
 };
+
+public type id_fail_bodyExpandItemsString string;
 
 # 
 public type Line_item record {
@@ -268,6 +268,12 @@ public type GetTaxIdsQueries record {
 @constraint:String {maxLength: 5000}
 public type GetMandatesMandateQueriesExpandItemsString string;
 
+public type refunds_bodyExpandItemsString string;
+
+public type rendering_pdf_param record {
+    "a4"|"auto"|"letter" page_size?;
+};
+
 # Details of the PaymentMethod collected by Payment Element
 public type Confirmation_tokens_resource_payment_method_preview record {
     Payment_method_acss_debit acss_debit?;
@@ -316,10 +322,6 @@ public type Confirmation_tokens_resource_payment_method_preview record {
     Payment_method_zip zip?;
 };
 
-public type rendering_pdf_param record {
-    "a4"|"auto"|"letter" page_size?;
-};
-
 # 
 public type TreasuryTransactionsResourceTransactionList record {
     # Details about each object.
@@ -345,6 +347,11 @@ public type Invoice_setting_quote_setting record {
     Connect_account_reference issuer;
 };
 
+public type province_standard record {
+    @constraint:String {maxLength: 5000}
+    string province;
+};
+
 # Represents the Queries record for the operation: GetSourcesSource
 public type GetSourcesSourceQueries record {
     # Specifies which fields in the response should be expanded.
@@ -352,11 +359,6 @@ public type GetSourcesSourceQueries record {
     # The client secret of the source. Required if a publishable key is used to retrieve the source.
     @constraint:String {maxLength: 5000}
     string client_secret?;
-};
-
-public type province_standard record {
-    @constraint:String {maxLength: 5000}
-    string province;
 };
 
 # Represents the Queries record for the operation: GetTreasuryTransactionEntries
@@ -487,6 +489,8 @@ public type invoice_send_body record {|
     invoice_send_bodyExpandItemsString[] expand?;
 |};
 
+public type subscription_schedules_bodyExpandItemsString string;
+
 # 
 public type Portal_subscription_update record {
     # The types of subscription updates that are supported for items listed in the `products` attribute. When empty, subscriptions are not updateable.
@@ -499,13 +503,13 @@ public type Portal_subscription_update record {
     "always_invoice"|"create_prorations"|"none" proration_behavior;
 };
 
-public type status_transition_timestamp_specs record {
-    record {int gt?; int gte?; int lt?; int lte?;}|int posted_at?;
-};
-
 # Optional hash to set the return code.
 public type returned_details_params record {
     "account_closed"|"account_frozen"|"bank_account_restricted"|"bank_ownership_changed"|"declined"|"incorrect_account_holder_name"|"invalid_account_number"|"invalid_currency"|"no_account"|"other" code?;
+};
+
+public type status_transition_timestamp_specs record {
+    record {int gt?; int gte?; int lt?; int lte?;}|int posted_at?;
 };
 
 # 
@@ -544,8 +548,6 @@ public type transaction_refund_body record {|
     # The total amount to attempt to refund. This amount is in the provided currency, or defaults to the cards currency, and in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal).
     int refund_amount?;
 |};
-
-public type v1_customer_sessions_bodyExpandItemsString string;
 
 # Represents the Queries record for the operation: GetTaxRatesTaxRate
 public type GetTaxRatesTaxRateQueries record {
@@ -724,12 +726,6 @@ public type Issuing_authorization_fleet_reported_breakdown record {
     Issuing_authorization_fleet_tax_data? tax?;
 };
 
-# Represents the Queries record for the operation: GetAccountsAccountPersonsPerson
-public type GetAccountsAccountPersonsPersonQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetAccountsAccountPersonsPersonQueriesExpandItemsString[] expand?;
-};
-
 # 
 public type ProductList record {
     # Details about each object.
@@ -741,6 +737,12 @@ public type ProductList record {
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000, pattern: re `^/v1/products`}
     string url;
+};
+
+# Represents the Queries record for the operation: GetAccountsAccountPersonsPerson
+public type GetAccountsAccountPersonsPersonQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetAccountsAccountPersonsPersonQueriesExpandItemsString[] expand?;
 };
 
 public type id_post_body record {|
@@ -804,7 +806,25 @@ public type RefundList_1 record {
     string url;
 };
 
-public type v1_transfers_bodyExpandItemsString string;
+public type subscription_schedules_body record {|
+    # The identifier of the customer to create the subscription schedule for.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    default_settings_params default_settings?;
+    # Behavior of the subscription schedule and underlying subscription when it ends. Possible values are `release` or `cancel` with the default being `release`. `release` will end the subscription schedule and keep the underlying subscription running. `cancel` will end the subscription schedule and cancel the underlying subscription.
+    "cancel"|"none"|"release"|"renew" end_behavior?;
+    # Specifies which fields in the response should be expanded.
+    subscription_schedules_bodyExpandItemsString[] expand?;
+    # Migrate an existing subscription to be managed by a subscription schedule. If this parameter is set, a subscription schedule will be created using the subscription's item(s), set to auto-renew using the subscription's interval. When using this parameter, other parameters (such as phase values) cannot be set. To create a subscription schedule with other modifications, we recommend making two separate API calls.
+    @constraint:String {maxLength: 5000}
+    string from_subscription?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # List representing phases of the subscription schedule. Each phase can be customized to have different durations, plans, and coupons. If there are multiple phases, the `end_date` of one phase will always equal the `start_date` of the next phase.
+    phase_configuration_params_3[] phases?;
+    # When the subscription schedule starts. We recommend using `now` so that it starts the subscription immediately. You can also use a Unix timestamp to backdate the subscription so that it starts on a past date, or set a future date for the subscription to start on.
+    int|"now" start_date?;
+|};
 
 public type linked_account_options_param_1PermissionsItemsString "balances"|"ownership"|"payment_method"|"transactions";
 
@@ -927,9 +947,6 @@ public type PortalPublicResourceConfigurationList record {
     string url;
 };
 
-@constraint:String {maxLength: 5000}
-public type Account_capability_future_requirementsEventuallydueItemsString string;
-
 public type tax_calculations_body record {|
     # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
     string currency;
@@ -947,6 +964,9 @@ public type tax_calculations_body record {|
     int tax_date?;
 |};
 
+@constraint:String {maxLength: 5000}
+public type Account_capability_future_requirementsEventuallydueItemsString string;
+
 # 
 public type Account_unification_account_controller record {
     Account_unification_account_controller_fees fees?;
@@ -960,13 +980,13 @@ public type Account_unification_account_controller record {
     "account"|"application" 'type;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetExchangeRatesRateIdQueriesExpandItemsString string;
+
 public type customer_update_updating_param record {
     ("address"|"email"|"name"|"phone"|"shipping"|"tax_id")[]|"" allowed_updates?;
     boolean enabled?;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetExchangeRatesRateIdQueriesExpandItemsString string;
 
 public type custom_field_option_param record {
     @constraint:String {maxLength: 100}
@@ -1068,6 +1088,8 @@ public type Forwarded_request_context record {
     @constraint:String {maxLength: 5000}
     string destination_ip_address;
 };
+
+public type account_links_bodyExpandItemsString string;
 
 # Shipping information for this ConfirmationToken.
 public type recipient_shipping_with_optional_fields_address_1 record {
@@ -1217,6 +1239,8 @@ public type Credit_note_line_item record {
     string? unit_amount_excluding_tax?;
 };
 
+public type files_bodyExpandItemsString string;
+
 public type customer_sources_bodyExpandItemsString string;
 
 # 
@@ -1271,6 +1295,8 @@ public type billing_meter_events_body record {|
 
 @constraint:String {maxLength: 5000}
 public type GetCustomersQueriesExpandItemsString string;
+
+public type webhook_endpoints_bodyExpandItemsString string;
 
 # The relationship that this person has with the account's legal entity.
 public type relationship_specs record {
@@ -1367,6 +1393,8 @@ public type Payment_intent_next_action record {
 public type tax_id_collection_params record {
     boolean enabled;
 };
+
+public type payment_methods_bodyExpandItemsString string;
 
 # 
 public type Payment_method_details_sepa_debit record {
@@ -1620,8 +1648,6 @@ public type Invoice_installments_card record {
     boolean? enabled?;
 };
 
-public type v1_accounts_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetTaxTransactionsTransactionLineItemsQueriesExpandItemsString string;
 
@@ -1700,19 +1726,21 @@ public type Treasury\.inbound_transfer record {
     string|Treasury\.transaction? 'transaction?;
 };
 
-public type intent_cancel_body_1ExpandItemsString string;
-
 # 
 public type Tax_product_resource_tax_settings_status_details record {
     Tax_product_resource_tax_settings_status_details_resource_active active?;
     Tax_product_resource_tax_settings_status_details_resource_pending pending?;
 };
 
+public type intent_cancel_body_1ExpandItemsString string;
+
 # 
 public type Portal_invoice_list record {
     # Whether the feature is enabled.
     boolean enabled;
 };
+
+public type subscriptions_bodyExpandItemsString string;
 
 # The period associated with this invoice item. When set to different values, the period will be rendered on the invoice. If you have [Stripe Revenue Recognition](https://stripe.com/docs/revenue-recognition) enabled, the period will be used to recognize and defer revenue. See the [Revenue Recognition documentation](https://stripe.com/docs/revenue-recognition/methodology/subscriptions-and-invoicing) for details.
 public type period record {
@@ -1808,14 +1836,14 @@ public type GetSubscriptionSchedulesScheduleQueries record {
     GetSubscriptionSchedulesScheduleQueriesExpandItemsString[] expand?;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetCreditNotesPreviewLinesQueriesExpandItemsString string;
-
 public type custom_field_label_param record {
     @constraint:String {maxLength: 50}
     string custom;
     "custom" 'type;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetCreditNotesPreviewLinesQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetApplicationFeesIdRefunds
 public type GetApplicationFeesIdRefundsQueries record {
@@ -1830,6 +1858,8 @@ public type GetApplicationFeesIdRefundsQueries record {
     @constraint:String {maxLength: 5000}
     string starting_after?;
 };
+
+public type payment_intents_bodyExpandItemsString string;
 
 public type transaction_refresh_params record {
     @constraint:String {maxLength: 5000}
@@ -1970,7 +2000,12 @@ public type payment_method_options_param_16 record {
     setup_intent_payment_method_options_param_3 us_bank_account?;
 };
 
-public type v1_payment_links_bodyExpandItemsString string;
+public type subscription_trial_end_1 "now"|int;
+
+public type payment_method_options_param_11 record {
+    @constraint:String {maxLength: 5000}
+    string reference?;
+};
 
 public type Treasury\.outbound_transfer record {
     int amount;
@@ -1994,13 +2029,6 @@ public type Treasury\.outbound_transfer record {
     Treasury_outbound_transfers_resource_outbound_transfer_resource_tracking_details? tracking_details?;
     string|Treasury\.transaction 'transaction;
 };
-
-public type payment_method_options_param_11 record {
-    @constraint:String {maxLength: 5000}
-    string reference?;
-};
-
-public type subscription_trial_end_1 "now"|int;
 
 public type payment_method_options_param_12 record {
     linked_account_options_param financial_connections?;
@@ -2059,6 +2087,21 @@ public type payment_method_options_param_14 record {
     record {string app_id?; "android"|"ios"|"web" 'client; "none" setup_future_usage?;}|"" wechat_pay?;
     record {"none" setup_future_usage?;}|"" zip?;
 };
+
+public type tokens_body record {|
+    connect_js_account_token_specs account?;
+    token_create_bank_account bank_account?;
+    # The card this token will represent. If you also pass in a customer, the card must be the ID of a card belonging to the customer. Otherwise, if you do not pass in a customer, this is a dictionary containing a user's credit card details, with the options described below.
+    record {string address_city?; string address_country?; string address_line1?; string address_line2?; string address_state?; string address_zip?; string currency?; string cvc?; string exp_month; string exp_year; string name?; record {"cartes_bancaires"|"mastercard"|"visa" preferred?;} networks?; string number;}|string card?;
+    # Create a token for the customer, which is owned by the application's account. You can only use this with an [OAuth access token](https://stripe.com/docs/connect/standard-accounts) or [Stripe-Account header](https://stripe.com/docs/connect/authentication). Learn more about [cloning saved payment methods](https://stripe.com/docs/connect/cloning-saved-payment-methods).
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    cvc_params cvc_update?;
+    # Specifies which fields in the response should be expanded.
+    tokens_bodyExpandItemsString[] expand?;
+    person_token_specs person?;
+    pii_token_specs pii?;
+|};
 
 public type payment_method_options_param_10 record {
     int expires_after_seconds?;
@@ -2179,26 +2222,6 @@ public type Gelato_email_report_error record {
     string? reason?;
 };
 
-public type v1_subscription_schedules_body record {|
-    # The identifier of the customer to create the subscription schedule for.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    default_settings_params default_settings?;
-    # Behavior of the subscription schedule and underlying subscription when it ends. Possible values are `release` or `cancel` with the default being `release`. `release` will end the subscription schedule and keep the underlying subscription running. `cancel` will end the subscription schedule and cancel the underlying subscription.
-    "cancel"|"none"|"release"|"renew" end_behavior?;
-    # Specifies which fields in the response should be expanded.
-    v1_subscription_schedules_bodyExpandItemsString[] expand?;
-    # Migrate an existing subscription to be managed by a subscription schedule. If this parameter is set, a subscription schedule will be created using the subscription's item(s), set to auto-renew using the subscription's interval. When using this parameter, other parameters (such as phase values) cannot be set. To create a subscription schedule with other modifications, we recommend making two separate API calls.
-    @constraint:String {maxLength: 5000}
-    string from_subscription?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # List representing phases of the subscription schedule. Each phase can be customized to have different durations, plans, and coupons. If there are multiple phases, the `end_date` of one phase will always equal the `start_date` of the next phase.
-    phase_configuration_params_3[] phases?;
-    # When the subscription schedule starts. We recommend using `now` so that it starts the subscription immediately. You can also use a Unix timestamp to backdate the subscription so that it starts on a past date, or set a future date for the subscription to start on.
-    int|"now" start_date?;
-|};
-
 # 
 public type Checkout_card_installments_options record {
     # Indicates if installments are enabled
@@ -2218,6 +2241,8 @@ public type account_login_links_body record {|
 @constraint:String {maxLength: 5000}
 public type GetAccountsAccountPeoplePersonQueriesExpandItemsString string;
 
+public type setup_intents_bodyExpandItemsString string;
+
 # Point in Time
 public type Gelato_data_document_report_date_of_birth record {
     # Numerical day between 1 and 31.
@@ -2233,15 +2258,15 @@ public type refund_expire_body record {|
     refund_expire_bodyExpandItemsString[] expand?;
 |};
 
-# Contains Features that add FinancialAddresses to the FinancialAccount.
-public type financial_addresses_1 record {
-    aba_access aba?;
-};
-
 # Represents the Queries record for the operation: GetCustomersCustomerSubscriptionsSubscriptionExposedId
 public type GetCustomersCustomerSubscriptionsSubscriptionExposedIdQueries record {
     # Specifies which fields in the response should be expanded.
     GetCustomersCustomerSubscriptionsSubscriptionExposedIdQueriesExpandItemsString[] expand?;
+};
+
+# Contains Features that add FinancialAddresses to the FinancialAccount.
+public type financial_addresses_1 record {
+    aba_access aba?;
 };
 
 public type shipping_option_params_1 record {
@@ -2249,16 +2274,28 @@ public type shipping_option_params_1 record {
     string shipping_rate?;
 };
 
+public type account_links_body record {|
+    # The identifier of the account to create an account link for.
+    @constraint:String {maxLength: 5000}
+    string account;
+    # The collect parameter is deprecated. Use `collection_options` instead.
+    "currently_due"|"eventually_due" collect?;
+    collection_options_params collection_options?;
+    # Specifies which fields in the response should be expanded.
+    account_links_bodyExpandItemsString[] expand?;
+    # The URL the user will be redirected to if the account link is expired, has been previously-visited, or is otherwise invalid. The URL you specify should attempt to generate a new account link with the same parameters used to create the original account link, then redirect the user to the new account link's URL so they can continue with Connect Onboarding. If a new account link cannot be generated or the redirect fails you should display a useful error to the user.
+    string refresh_url?;
+    # The URL that the user will be redirected to upon leaving or completing the linked flow.
+    string return_url?;
+    # The type of account link the user is requesting. Possible values are `account_onboarding` or `account_update`.
+    "account_onboarding"|"account_update" 'type;
+|};
+
 @constraint:String {maxLength: 5000}
 public type Account_future_requirementsPendingverificationItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetTaxCalculationsCalculationLineItemsQueriesExpandItemsString string;
-
-public type authentication_exemption_specs record {
-    "acquirer"|"issuer" claimed_by;
-    "low_value_transaction"|"transaction_risk_analysis"|"unknown" 'type;
-};
 
 public type identity_verification_sessions_body record {|
     # A string to reference this user. This can be a customer ID, a session ID, or similar, and can be used to reconcile this verification with your internal systems.
@@ -2278,6 +2315,11 @@ public type identity_verification_sessions_body record {|
     @constraint:String {maxLength: 5000}
     string verification_flow?;
 |};
+
+public type authentication_exemption_specs record {
+    "acquirer"|"issuer" claimed_by;
+    "low_value_transaction"|"transaction_risk_analysis"|"unknown" 'type;
+};
 
 # Represents the Queries record for the operation: GetSubscriptionsSearch
 public type GetSubscriptionsSearchQueries record {
@@ -2608,35 +2650,6 @@ public type charge_refund_body record {|
     boolean reverse_transfer?;
 |};
 
-public type v1_refunds_body record {|
-    int amount?;
-    # The identifier of the charge to refund.
-    @constraint:String {maxLength: 5000}
-    string charge?;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency?;
-    # Customer whose customer balance to refund from.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    # Specifies which fields in the response should be expanded.
-    v1_refunds_bodyExpandItemsString[] expand?;
-    # For payment methods without native refund support (e.g., Konbini, PromptPay), use this email from the customer to receive refund instructions.
-    string instructions_email?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # Origin of the refund
-    "customer_balance" origin?;
-    # The identifier of the PaymentIntent to refund.
-    @constraint:String {maxLength: 5000}
-    string payment_intent?;
-    # String indicating the reason for the refund. If set, possible values are `duplicate`, `fraudulent`, and `requested_by_customer`. If you believe the charge to be fraudulent, specifying `fraudulent` as the reason will add the associated card and email to your [block lists](https://stripe.com/docs/radar/lists), and will also help us improve our fraud detection algorithms.
-    "duplicate"|"fraudulent"|"requested_by_customer" reason?;
-    # Boolean indicating whether the application fee should be refunded when refunding this charge. If a full charge refund is given, the full application fee will be refunded. Otherwise, the application fee will be refunded in an amount proportional to the amount of the charge refunded. An application fee can be refunded only by the application that created the charge.
-    boolean refund_application_fee?;
-    # Boolean indicating whether the transfer should be reversed when refunding this charge. The transfer will be reversed proportionally to the amount being refunded (either the entire or partial amount).<br><br>A transfer can be reversed only by the application that created the charge.
-    boolean reverse_transfer?;
-|};
-
 public type Treasury\.transaction_entry record {
     Treasury_transactions_resource_balance_impact balance_impact;
     int created;
@@ -2737,6 +2750,47 @@ public type Source_type_acss_debit record {
     string? routing_number?;
 };
 
+public type quotes_body record {|
+    # The amount of the application fee (if any) that will be requested to be applied to the payment and transferred to the application owner's Stripe account. There cannot be any line items with recurring prices when using this field.
+    int|"" application_fee_amount?;
+    # A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice total that will be transferred to the application owner's Stripe account. There must be at least 1 line item with a recurring price to use this field.
+    decimal|"" application_fee_percent?;
+    automatic_tax_param_5 automatic_tax?;
+    # Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay invoices at the end of the subscription cycle or at invoice finalization using the default payment method attached to the subscription or customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions and mark the subscription as `active`. Defaults to `charge_automatically`.
+    "charge_automatically"|"send_invoice" collection_method?;
+    # The customer for which this quote belongs to. A customer is required before finalizing the quote. Once specified, it cannot be changed.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    # The tax rates that will apply to any line item that does not have `tax_rates` set.
+    DefaulttaxratesItemsString[]|"" default_tax_rates?;
+    # A description that will be displayed on the quote PDF. If no value is passed, the default description configured in your [quote template settings](https://dashboard.stripe.com/settings/billing/quote) will be used.
+    string|"" description?;
+    # The discounts applied to the quote. You can only set up to one discount.
+    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
+    # Specifies which fields in the response should be expanded.
+    quotes_bodyExpandItemsString[] expand?;
+    # A future timestamp on which the quote will be canceled if in `open` or `draft` status. Measured in seconds since the Unix epoch. If no value is passed, the default expiration date configured in your [quote template settings](https://dashboard.stripe.com/settings/billing/quote) will be used.
+    int expires_at?;
+    # A footer that will be displayed on the quote PDF. If no value is passed, the default footer configured in your [quote template settings](https://dashboard.stripe.com/settings/billing/quote) will be used.
+    string|"" footer?;
+    from_quote_params from_quote?;
+    # A header that will be displayed on the quote PDF. If no value is passed, the default header configured in your [quote template settings](https://dashboard.stripe.com/settings/billing/quote) will be used.
+    string|"" header?;
+    quote_param invoice_settings?;
+    # A list of line items the customer is being quoted for. Each line item includes information about the product, the quantity, and the resulting cost.
+    line_item_create_params[] line_items?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # The account on behalf of which to charge.
+    string|"" on_behalf_of?;
+    subscription_data_create_params subscription_data?;
+    # ID of the test clock to attach to the quote.
+    @constraint:String {maxLength: 5000}
+    string test_clock?;
+    # The data with which to automatically create a Transfer for each of the invoices.
+    record {int amount?; decimal amount_percent?; string destination;}|"" transfer_data?;
+|};
+
 # 
 public type Payment_pages_checkout_session_custom_text record {
     # Custom text that should be displayed after the payment confirmation button.
@@ -2814,23 +2868,6 @@ public type Subscriptions_trials_resource_end_behavior record {
     "cancel"|"create_invoice"|"pause" missing_payment_method;
 };
 
-# 
-public type Portal_login_page record {
-    # If `true`, a shareable `url` will be generated that will take your customers to a hosted login page for the customer portal.
-    # 
-    # If `false`, the previously generated `url`, if any, will be deactivated.
-    boolean enabled;
-    # A shareable URL to the hosted portal login page. Your customers will be able to log in with their [email](https://stripe.com/docs/api/customers/object#customer_object-email) and receive a link to their customer portal.
-    string? url?;
-};
-
-public type accountholder_params record {
-    @constraint:String {maxLength: 5000}
-    string account?;
-    @constraint:String {maxLength: 5000}
-    string customer?;
-};
-
 # Shipping information for this PaymentIntent.
 public type optional_fields_shipping_1 record {
     optional_fields_address address;
@@ -2842,6 +2879,23 @@ public type optional_fields_shipping_1 record {
     string phone?;
     @constraint:String {maxLength: 5000}
     string tracking_number?;
+};
+
+public type accountholder_params record {
+    @constraint:String {maxLength: 5000}
+    string account?;
+    @constraint:String {maxLength: 5000}
+    string customer?;
+};
+
+# 
+public type Portal_login_page record {
+    # If `true`, a shareable `url` will be generated that will take your customers to a hosted login page for the customer portal.
+    # 
+    # If `false`, the previously generated `url`, if any, will be deactivated.
+    boolean enabled;
+    # A shareable URL to the hosted portal login page. Your customers will be able to log in with their [email](https://stripe.com/docs/api/customers/object#customer_object-email) and receive a link to their customer portal.
+    string? url?;
 };
 
 # 
@@ -2871,12 +2925,14 @@ public type RadarReviewList record {
     string url;
 };
 
-# 
-public type Card_mandate_payment_method_details record {
-};
+public type invoiceitems_bodyTaxratesItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type Tax_product_resource_tax_settings_status_details_resource_pendingMissingfieldsItemsString string;
+
+# 
+public type Card_mandate_payment_method_details record {
+};
 
 # 
 public type Subscription_schedule_current_phase record {
@@ -2931,6 +2987,8 @@ public type Climate\.product record {
     "climate.product" 'object;
     Climate\.supplier[] suppliers;
 };
+
+public type accounts_bodyExpandItemsString string;
 
 # 
 public type Gelato_selfie_report_error record {
@@ -3096,6 +3154,40 @@ public type cards_id_body record {|
     owner owner?;
 |};
 
+public type subscription_items_body record {|
+    # Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period. When updating, pass an empty string to remove previously-defined thresholds.
+    record {int usage_gte;}|"" billing_thresholds?;
+    # The coupons to redeem into discounts for the subscription item.
+    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
+    # Specifies which fields in the response should be expanded.
+    subscription_items_bodyExpandItemsString[] expand?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # Use `allow_incomplete` to transition the subscription to `status=past_due` if a payment is required but cannot be paid. This allows you to manage scenarios where additional user actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.
+    # 
+    # Use `default_incomplete` to transition the subscription to `status=past_due` when payment is required and await explicit confirmation of the invoice's payment intent. This allows simpler management of scenarios where additional user actions are needed to pay a subscription’s invoice. Such as failed payments, [SCA regulation](https://stripe.com/docs/billing/migration/strong-customer-authentication), or collecting a mandate for a bank debit payment method.
+    # 
+    # Use `pending_if_incomplete` to update the subscription using [pending updates](https://stripe.com/docs/billing/subscriptions/pending-updates). When you use `pending_if_incomplete` you can only pass the parameters [supported by pending updates](https://stripe.com/docs/billing/pending-updates-reference#supported-attributes).
+    # 
+    # Use `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's invoice cannot be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further user action is needed, this parameter does not update the subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.
+    "allow_incomplete"|"default_incomplete"|"error_if_incomplete"|"pending_if_incomplete" payment_behavior?;
+    # The ID of the price object.
+    @constraint:String {maxLength: 5000}
+    string price?;
+    recurring_price_data_1 price_data?;
+    # Determines how to handle [prorations](https://stripe.com/docs/billing/subscriptions/prorations) when the billing cycle changes (e.g., when switching plans, resetting `billing_cycle_anchor=now`, or starting a trial), or if an item's `quantity` changes. The default value is `create_prorations`.
+    "always_invoice"|"create_prorations"|"none" proration_behavior?;
+    # If set, the proration will be calculated as though the subscription was updated at the given time. This can be used to apply the same proration that was previewed with the [upcoming invoice](https://stripe.com/docs/api#retrieve_customer_invoice) endpoint.
+    int proration_date?;
+    # The quantity you'd like to apply to the subscription item you're creating.
+    int quantity?;
+    # The identifier of the subscription to modify.
+    @constraint:String {maxLength: 5000}
+    string subscription;
+    # A list of [Tax Rate](https://stripe.com/docs/api/tax_rates) ids. These Tax Rates will override the [`default_tax_rates`](https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates) on the Subscription. When updating, pass an empty string to remove previously-defined tax rates.
+    TaxratesItemsString[]|"" tax_rates?;
+|};
+
 public type subscriptions_subscription_exposed_id_body_1ExpandItemsString string;
 
 # Filters to restrict the kinds of accounts to collect.
@@ -3106,13 +3198,13 @@ public type filters_params record {
 
 public type Reporting\.report_typeDefaultcolumnsItemsString string;
 
-public type current_period_end record {int gt?; int gte?; int lt?; int lte?;}|int;
-
 # Represents the Queries record for the operation: GetRadarValueListsValueList
 public type GetRadarValueListsValueListQueries record {
     # Specifies which fields in the response should be expanded.
     GetRadarValueListsValueListQueriesExpandItemsString[] expand?;
 };
+
+public type current_period_end record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type subscription_update_updating_param record {
     ("price"|"promotion_code"|"quantity")[]|"" default_allowed_updates?;
@@ -3216,10 +3308,10 @@ public type Payment_intent_next_action_verify_with_microdeposits record {
     "amounts"|"descriptor_code"? microdeposit_type?;
 };
 
+public type order_cancel_bodyExpandItemsString string;
+
 @constraint:String {maxLength: 5000}
 public type GetFinancialConnectionsTransactionsQueriesExpandItemsString string;
-
-public type order_cancel_bodyExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetFinancialConnectionsTransactionsTransactionQueriesExpandItemsString string;
@@ -3248,19 +3340,6 @@ public type Treasury\.financial_account_features record {
     "treasury.financial_account_features" 'object;
     Treasury_financial_accounts_resource_outbound_payments outbound_payments?;
     Treasury_financial_accounts_resource_outbound_transfers outbound_transfers?;
-};
-
-# 
-public type Payment_intent_payment_method_options_mandate_options_acss_debit record {
-    # A URL for custom mandate text
-    @constraint:String {maxLength: 5000}
-    string custom_mandate_url?;
-    # Description of the interval. Only required if the 'payment_schedule' parameter is 'interval' or 'combined'.
-    string? interval_description?;
-    # Payment schedule for the mandate.
-    "combined"|"interval"|"sporadic"? payment_schedule?;
-    # Transaction type of the mandate.
-    "business"|"personal"? transaction_type?;
 };
 
 # These bank accounts are payment methods on `Customer` objects.
@@ -3315,6 +3394,19 @@ public type Bank_account record {
     # For external accounts, possible values are `new`, `errored` and `verification_failed`. If a payout fails, the status is set to `errored` and scheduled payouts are stopped until account details are updated. In the US and India, if we can't [verify the owner of the bank account](https://support.stripe.com/questions/bank-account-ownership-verification), we'll set the status to `verification_failed`. Other validations aren't run against external accounts because they're only used for payouts. This means the other statuses don't apply.
     @constraint:String {maxLength: 5000}
     string status;
+};
+
+# 
+public type Payment_intent_payment_method_options_mandate_options_acss_debit record {
+    # A URL for custom mandate text
+    @constraint:String {maxLength: 5000}
+    string custom_mandate_url?;
+    # Description of the interval. Only required if the 'payment_schedule' parameter is 'interval' or 'combined'.
+    string? interval_description?;
+    # Payment schedule for the mandate.
+    "combined"|"interval"|"sporadic"? payment_schedule?;
+    # Transaction type of the mandate.
+    "business"|"personal"? transaction_type?;
 };
 
 # 
@@ -3385,10 +3477,6 @@ public type Recurring record {
     "licensed"|"metered" usage_type;
 };
 
-# 
-public type Gelato_session_id_number_options record {
-};
-
 public type sources_id_body record {|
     # The name of the person or business that owns the bank account.
     @constraint:String {maxLength: 5000}
@@ -3429,19 +3517,23 @@ public type sources_id_body record {|
     owner owner?;
 |};
 
+# 
+public type Gelato_session_id_number_options record {
+};
+
 public type id_void_body record {|
     # Specifies which fields in the response should be expanded.
     id_void_bodyExpandItemsString[] expand?;
 |};
-
-@constraint:String {maxLength: 5000}
-public type GetSetupIntentsIntentQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetTreasuryDebitReversalsDebitReversal
 public type GetTreasuryDebitReversalsDebitReversalQueries record {
     # Specifies which fields in the response should be expanded.
     GetTreasuryDebitReversalsDebitReversalQueriesExpandItemsString[] expand?;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetSetupIntentsIntentQueriesExpandItemsString string;
 
 # 
 public type IssuingCardList record {
@@ -3488,8 +3580,6 @@ public type Apps\.secret record {
     string? payload?;
     Secret_service_resource_scope scope;
 };
-
-public type v1_invoiceitems_bodyExpandItemsString string;
 
 # 
 public type Radar_review_resource_location record {
@@ -3723,14 +3813,14 @@ public type account_disconnect_body_1 record {|
 
 public type intent_verify_microdeposits_bodyExpandItemsString string;
 
-public type id_succeed_bodyExpandItemsString string;
-
 public type dispute_submit_body record {|
     # Specifies which fields in the response should be expanded.
     dispute_submit_bodyExpandItemsString[] expand?;
     # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
     record {|string...;|}|"" metadata?;
 |};
+
+public type id_succeed_bodyExpandItemsString string;
 
 # Point in Time
 public type Gelato_data_id_number_report_date record {
@@ -3786,6 +3876,18 @@ public type Payment_links_resource_custom_fields_label record {
     "custom" 'type;
 };
 
+public type payment_method_domains_body record {|
+    # The domain name that this payment method domain object represents.
+    @constraint:String {maxLength: 5000}
+    string domain_name;
+    # Whether this payment method domain is enabled. If the domain is not enabled, payment methods that require a payment method domain will not appear in Elements.
+    boolean enabled?;
+    # Specifies which fields in the response should be expanded.
+    payment_method_domains_bodyExpandItemsString[] expand?;
+|};
+
+public type subscription_billing_cycle_anchor_1 "now"|"unchanged"|int;
+
 # Represents the Queries record for the operation: GetProductsSearch
 public type GetProductsSearchQueries record {
     # Specifies which fields in the response should be expanded.
@@ -3799,8 +3901,6 @@ public type GetProductsSearchQueries record {
     @constraint:String {maxLength: 5000}
     string page?;
 };
-
-public type subscription_billing_cycle_anchor_1 "now"|"unchanged"|int;
 
 # 
 public type Treasury_inbound_transfers_resource_failure_details record {
@@ -3835,10 +3935,10 @@ public type Payment_pages_checkout_session_custom_fields_label record {
 
 public type created_44 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
+public type created_43 record {int gt?; int gte?; int lt?; int lte?;}|int;
+
 @constraint:String {maxLength: 5000}
 public type Account_capability_future_requirementsPendingverificationItemsString string;
-
-public type created_43 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 # 
 public type Payment_method_details_ideal record {
@@ -3857,6 +3957,8 @@ public type Payment_method_details_ideal record {
     string? verified_name?;
 };
 
+public type created_42 record {int gt?; int gte?; int lt?; int lte?;}|int;
+
 # 
 public type EntitlementsResourceFeatureList record {
     Entitlements\.feature[] data;
@@ -3868,8 +3970,6 @@ public type EntitlementsResourceFeatureList record {
     @constraint:String {maxLength: 5000, pattern: re `^/v1/entitlements/features`}
     string url;
 };
-
-public type created_42 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type created_41 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
@@ -4066,6 +4166,16 @@ public type account_persons_body record {|
     person_verification_specs_1 verification?;
 |};
 
+public type transfers_transfer_body record {|
+    # An arbitrary string attached to the object. Often useful for displaying to users.
+    @constraint:String {maxLength: 5000}
+    string description?;
+    # Specifies which fields in the response should be expanded.
+    transfers_transfer_bodyExpandItemsString[] expand?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+|};
+
 # Represents the Queries record for the operation: GetIssuingPersonalizationDesigns
 public type GetIssuingPersonalizationDesignsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -4085,16 +4195,6 @@ public type GetIssuingPersonalizationDesignsQueries record {
     # Only return personalization designs with the given status.
     "active"|"inactive"|"rejected"|"review" status?;
 };
-
-public type transfers_transfer_body record {|
-    # An arbitrary string attached to the object. Often useful for displaying to users.
-    @constraint:String {maxLength: 5000}
-    string description?;
-    # Specifies which fields in the response should be expanded.
-    transfers_transfer_bodyExpandItemsString[] expand?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-|};
 
 # 
 public type Line_items_tax_amount record {
@@ -4151,11 +4251,13 @@ public type created_36 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type created_35 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
+public type quotes_bodyExpandItemsString string;
+
 public type created_34 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
-public type created_39 record {int gt?; int gte?; int lt?; int lte?;}|int;
-
 public type id_reactivate_bodyExpandItemsString string;
+
+public type created_39 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type created_38 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
@@ -4190,18 +4292,6 @@ public type Quotes_resource_subscription_data_subscription_data record {
     int? trial_period_days?;
 };
 
-# 
-public type ChargeList record {
-    Charge[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000, pattern: re `^/v1/charges`}
-    string url;
-};
-
 # Represents the Queries record for the operation: GetIdentityVerificationSessions
 public type GetIdentityVerificationSessionsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -4221,6 +4311,18 @@ public type GetIdentityVerificationSessionsQueries record {
     string starting_after?;
     # Only return VerificationSessions with this status. [Learn more about the lifecycle of sessions](https://stripe.com/docs/identity/how-sessions-work).
     "canceled"|"processing"|"requires_input"|"verified" status?;
+};
+
+# 
+public type ChargeList record {
+    Charge[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000, pattern: re `^/v1/charges`}
+    string url;
 };
 
 # Represents the Queries record for the operation: GetEventsId
@@ -4310,6 +4412,9 @@ public type GetTransfersQueries record {
 
 public type locations_location_bodyExpandItemsString string;
 
+@constraint:String {maxLength: 5000}
+public type GetIssuingDisputesDisputeQueriesExpandItemsString string;
+
 # 
 public type PaymentFlowsPaymentMethodList record {
     Payment_method[] data;
@@ -4322,9 +4427,6 @@ public type PaymentFlowsPaymentMethodList record {
     string url;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetIssuingDisputesDisputeQueriesExpandItemsString string;
-
 # 
 public type Payment_method_card_wallet_visa_checkout record {
     # Owner's verified billing address. Values are verified or provided by the wallet directly (if supported) at the time of authorization or settlement. They cannot be set or mutated.
@@ -4336,50 +4438,6 @@ public type Payment_method_card_wallet_visa_checkout record {
     # Owner's verified shipping address. Values are verified or provided by the wallet directly (if supported) at the time of authorization or settlement. They cannot be set or mutated.
     Address? shipping_address?;
 };
-
-public type v1_charges_body record {|
-    # Amount intended to be collected by this payment. A positive integer representing how much to charge in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal) (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or [equivalent in charge currency](https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts). The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99).
-    int amount?;
-    int application_fee?;
-    # A fee in cents (or local equivalent) that will be applied to the charge and transferred to the application owner's Stripe account. The request must be made with an OAuth key or the `Stripe-Account` header in order to take an application fee. For more information, see the application fees [documentation](https://stripe.com/docs/connect/direct-charges#collect-fees).
-    int application_fee_amount?;
-    # Whether to immediately capture the charge. Defaults to `true`. When `false`, the charge issues an authorization (or pre-authorization), and will need to be [captured](https://stripe.com/docs/api#capture_charge) later. Uncaptured charges expire after a set number of days (7 by default). For more information, see the [authorizing charges and settling later](https://stripe.com/docs/charges/placing-a-hold) documentation.
-    boolean capture?;
-    # A token, like the ones returned by [Stripe.js](https://stripe.com/docs/js).
-    record {string address_city?; string address_country?; string address_line1?; string address_line2?; string address_state?; string address_zip?; string cvc?; int exp_month; int exp_year; record {|string...;|} metadata?; string name?; string number; "card" 'object?;}|string card?;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency?;
-    # The ID of an existing customer that will be charged in this request.
-    @constraint:String {maxLength: 500}
-    string customer?;
-    # An arbitrary string which you can attach to a `Charge` object. It is displayed when in the web interface alongside the charge. Note that if you use Stripe to send automatic email receipts to your customers, your receipt emails will include the `description` of the charge(s) that they are describing.
-    @constraint:String {maxLength: 40000}
-    string description?;
-    record {string account; int amount?;}|string destination?;
-    # Specifies which fields in the response should be expanded.
-    v1_charges_bodyExpandItemsString[] expand?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # The Stripe account ID for which these funds are intended. Automatically set if you use the `destination` parameter. For details, see [Creating Separate Charges and Transfers](https://stripe.com/docs/connect/separate-charges-and-transfers#settlement-merchant).
-    @constraint:String {maxLength: 5000}
-    string on_behalf_of?;
-    radar_options_with_hidden_options radar_options?;
-    # The email address to which this charge's [receipt](https://stripe.com/docs/dashboard/receipts) will be sent. The receipt will not be sent until the charge is paid, and no receipts will be sent for test mode charges. If this charge is for a [Customer](https://stripe.com/docs/api/customers/object), the email address specified here will override the customer's email address. If `receipt_email` is specified for a charge in live mode, a receipt will be sent regardless of your [email settings](https://dashboard.stripe.com/account/emails).
-    string receipt_email?;
-    optional_fields_shipping shipping?;
-    # A payment source to be charged. This can be the ID of a [card](https://stripe.com/docs/api#cards) (i.e., credit or debit card), a [bank account](https://stripe.com/docs/api#bank_accounts), a [source](https://stripe.com/docs/api#sources), a [token](https://stripe.com/docs/api#tokens), or a [connected account](https://stripe.com/docs/connect/account-debits#charging-a-connected-account). For certain sources---namely, [cards](https://stripe.com/docs/api#cards), [bank accounts](https://stripe.com/docs/api#bank_accounts), and attached [sources](https://stripe.com/docs/api#sources)---you must also pass the ID of the associated customer.
-    @constraint:String {maxLength: 5000}
-    string 'source?;
-    # For card charges, use `statement_descriptor_suffix` instead. Otherwise, you can use this value as the complete description of a charge on your customers’ statements. Must contain at least one letter, maximum 22 characters.
-    @constraint:String {maxLength: 22}
-    string statement_descriptor?;
-    # Provides information about the charge that customers see on their statements. Concatenated with the prefix (shortened descriptor) or statement descriptor that’s set on the account to form the complete statement descriptor. Maximum 22 characters for the concatenated descriptor.
-    @constraint:String {maxLength: 22}
-    string statement_descriptor_suffix?;
-    transfer_data_specs transfer_data?;
-    # A string that identifies this transaction as part of a group. For details, see [Grouping transactions](https://stripe.com/docs/connect/separate-charges-and-transfers#transfer-options).
-    string transfer_group?;
-|};
 
 @constraint:String {maxLength: 5000}
 public type GetBillingMetersIdQueriesExpandItemsString string;
@@ -4401,6 +4459,16 @@ public type Payment_links_resource_transfer_data record {
     int? amount?;
     # The connected account receiving the transfer.
     string|Account destination;
+};
+
+public type recurring_price_data record {
+    string currency;
+    @constraint:String {maxLength: 5000}
+    string product;
+    recurring_adhoc recurring;
+    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
+    int unit_amount?;
+    string unit_amount_decimal?;
 };
 
 public type Source_type_klarna record {
@@ -4430,16 +4498,6 @@ public type Source_type_klarna record {
     int shipping_delay?;
     string shipping_first_name?;
     string shipping_last_name?;
-};
-
-public type recurring_price_data record {
-    string currency;
-    @constraint:String {maxLength: 5000}
-    string product;
-    recurring_adhoc recurring;
-    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
-    int unit_amount?;
-    string unit_amount_decimal?;
 };
 
 public type Financial_connections\.account record {
@@ -4478,9 +4536,13 @@ public type Tax_product_resource_customer_details record {
     "customer_exempt"|"none"|"reverse_charge" taxability_override;
 };
 
+public type tax_rates_bodyExpandItemsString string;
+
 public type payment_method_update_param record {
     boolean enabled;
 };
+
+public type shipping_rates_bodyExpandItemsString string;
 
 # A subscription schedule allows you to create and manage the lifecycle of a subscription by predefining expected changes.
 # 
@@ -4524,6 +4586,11 @@ public type Subscription_schedule record {
     string|Test_helpers\.test_clock? test_clock?;
 };
 
+public type invoice_void_body record {|
+    # Specifies which fields in the response should be expanded.
+    invoice_void_bodyExpandItemsString[] expand?;
+|};
+
 # A subset of parameters to be passed to PaymentIntent creation for Checkout Sessions in `payment` mode.
 public type payment_intent_data_params_1 record {
     "automatic"|"automatic_async"|"manual" capture_method?;
@@ -4539,14 +4606,6 @@ public type payment_intent_data_params_1 record {
     string transfer_group?;
 };
 
-public type invoice_void_body record {|
-    # Specifies which fields in the response should be expanded.
-    invoice_void_bodyExpandItemsString[] expand?;
-|};
-
-@constraint:String {maxLength: 5000}
-public type GetSubscriptionSchedulesScheduleQueriesExpandItemsString string;
-
 # This hash contains whether the Payment Element is enabled and the features it supports.
 public type Customer_session_resource_components_resource_payment_element record {
     # Whether the Payment Element is enabled.
@@ -4554,6 +4613,9 @@ public type Customer_session_resource_components_resource_payment_element record
     # This hash defines whether the Payment Element supports certain features.
     Customer_session_resource_components_resource_payment_element_resource_features? features?;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetSubscriptionSchedulesScheduleQueriesExpandItemsString string;
 
 public type Forwarding\.request record {
     int created;
@@ -4599,15 +4661,6 @@ public type Account_annual_revenue record {
     string? fiscal_year_end?;
 };
 
-# Shipping cost details to be used for the calculation.
-public type shipping_cost_1 record {
-    int amount?;
-    @constraint:String {maxLength: 5000}
-    string shipping_rate?;
-    "exclusive"|"inclusive" tax_behavior?;
-    string tax_code?;
-};
-
 # Represents the Queries record for the operation: GetTransfersIdReversals
 public type GetTransfersIdReversalsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -4620,6 +4673,15 @@ public type GetTransfersIdReversalsQueries record {
     # A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.
     @constraint:String {maxLength: 5000}
     string starting_after?;
+};
+
+# Shipping cost details to be used for the calculation.
+public type shipping_cost_1 record {
+    int amount?;
+    @constraint:String {maxLength: 5000}
+    string shipping_rate?;
+    "exclusive"|"inclusive" tax_behavior?;
+    string tax_code?;
 };
 
 @constraint:String {maxLength: 5000}
@@ -4640,21 +4702,6 @@ public type BankConnectionsResourceOwnerList record {
 
 @constraint:String {maxLength: 5000}
 public type GetPricesSearchQueriesExpandItemsString string;
-
-public type optional_fields_address record {
-    @constraint:String {maxLength: 5000}
-    string city?;
-    @constraint:String {maxLength: 5000}
-    string country?;
-    @constraint:String {maxLength: 5000}
-    string line1?;
-    @constraint:String {maxLength: 5000}
-    string line2?;
-    @constraint:String {maxLength: 5000}
-    string postal_code?;
-    @constraint:String {maxLength: 5000}
-    string state?;
-};
 
 # Represents the Queries record for the operation: GetSetupAttempts
 public type GetSetupAttemptsQueries record {
@@ -4678,6 +4725,21 @@ public type GetSetupAttemptsQueries record {
     string starting_after?;
 };
 
+public type optional_fields_address record {
+    @constraint:String {maxLength: 5000}
+    string city?;
+    @constraint:String {maxLength: 5000}
+    string country?;
+    @constraint:String {maxLength: 5000}
+    string line1?;
+    @constraint:String {maxLength: 5000}
+    string line2?;
+    @constraint:String {maxLength: 5000}
+    string postal_code?;
+    @constraint:String {maxLength: 5000}
+    string state?;
+};
+
 # Represents the Queries record for the operation: GetSetupIntentsIntent
 public type GetSetupIntentsIntentQueries record {
     # Specifies which fields in the response should be expanded.
@@ -4693,6 +4755,12 @@ public type Gelato_document_reportFilesItemsString string;
 @constraint:String {maxLength: 5000}
 public type GetPricesPriceQueriesExpandItemsString string;
 
+public type flow_data_after_completion_param record {
+    after_completion_hosted_confirmation_param hosted_confirmation?;
+    after_completion_redirect_param redirect?;
+    "hosted_confirmation"|"portal_homepage"|"redirect" 'type;
+};
+
 # Represents the Queries record for the operation: GetCustomersSearch
 public type GetCustomersSearchQueries record {
     # Specifies which fields in the response should be expanded.
@@ -4705,12 +4773,6 @@ public type GetCustomersSearchQueries record {
     # A cursor for pagination across multiple pages of results. Don't include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     @constraint:String {maxLength: 5000}
     string page?;
-};
-
-public type flow_data_after_completion_param record {
-    after_completion_hosted_confirmation_param hosted_confirmation?;
-    after_completion_redirect_param redirect?;
-    "hosted_confirmation"|"portal_homepage"|"redirect" 'type;
 };
 
 # 
@@ -4962,23 +5024,6 @@ public type Issuing_transaction_lodging_data record {
 
 public type subscription_cancel_at_1 int|"";
 
-public type v1_account_links_body record {|
-    # The identifier of the account to create an account link for.
-    @constraint:String {maxLength: 5000}
-    string account;
-    # The collect parameter is deprecated. Use `collection_options` instead.
-    "currently_due"|"eventually_due" collect?;
-    collection_options_params collection_options?;
-    # Specifies which fields in the response should be expanded.
-    v1_account_links_bodyExpandItemsString[] expand?;
-    # The URL the user will be redirected to if the account link is expired, has been previously-visited, or is otherwise invalid. The URL you specify should attempt to generate a new account link with the same parameters used to create the original account link, then redirect the user to the new account link's URL so they can continue with Connect Onboarding. If a new account link cannot be generated or the redirect fails you should display a useful error to the user.
-    string refresh_url?;
-    # The URL that the user will be redirected to upon leaving or completing the linked flow.
-    string return_url?;
-    # The type of account link the user is requesting. Possible values are `account_onboarding` or `account_update`.
-    "account_onboarding"|"account_update" 'type;
-|};
-
 # Controls phone number collection settings for the session.
 # 
 # We recommend that you review your privacy policy and check with your legal contacts
@@ -4987,7 +5032,12 @@ public type phone_number_collection_params record {
     boolean enabled;
 };
 
+public type payment_method_configurations_bodyExpandItemsString string;
+
 public type treasury_outbound_payments_bodyExpandItemsString string;
+
+@constraint:String {maxLength: 5000}
+public type GetTreasuryCreditReversalsCreditReversalQueriesExpandItemsString string;
 
 # 
 public type Gelato_provided_details record {
@@ -4998,9 +5048,6 @@ public type Gelato_provided_details record {
     @constraint:String {maxLength: 5000}
     string phone?;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetTreasuryCreditReversalsCreditReversalQueriesExpandItemsString string;
 
 # 
 public type Payment_flows_private_payment_methods_card_details_api_resource_multicapture record {
@@ -5013,8 +5060,6 @@ public type Balance_detail record {
     # Funds that are available for use.
     Balance_amount[] available;
 };
-
-public type v1_payouts_bodyExpandItemsString string;
 
 # Customers with certain payments enabled have a cash balance, representing funds that were paid
 # by the customer to a merchant, but have not yet been allocated to a payment. Cash Balance Transactions
@@ -5247,14 +5292,6 @@ public type Quotes_resource_transfer_data record {
 public type Payment_intent_payment_method_options_mandate_options_sepa_debit record {
 };
 
-public type v1_account_sessions_body record {|
-    # The identifier of the account to create an Account Session for.
-    string account;
-    account_session_create_components_param components;
-    # Specifies which fields in the response should be expanded.
-    v1_account_sessions_bodyExpandItemsString[] expand?;
-|};
-
 public type created_1 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type created_2 record {int gt?; int gte?; int lt?; int lte?;}|int;
@@ -5447,16 +5484,6 @@ public type people_person_body record {|
     person_verification_specs_1 verification?;
 |};
 
-public type v1_payment_method_domains_body record {|
-    # The domain name that this payment method domain object represents.
-    @constraint:String {maxLength: 5000}
-    string domain_name;
-    # Whether this payment method domain is enabled. If the domain is not enabled, payment methods that require a payment method domain will not appear in Elements.
-    boolean enabled?;
-    # Specifies which fields in the response should be expanded.
-    v1_payment_method_domains_bodyExpandItemsString[] expand?;
-|};
-
 # 
 public type Payment_method_details_ach_debit record {
     # Type of entity that holds the account. This can be either `individual` or `company`.
@@ -5519,6 +5546,8 @@ public type Customer_balance_resource_cash_balance_transaction_resource_refunded
     string|Refund refund;
 };
 
+public type topups_bodyExpandItemsString string;
+
 # Represents the Queries record for the operation: GetCheckoutSessionsSessionLineItems
 public type GetCheckoutSessionsSessionLineItemsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -5563,8 +5592,6 @@ public type transfer_data_specs record {
     string destination;
 };
 
-public type transacted_at record {int gt?; int gte?; int lt?; int lte?;}|int;
-
 public type verification_document_specs record {
     @constraint:String {maxLength: 500}
     string back?;
@@ -5575,16 +5602,20 @@ public type verification_document_specs record {
 @constraint:String {maxLength: 5000}
 public type GetProductsQueriesExpandItemsString string;
 
+public type transacted_at record {int gt?; int gte?; int lt?; int lte?;}|int;
+
 public type created_22 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type created_21 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type created_20 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
+public type created_26 record {int gt?; int gte?; int lt?; int lte?;}|int;
+
 @constraint:String {maxLength: 5000}
 public type GetEntitlementsActiveEntitlementsIdQueriesExpandItemsString string;
 
-public type created_26 record {int gt?; int gte?; int lt?; int lte?;}|int;
+public type created_25 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 # 
 public type IssuingNetworkTokenList record {
@@ -5598,10 +5629,6 @@ public type IssuingNetworkTokenList record {
     string url;
 };
 
-public type created_25 record {int gt?; int gte?; int lt?; int lte?;}|int;
-
-public type created_24 record {int gt?; int gte?; int lt?; int lte?;}|int;
-
 # 
 public type ClimateRemovalsSuppliersList record {
     Climate\.supplier[] data;
@@ -5614,7 +5641,7 @@ public type ClimateRemovalsSuppliersList record {
     string url;
 };
 
-public type v1_webhook_endpoints_bodyExpandItemsString string;
+public type created_24 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type created_23 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
@@ -5694,10 +5721,6 @@ public type Billing\.meter_event_summary record {
     int start_time;
 };
 
-public type address_validation_param record {
-    "disabled"|"normalization_only"|"validation_and_normalization" mode;
-};
-
 # 
 public type Payment_pages_checkout_session_currency_conversion record {
     # Total of all items in source currency before discounts or taxes are applied.
@@ -5709,6 +5732,10 @@ public type Payment_pages_checkout_session_currency_conversion record {
     # Creation currency of the CheckoutSession before localization
     @constraint:String {maxLength: 5000}
     string source_currency;
+};
+
+public type address_validation_param record {
+    "disabled"|"normalization_only"|"validation_and_normalization" mode;
 };
 
 # Iban Records contain E.U. bank account details per the SEPA format.
@@ -5727,16 +5754,16 @@ public type Funding_instructions_bank_transfer_iban_record record {
     string iban;
 };
 
-public type outbound_transfer_cancel_body record {|
-    # Specifies which fields in the response should be expanded.
-    outbound_transfer_cancel_bodyExpandItemsString[] expand?;
-|};
-
 # Represents the Queries record for the operation: GetTopupsTopup
 public type GetTopupsTopupQueries record {
     # Specifies which fields in the response should be expanded.
     GetTopupsTopupQueriesExpandItemsString[] expand?;
 };
+
+public type outbound_transfer_cancel_body record {|
+    # Specifies which fields in the response should be expanded.
+    outbound_transfer_cancel_bodyExpandItemsString[] expand?;
+|};
 
 # 
 public type Payment_method_options_bancontact record {
@@ -5775,9 +5802,9 @@ public type Account_monthly_estimated_revenue record {
 
 public type created_11 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
-public type test_clock_advance_bodyExpandItemsString string;
-
 public type created_10 record {int gt?; int gte?; int lt?; int lte?;}|int;
+
+public type test_clock_advance_bodyExpandItemsString string;
 
 public type outbound_payments_id_body record {|
     # Specifies which fields in the response should be expanded.
@@ -5797,13 +5824,13 @@ public type Subscription_schedule_add_invoice_item record {
     Tax_rate[]? tax_rates?;
 };
 
+public type created_15 record {int gt?; int gte?; int lt?; int lte?;}|int;
+
 # Represents the Queries record for the operation: GetApplicationFeesFeeRefundsId
 public type GetApplicationFeesFeeRefundsIdQueries record {
     # Specifies which fields in the response should be expanded.
     GetApplicationFeesFeeRefundsIdQueriesExpandItemsString[] expand?;
 };
-
-public type created_15 record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 # 
 public type Issuing_transaction_fleet_tax_data record {
@@ -5859,6 +5886,12 @@ public type radar_options_with_hidden_options_1 record {
     string session?;
 };
 
+# Options to configure Radar. Learn more about [Radar Sessions](https://stripe.com/docs/radar/radar-session).
+public type radar_options_with_hidden_options_2 record {
+    @constraint:String {maxLength: 5000}
+    string session?;
+};
+
 # 
 public type Tax_product_resource_tax_rate_details record {
     # Two-letter country code ([ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)).
@@ -5870,12 +5903,6 @@ public type Tax_product_resource_tax_rate_details record {
     string? state?;
     # The tax type, such as `vat` or `sales_tax`.
     "amusement_tax"|"communications_tax"|"gst"|"hst"|"igst"|"jct"|"lease_tax"|"pst"|"qst"|"rst"|"sales_tax"|"vat"? tax_type?;
-};
-
-# Options to configure Radar. Learn more about [Radar Sessions](https://stripe.com/docs/radar/radar-session).
-public type radar_options_with_hidden_options_2 record {
-    @constraint:String {maxLength: 5000}
-    string session?;
 };
 
 # 
@@ -5914,10 +5941,6 @@ public type Payment_method_options_us_bank_account_mandate_options record {
     "paper" collection_method?;
 };
 
-public type network_options_param record {
-    cartes_bancaires_network_options_param cartes_bancaires?;
-};
-
 # 
 public type Transform_usage record {
     # Divide usage by this number.
@@ -5926,12 +5949,14 @@ public type Transform_usage record {
     "down"|"up" round;
 };
 
+public type network_options_param record {
+    cartes_bancaires_network_options_param cartes_bancaires?;
+};
+
 # A hash containing directions for what this Coupon will apply discounts to.
 public type applies_to_params record {
     applies_to_paramsProductsItemsString[] products?;
 };
-
-public type arrival_date record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 # 
 public type DisputeList record {
@@ -5944,6 +5969,8 @@ public type DisputeList record {
     @constraint:String {maxLength: 5000, pattern: re `^/v1/disputes`}
     string url;
 };
+
+public type arrival_date record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 @constraint:String {maxLength: 5000}
 public type GetChargesChargeRefundsQueriesExpandItemsString string;
@@ -6414,23 +6441,6 @@ public type japan_address_kanji_specs record {
     string town?;
 };
 
-public type v1_tokens_body record {|
-    connect_js_account_token_specs account?;
-    token_create_bank_account bank_account?;
-    # The card this token will represent. If you also pass in a customer, the card must be the ID of a card belonging to the customer. Otherwise, if you do not pass in a customer, this is a dictionary containing a user's credit card details, with the options described below.
-    record {string address_city?; string address_country?; string address_line1?; string address_line2?; string address_state?; string address_zip?; string currency?; string cvc?; string exp_month; string exp_year; string name?; record {"cartes_bancaires"|"mastercard"|"visa" preferred?;} networks?; string number;}|string card?;
-    # Create a token for the customer, which is owned by the application's account. You can only use this with an [OAuth access token](https://stripe.com/docs/connect/standard-accounts) or [Stripe-Account header](https://stripe.com/docs/connect/authentication). Learn more about [cloning saved payment methods](https://stripe.com/docs/connect/cloning-saved-payment-methods).
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    cvc_params cvc_update?;
-    # Specifies which fields in the response should be expanded.
-    v1_tokens_bodyExpandItemsString[] expand?;
-    person_token_specs person?;
-    pii_token_specs pii?;
-|};
-
-public type v1_account_sessions_bodyExpandItemsString string;
-
 # 
 public type Payment_method_details_card_installments_plan record {
     # For `fixed_count` installment plans, this is the number of installment payments your customer will make to their credit card.
@@ -6470,12 +6480,12 @@ public type Issuing_cardholder_company record {
     boolean tax_id_provided;
 };
 
-public type AccounttaxidsItemsString string;
-
 public type recurring_adhoc record {
     "day"|"month"|"week"|"year" interval;
     int interval_count?;
 };
+
+public type AccounttaxidsItemsString string;
 
 # 
 public type Setup_attempt_payment_method_details_bacs_debit record {
@@ -6571,6 +6581,8 @@ public type GetFilesFileQueries record {
 public type Payment_method_paynow record {
 };
 
+public type QuoteDiscountsItemsnull string|Discount;
+
 # 
 public type Payment_intent_next_action_cashapp_handle_redirect_or_display_qr_code record {
     # The URL to the hosted Cash App Pay instructions page, which allows customers to view the QR code, and supports QR code refreshing on expiration.
@@ -6582,8 +6594,6 @@ public type Payment_intent_next_action_cashapp_handle_redirect_or_display_qr_cod
     Payment_intent_next_action_cashapp_qr_code qr_code;
 };
 
-public type QuoteDiscountsItemsnull string|Discount;
-
 # 
 public type Bank_connections_resource_balance_api_resource_cash_balance record {
     # The funds available to the account holder. Typically this is the current balance less any holds.
@@ -6593,6 +6603,8 @@ public type Bank_connections_resource_balance_api_resource_cash_balance record {
     # Each value is a integer amount. A positive amount indicates money owed to the account holder. A negative amount indicates money owed by the account holder.
     record {|int...;|}? available?;
 };
+
+public type subscription_items_bodyExpandItemsString string;
 
 # 
 public type Payment_method_us_bank_account_status_details record {
@@ -6706,11 +6718,6 @@ public type Payment_method_details record {
     Payment_method_details_zip zip?;
 };
 
-public type customer_update_creation_param record {
-    ("address"|"email"|"name"|"phone"|"shipping"|"tax_id")[]|"" allowed_updates?;
-    boolean enabled;
-};
-
 # 
 public type IssuingPersonalizationDesignList record {
     Issuing\.personalization_design[] data;
@@ -6723,12 +6730,30 @@ public type IssuingPersonalizationDesignList record {
     string url;
 };
 
+public type customer_update_creation_param record {
+    ("address"|"email"|"name"|"phone"|"shipping"|"tax_id")[]|"" allowed_updates?;
+    boolean enabled;
+};
+
 # Contains additional details about the status of a payment method for a specific payment method domain.
 public type Payment_method_domain_resource_payment_method_status_details record {
     # The error message associated with the status of the payment method on the domain.
     @constraint:String {maxLength: 5000}
     string error_message;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetIssuingAuthorizationsQueriesExpandItemsString string;
+
+public type topups_topup_body record {|
+    # An arbitrary string attached to the object. Often useful for displaying to users.
+    @constraint:String {maxLength: 5000}
+    string description?;
+    # Specifies which fields in the response should be expanded.
+    topups_topup_bodyExpandItemsString[] expand?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+|};
 
 # Represents the Queries record for the operation: GetBillingPortalConfigurations
 public type GetBillingPortalConfigurationsQueries record {
@@ -6747,19 +6772,6 @@ public type GetBillingPortalConfigurationsQueries record {
     # Only return the default or non-default configurations (e.g., pass `true` to only list the default configuration).
     boolean is_default?;
 };
-
-public type topups_topup_body record {|
-    # An arbitrary string attached to the object. Often useful for displaying to users.
-    @constraint:String {maxLength: 5000}
-    string description?;
-    # Specifies which fields in the response should be expanded.
-    topups_topup_bodyExpandItemsString[] expand?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-|};
-
-@constraint:String {maxLength: 5000}
-public type GetIssuingAuthorizationsQueriesExpandItemsString string;
 
 # This object represents a customer of your business. Use it to create recurring charges and track payments that belong to the same customer.
 # 
@@ -6908,36 +6920,6 @@ public type GetTaxCalculationsCalculationLineItemsQueries record {
     string starting_after?;
 };
 
-public type v1_coupons_body record {|
-    # A positive integer representing the amount to subtract from an invoice total (required if `percent_off` is not passed).
-    int amount_off?;
-    applies_to_params applies_to?;
-    # Three-letter [ISO code for the currency](https://stripe.com/docs/currencies) of the `amount_off` parameter (required if `amount_off` is passed).
-    string currency?;
-    # Coupons defined in each available currency option (only supported if `amount_off` is passed). Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
-    record {|currency_option_1...;|} currency_options?;
-    # Specifies how long the discount will be in effect if used on a subscription. Defaults to `once`.
-    "forever"|"once"|"repeating" duration?;
-    # Required only if `duration` is `repeating`, in which case it must be a positive integer that specifies the number of months the discount will be in effect.
-    int duration_in_months?;
-    # Specifies which fields in the response should be expanded.
-    v1_coupons_bodyExpandItemsString[] expand?;
-    # Unique string of your choice that will be used to identify this coupon when applying it to a customer. If you don't want to specify a particular code, you can leave the ID blank and we'll generate a random code for you.
-    @constraint:String {maxLength: 5000}
-    string id?;
-    # A positive integer specifying the number of times the coupon can be redeemed before it's no longer valid. For example, you might have a 50% off coupon that the first 20 readers of your blog can use.
-    int max_redemptions?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # Name of the coupon displayed to customers on, for instance invoices, or receipts. By default the `id` is shown if `name` is not set.
-    @constraint:String {maxLength: 40}
-    string name?;
-    # A positive float larger than 0, and smaller or equal to 100, that represents the discount the coupon will apply (required if `amount_off` is not passed).
-    decimal percent_off?;
-    # Unix timestamp specifying the last time at which the coupon can be redeemed. After the redeem_by date, the coupon can no longer be applied to new customers.
-    int redeem_by?;
-|};
-
 # When creating a subscription, the specified configuration data will be used. There must be at least one line item with a recurring price to use `subscription_data`.
 public type subscription_data_params_1 record {
     @constraint:String {maxLength: 500}
@@ -6980,89 +6962,6 @@ public type Payment_intent_next_action_konbini record {
 @constraint:String {maxLength: 5000}
 public type GetLinkAccountSessionsSessionQueriesExpandItemsString string;
 
-public type v1_payment_methods_body record {|
-    payment_method_param_42 acss_debit?;
-    # If this is an `affirm` PaymentMethod, this hash contains details about the Affirm payment method.
-    record {} affirm?;
-    # If this is an `AfterpayClearpay` PaymentMethod, this hash contains details about the AfterpayClearpay payment method.
-    record {} afterpay_clearpay?;
-    # If this is an `Alipay` PaymentMethod, this hash contains details about the Alipay payment method.
-    record {} alipay?;
-    # This field indicates whether this payment method can be shown again to its customer in a checkout flow. Stripe products such as Checkout and Elements use this field to determine whether a payment method can be shown as a saved payment method in a checkout flow. The field defaults to `unspecified`.
-    "always"|"limited"|"unspecified" allow_redisplay?;
-    # If this is a AmazonPay PaymentMethod, this hash contains details about the AmazonPay payment method.
-    record {} amazon_pay?;
-    param_14 au_becs_debit?;
-    param_15 bacs_debit?;
-    # If this is a `bancontact` PaymentMethod, this hash contains details about the Bancontact payment method.
-    record {} bancontact?;
-    billing_details_inner_params_1 billing_details?;
-    # If this is a `blik` PaymentMethod, this hash contains details about the BLIK payment method.
-    record {} blik?;
-    param_16 boleto?;
-    # If this is a `card` PaymentMethod, this hash contains the user's card details. For backwards compatibility, you can alternatively provide a Stripe token (e.g., for Apple Pay, Amex Express Checkout, or legacy Checkout) into the card hash with format `card: {token: "tok_visa"}`. When providing a card number, you must meet the requirements for [PCI compliance](https://stripe.com/docs/security#validating-pci-compliance). We strongly recommend using Stripe.js instead of interacting with this API directly.
-    record {string cvc?; int exp_month; int exp_year; record {"cartes_bancaires"|"mastercard"|"visa" preferred?;} networks?; string number;}|record {string token;} card?;
-    # If this is a `cashapp` PaymentMethod, this hash contains details about the Cash App Pay payment method.
-    record {} cashapp?;
-    # The `Customer` to whom the original PaymentMethod is attached.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    # If this is a `customer_balance` PaymentMethod, this hash contains details about the CustomerBalance payment method.
-    record {} customer_balance?;
-    param_17 eps?;
-    # Specifies which fields in the response should be expanded.
-    v1_payment_methods_bodyExpandItemsString[] expand?;
-    param_18 fpx?;
-    # If this is a `giropay` PaymentMethod, this hash contains details about the Giropay payment method.
-    record {} giropay?;
-    # If this is a `grabpay` PaymentMethod, this hash contains details about the GrabPay payment method.
-    record {} grabpay?;
-    param_19 ideal?;
-    # If this is an `interac_present` PaymentMethod, this hash contains details about the Interac Present payment method.
-    record {} interac_present?;
-    param_20 klarna?;
-    # If this is a `konbini` PaymentMethod, this hash contains details about the Konbini payment method.
-    record {} konbini?;
-    # If this is an `Link` PaymentMethod, this hash contains details about the Link payment method.
-    record {} link?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # If this is a `mobilepay` PaymentMethod, this hash contains details about the MobilePay payment method.
-    record {} mobilepay?;
-    # If this is a `multibanco` PaymentMethod, this hash contains details about the Multibanco payment method.
-    record {} multibanco?;
-    # If this is an `oxxo` PaymentMethod, this hash contains details about the OXXO payment method.
-    record {} oxxo?;
-    param_21 p24?;
-    # The PaymentMethod to share.
-    @constraint:String {maxLength: 5000}
-    string payment_method?;
-    # If this is a `paynow` PaymentMethod, this hash contains details about the PayNow payment method.
-    record {} paynow?;
-    # If this is a `paypal` PaymentMethod, this hash contains details about the PayPal payment method.
-    record {} paypal?;
-    # If this is a `pix` PaymentMethod, this hash contains details about the Pix payment method.
-    record {} pix?;
-    # If this is a `promptpay` PaymentMethod, this hash contains details about the PromptPay payment method.
-    record {} promptpay?;
-    radar_options_with_hidden_options radar_options?;
-    # If this is a `Revolut Pay` PaymentMethod, this hash contains details about the Revolut Pay payment method.
-    record {} revolut_pay?;
-    param_22 sepa_debit?;
-    param_23 sofort?;
-    # If this is a `swish` PaymentMethod, this hash contains details about the Swish payment method.
-    record {} swish?;
-    # If this is a TWINT PaymentMethod, this hash contains details about the TWINT payment method.
-    record {} twint?;
-    # The type of the PaymentMethod. An additional hash is included on the PaymentMethod with a name matching this value. It contains additional information specific to the PaymentMethod type.
-    "acss_debit"|"affirm"|"afterpay_clearpay"|"alipay"|"amazon_pay"|"au_becs_debit"|"bacs_debit"|"bancontact"|"blik"|"boleto"|"card"|"cashapp"|"customer_balance"|"eps"|"fpx"|"giropay"|"grabpay"|"ideal"|"klarna"|"konbini"|"link"|"mobilepay"|"multibanco"|"oxxo"|"p24"|"paynow"|"paypal"|"pix"|"promptpay"|"revolut_pay"|"sepa_debit"|"sofort"|"swish"|"twint"|"us_bank_account"|"wechat_pay"|"zip" 'type?;
-    payment_method_param_43 us_bank_account?;
-    # If this is an `wechat_pay` PaymentMethod, this hash contains details about the wechat_pay payment method.
-    record {} wechat_pay?;
-    # If this is a `zip` PaymentMethod, this hash contains details about the Zip payment method.
-    record {} zip?;
-|};
-
 public type bank_accounts_id_body_2ExpandItemsString string;
 
 # 
@@ -7092,16 +6991,6 @@ public type Payment_method_details_pix record {
     string? bank_transaction_id?;
 };
 
-public type price_data record {
-    string currency;
-    @constraint:String {maxLength: 5000}
-    string product;
-    recurring_adhoc recurring?;
-    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
-    int unit_amount?;
-    string unit_amount_decimal?;
-};
-
 # Represents the Queries record for the operation: GetTerminalLocations
 public type GetTerminalLocationsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -7114,6 +7003,16 @@ public type GetTerminalLocationsQueries record {
     # A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.
     @constraint:String {maxLength: 5000}
     string starting_after?;
+};
+
+public type price_data record {
+    string currency;
+    @constraint:String {maxLength: 5000}
+    string product;
+    recurring_adhoc recurring?;
+    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
+    int unit_amount?;
+    string unit_amount_decimal?;
 };
 
 # 
@@ -7142,15 +7041,15 @@ public type Customer_balance_resource_cash_balance_transaction_resource_funded_t
     Customer_balance_resource_cash_balance_transaction_resource_funded_transaction_resource_bank_transfer bank_transfer;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetTreasuryOutboundPaymentsQueriesExpandItemsString string;
-
 public type local_lease_tax record {
     @constraint:String {maxLength: 5000}
     string jurisdiction;
 };
 
 public type refund_expire_bodyExpandItemsString string;
+
+@constraint:String {maxLength: 5000}
+public type GetTreasuryOutboundPaymentsQueriesExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetChargesQueriesExpandItemsString string;
@@ -7198,18 +7097,6 @@ public type RadarListListItemList_1 record {
     string url;
 };
 
-# 
-public type SigmaScheduledQueryRunList record {
-    Scheduled_query_run[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000, pattern: re `^/v1/sigma/scheduled_query_runs`}
-    string url;
-};
-
 public type webhook_endpoints_webhook_endpoint_body record {|
     # An optional description of what the webhook is used for.
     string|"" description?;
@@ -7224,6 +7111,18 @@ public type webhook_endpoints_webhook_endpoint_body record {|
     # The URL of the webhook endpoint.
     string url?;
 |};
+
+# 
+public type SigmaScheduledQueryRunList record {
+    Scheduled_query_run[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000, pattern: re `^/v1/sigma/scheduled_query_runs`}
+    string url;
+};
 
 @constraint:String {maxLength: 5000}
 public type GetCustomersCustomerCashBalanceTransactionsQueriesExpandItemsString string;
@@ -7285,8 +7184,6 @@ public type Payment_method_us_bank_account record {
     Payment_method_us_bank_account_status_details? status_details?;
 };
 
-public type authorization_reverse_bodyExpandItemsString string;
-
 public type subscription_item_update_params record {
     record {int usage_gte;}|"" billing_thresholds?;
     boolean clear_usage?;
@@ -7301,6 +7198,8 @@ public type subscription_item_update_params record {
     int quantity?;
     TaxratesItemsString[]|"" tax_rates?;
 };
+
+public type authorization_reverse_bodyExpandItemsString string;
 
 public type value_lists_value_list_body record {|
     # The name of the value list for use in rules.
@@ -7434,8 +7333,6 @@ public type Payment_method_details_boleto record {
     string tax_id;
 };
 
-public type outbound_payments_id_bodyExpandItemsString string;
-
 # 
 public type TaxProductResourceTaxCalculationLineItemList record {
     # Details about each object.
@@ -7448,6 +7345,8 @@ public type TaxProductResourceTaxCalculationLineItemList record {
     @constraint:String {maxLength: 5000, pattern: re `^/v1/tax/calculations/[^/]+/line_items`}
     string url;
 };
+
+public type outbound_payments_id_bodyExpandItemsString string;
 
 # Represents the Queries record for the operation: GetReportingReportTypes
 public type GetReportingReportTypesQueries record {
@@ -7462,19 +7361,6 @@ public type invoice_update_lines_body record {|
     record {|string...;|}|"" invoice_metadata?;
     # The line items to update.
     lines_data_param_2[] lines;
-|};
-
-public type intent_verify_microdeposits_body_1 record {|
-    # Two positive integers, in *cents*, equal to the values of the microdeposits sent to the bank account.
-    int[] amounts?;
-    # The client secret of the SetupIntent.
-    @constraint:String {maxLength: 5000}
-    string client_secret?;
-    # A six-character code starting with SM present in the microdeposit sent to the bank account.
-    @constraint:String {maxLength: 5000}
-    string descriptor_code?;
-    # Specifies which fields in the response should be expanded.
-    intent_verify_microdeposits_body_1ExpandItemsString[] expand?;
 |};
 
 public type Billing\.meter record {
@@ -7492,6 +7378,19 @@ public type Billing\.meter record {
     int updated;
     Billing_meter_resource_billing_meter_value value_settings;
 };
+
+public type intent_verify_microdeposits_body_1 record {|
+    # Two positive integers, in *cents*, equal to the values of the microdeposits sent to the bank account.
+    int[] amounts?;
+    # The client secret of the SetupIntent.
+    @constraint:String {maxLength: 5000}
+    string client_secret?;
+    # A six-character code starting with SM present in the microdeposit sent to the bank account.
+    @constraint:String {maxLength: 5000}
+    string descriptor_code?;
+    # Specifies which fields in the response should be expanded.
+    intent_verify_microdeposits_body_1ExpandItemsString[] expand?;
+|};
 
 public type Climate\.order record {
     int amount_fees;
@@ -7650,18 +7549,6 @@ public type EntitlementsResourceCustomerEntitlementList record {
 
 public type charge_refund_bodyExpandItemsString string;
 
-public type v1_file_links_body record {|
-    # Specifies which fields in the response should be expanded.
-    v1_file_links_bodyExpandItemsString[] expand?;
-    # The link isn't usable after this future timestamp.
-    int expires_at?;
-    # The ID of the file. The file's `purpose` must be one of the following: `business_icon`, `business_logo`, `customer_signature`, `dispute_evidence`, `finance_report_run`, `identity_document_downloadable`, `pci_document`, `selfie`, `sigma_scheduled_query`, `tax_document_user_upload`, or `terminal_reader_splashscreen`.
-    @constraint:String {maxLength: 5000}
-    string file;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-|};
-
 # 
 public type Tax_product_registrations_resource_country_options_canada record {
     Tax_product_registrations_resource_country_options_ca_province_standard province_standard?;
@@ -7729,9 +7616,6 @@ public type Payment_method_options_grabpay record {
     "none" setup_future_usage?;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetReviewsReviewQueriesExpandItemsString string;
-
 # Represents the Queries record for the operation: GetCustomersCustomerSources
 public type GetCustomersCustomerSourcesQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -7747,7 +7631,8 @@ public type GetCustomersCustomerSourcesQueries record {
     string 'object?;
 };
 
-public type v1_subscription_items_bodyExpandItemsString string;
+@constraint:String {maxLength: 5000}
+public type GetReviewsReviewQueriesExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetTreasuryDebitReversalsQueriesExpandItemsString string;
@@ -7802,15 +7687,15 @@ public type Payment_method_details_bacs_debit record {
     string? sort_code?;
 };
 
+@constraint:String {maxLength: 5000}
+public type Account_requirementsEventuallydueItemsString string;
+
 public type Source_type_giropay record {
     string? bank_code?;
     string? bank_name?;
     string? bic?;
     string? statement_descriptor?;
 };
-
-@constraint:String {maxLength: 5000}
-public type Account_requirementsEventuallydueItemsString string;
 
 public type product_data record {
     @constraint:String {maxLength: 40000}
@@ -7831,9 +7716,9 @@ public type Treasury_financial_accounts_resource_platform_restrictions record {
     "restricted"|"unrestricted"? outbound_flows?;
 };
 
-public type id_refund_bodyExpandItemsString string;
-
 public type authorization_finalize_amount_bodyExpandItemsString string;
+
+public type id_refund_bodyExpandItemsString string;
 
 public type Issuing\.token record {
     string|Issuing\.card card;
@@ -8000,11 +7885,11 @@ public type features_id_body record {|
     string name?;
 |};
 
-public type customer_fund_cash_balance_bodyExpandItemsString string;
-
 public type tax_param_1 record {
     string|"" ip_address?;
 };
+
+public type customer_fund_cash_balance_bodyExpandItemsString string;
 
 # Represents the Queries record for the operation: GetCustomersCustomerSubscriptionsSubscriptionExposedIdDiscount
 public type GetCustomersCustomerSubscriptionsSubscriptionExposedIdDiscountQueries record {
@@ -8027,18 +7912,6 @@ public type Tax_i_ds_owner record {
 public type authorization_controls_param_v2AllowedmerchantcountriesItemsString string;
 
 # 
-public type QuotesResourceQuoteList record {
-    Quote[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000, pattern: re `^/v1/quotes`}
-    string url;
-};
-
-# 
 public type CustomerPaymentMethodResourceList record {
     Payment_method[] data;
     # True if this list has another page of items after this one that can be fetched.
@@ -8047,6 +7920,18 @@ public type CustomerPaymentMethodResourceList record {
     "list" 'object;
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000}
+    string url;
+};
+
+# 
+public type QuotesResourceQuoteList record {
+    Quote[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000, pattern: re `^/v1/quotes`}
     string url;
 };
 
@@ -8129,6 +8014,8 @@ public type file_link_creation_params record {
 
 public type reversals_id_bodyExpandItemsString string;
 
+public type intent_apply_customer_balance_bodyExpandItemsString string;
+
 # 
 public type Terminal_configuration_configuration_resource_reboot_window record {
     # Integer between 0 to 23 that represents the end hour of the reboot time window. The value must be different than the start_hour.
@@ -8136,8 +8023,6 @@ public type Terminal_configuration_configuration_resource_reboot_window record {
     # Integer between 0 to 23 that represents the start hour of the reboot time window.
     int start_hour;
 };
-
-public type intent_apply_customer_balance_bodyExpandItemsString string;
 
 # Rules that control spending across this cardholder's cards. Refer to our [documentation](https://stripe.com/docs/issuing/controls/spending-controls) for more details.
 public type authorization_controls_param_v2 record {
@@ -8150,6 +8035,58 @@ public type authorization_controls_param_v2 record {
 };
 
 public type outbound_transfer_fail_bodyExpandItemsString string;
+
+public type setup_intents_body record {|
+    # If present, the SetupIntent's payment method will be attached to the in-context Stripe Account.
+    # 
+    # It can only be used for this Stripe Account’s own money movement flows like InboundTransfer and OutboundTransfers. It cannot be set to true when setting up a PaymentMethod for a Customer, and defaults to false when attaching a PaymentMethod to a Customer.
+    boolean attach_to_self?;
+    automatic_payment_methods_param_1 automatic_payment_methods?;
+    # Set to `true` to attempt to confirm this SetupIntent immediately. This parameter defaults to `false`. If a card is the attached payment method, you can provide a `return_url` in case further authentication is necessary.
+    boolean confirm?;
+    # ID of the ConfirmationToken used to confirm this SetupIntent.
+    # 
+    # If the provided ConfirmationToken contains properties that are also being provided in this request, such as `payment_method`, then the values in this request will take precedence.
+    @constraint:String {maxLength: 5000}
+    string confirmation_token?;
+    # ID of the Customer this SetupIntent belongs to, if one exists.
+    # 
+    # If present, the SetupIntent's payment method will be attached to the Customer on successful setup. Payment methods attached to other Customers cannot be used with this SetupIntent.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    # An arbitrary string attached to the object. Often useful for displaying to users.
+    @constraint:String {maxLength: 1000}
+    string description?;
+    # Specifies which fields in the response should be expanded.
+    setup_intents_bodyExpandItemsString[] expand?;
+    # Indicates the directions of money movement for which this payment method is intended to be used.
+    # 
+    # Include `inbound` if you intend to use the payment method as the origin to pull funds from. Include `outbound` if you intend to use the payment method as the destination to send funds to. You can include both if you intend to use the payment method for both purposes.
+    ("inbound"|"outbound")[] flow_directions?;
+    # This hash contains details about the mandate to create. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/setup_intents/create#create_setup_intent-confirm).
+    record {record {int accepted_at?; record {} offline?; record {string ip_address; string user_agent;} online?; "offline"|"online" 'type;} customer_acceptance;}|"" mandate_data?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # The Stripe account ID created for this SetupIntent.
+    string on_behalf_of?;
+    # ID of the payment method (a PaymentMethod, Card, or saved Source object) to attach to this SetupIntent.
+    @constraint:String {maxLength: 5000}
+    string payment_method?;
+    # The ID of the payment method configuration to use with this SetupIntent.
+    @constraint:String {maxLength: 100}
+    string payment_method_configuration?;
+    payment_method_data_params_1 payment_method_data?;
+    payment_method_options_param_16 payment_method_options?;
+    # The list of payment method types (for example, card) that this SetupIntent can use. If you don't provide this, it defaults to ["card"].
+    setup_intents_bodyPaymentmethodtypesItemsString[] payment_method_types?;
+    # The URL to redirect your customer back to after they authenticate or cancel their payment on the payment method's app or site. To redirect to a mobile application, you can alternatively supply an application URI scheme. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/setup_intents/create#create_setup_intent-confirm).
+    string return_url?;
+    setup_intent_single_use_params single_use?;
+    # Indicates how the payment method is intended to be used in the future. If not provided, this value defaults to `off_session`.
+    "off_session"|"on_session" usage?;
+    # Set to `true` when confirming server-side and using Stripe.js, iOS, or Android client-side SDKs to handle the next actions.
+    boolean use_stripe_sdk?;
+|};
 
 # This hash contains whether the pricing table is enabled.
 public type Customer_session_resource_components_resource_pricing_table record {
@@ -8218,13 +8155,13 @@ public type Tax\.registration record {
     "active"|"expired"|"scheduled" status;
 };
 
-public type subscription_resume_bodyExpandItemsString string;
-
 # Reboot time settings for readers that support customized reboot time configuration.
 public type reboot_window record {
     int end_hour;
     int start_hour;
 };
+
+public type subscription_resume_bodyExpandItemsString string;
 
 # 
 public type Setup_attempt_payment_method_details_card_checks record {
@@ -8388,8 +8325,6 @@ public type Source_order_item record {
     string? 'type?;
 };
 
-public type v1_quotes_bodyExpandItemsString string;
-
 # 
 public type Checkout_klarna_payment_method_options record {
     # Indicates that you intend to make future payments with this PaymentIntent's payment method.
@@ -8487,6 +8422,18 @@ public type Checkout_sofort_payment_method_options record {
     "none" setup_future_usage?;
 };
 
+# 
+public type InvoicesItemsList record {
+    Invoiceitem[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000, pattern: re `^/v1/invoiceitems`}
+    string url;
+};
+
 public type Treasury\.received_credit record {
     int amount;
     int created;
@@ -8519,18 +8466,6 @@ public type Financial_connections\.transaction record {
     int transacted_at;
     string transaction_refresh;
     int updated;
-};
-
-# 
-public type InvoicesItemsList record {
-    Invoiceitem[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000, pattern: re `^/v1/invoiceitems`}
-    string url;
 };
 
 public type Source_type_card_present record {
@@ -8748,6 +8683,8 @@ public type Tax_product_registrations_resource_country_options_default record {
     "standard" 'type;
 };
 
+public type customer_sessions_bodyExpandItemsString string;
+
 # 
 public type Issuing_dispute_no_valid_authorization_evidence record {
     # (ID of a [file upload](https://stripe.com/docs/guides/file-upload)) Additional documentation supporting the dispute.
@@ -8923,6 +8860,28 @@ public type Shipping_rate_fixed_amount record {
     record {|Shipping_rate_currency_option...;|} currency_options?;
 };
 
+public type topups_body record {|
+    # A positive integer representing how much to transfer.
+    int amount;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency;
+    # An arbitrary string attached to the object. Often useful for displaying to users.
+    @constraint:String {maxLength: 5000}
+    string description?;
+    # Specifies which fields in the response should be expanded.
+    topups_bodyExpandItemsString[] expand?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # The ID of a source to transfer funds from. For most users, this should be left unspecified which will use the bank account that was set up in the dashboard for the specified currency. In test mode, this can be a test bank token (see [Testing Top-ups](https://stripe.com/docs/connect/testing#testing-top-ups)).
+    @constraint:String {maxLength: 5000}
+    string 'source?;
+    # Extra information about a top-up for the source's bank statement. Limited to 15 ASCII characters.
+    @constraint:String {maxLength: 15}
+    string statement_descriptor?;
+    # A string that identifies this top-up as part of a group.
+    string transfer_group?;
+|};
+
 public type completed_at record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 # The default settings to aggregate a meter's events with.
@@ -8967,11 +8926,8 @@ public type Issuing_card_authorization_controlsBlockedmerchantcountriesItemsStri
 @constraint:String {maxLength: 5000}
 public type GetTransfersTransferQueriesExpandItemsString string;
 
-# Represents the Queries record for the operation: GetRadarValueListItemsItem
-public type GetRadarValueListItemsItemQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetRadarValueListItemsItemQueriesExpandItemsString[] expand?;
-};
+@constraint:String {maxLength: 5000}
+public type GetCustomersCustomerSourcesIdQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetSourcesSourceMandateNotificationsMandateNotification
 public type GetSourcesSourceMandateNotificationsMandateNotificationQueries record {
@@ -8979,10 +8935,11 @@ public type GetSourcesSourceMandateNotificationsMandateNotificationQueries recor
     GetSourcesSourceMandateNotificationsMandateNotificationQueriesExpandItemsString[] expand?;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetCustomersCustomerSourcesIdQueriesExpandItemsString string;
-
-public type ephemeral_keys_key_bodyExpandItemsString string;
+# Represents the Queries record for the operation: GetRadarValueListItemsItem
+public type GetRadarValueListItemsItemQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetRadarValueListItemsItemQueriesExpandItemsString[] expand?;
+};
 
 public type discounts_data_param record {
     @constraint:String {maxLength: 5000}
@@ -8992,6 +8949,8 @@ public type discounts_data_param record {
     @constraint:String {maxLength: 5000}
     string promotion_code?;
 };
+
+public type ephemeral_keys_key_bodyExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetSourcesSourceSourceTransactionsSourceTransactionQueriesExpandItemsString string;
@@ -9053,6 +9012,8 @@ public type person_token_specs record {
     person_verification_specs verification?;
 };
 
+public type promotion_codes_bodyExpandItemsString string;
+
 public type configurations_configuration_bodyExpandItemsString string;
 
 # 
@@ -9062,6 +9023,50 @@ public type Account_requirements_alternative record {
     # Fields that are due and can be satisfied by providing all fields in `alternative_fields_due`.
     Account_requirements_alternativeOriginalfieldsdueItemsString[] original_fields_due;
 };
+
+public type invoiceitems_body record {|
+    # The integer amount in cents (or local equivalent) of the charge to be applied to the upcoming invoice. Passing in a negative `amount` will reduce the `amount_due` on the invoice.
+    int amount?;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency?;
+    # The ID of the customer who will be billed when this invoice item is billed.
+    @constraint:String {maxLength: 5000}
+    string customer;
+    # An arbitrary string which you can attach to the invoice item. The description is displayed in the invoice for easy tracking.
+    @constraint:String {maxLength: 5000}
+    string description?;
+    # Controls whether discounts apply to this invoice item. Defaults to false for prorations or negative invoice items, and true for all other invoice items.
+    boolean discountable?;
+    # The coupons and promotion codes to redeem into discounts for the invoice item or invoice line item.
+    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
+    # Specifies which fields in the response should be expanded.
+    invoiceitems_bodyExpandItemsString[] expand?;
+    # The ID of an existing invoice to add this invoice item to. When left blank, the invoice item will be added to the next upcoming scheduled invoice. This is useful when adding invoice items in response to an invoice.created webhook. You can only add invoice items to draft invoices and there is a maximum of 250 items per invoice.
+    @constraint:String {maxLength: 5000}
+    string invoice?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    period period?;
+    # The ID of the price object. One of `price` or `price_data` is required.
+    @constraint:String {maxLength: 5000}
+    string price?;
+    one_time_price_data price_data?;
+    # Non-negative integer. The quantity of units for the invoice item.
+    int quantity?;
+    # The ID of a subscription to add this invoice item to. When left blank, the invoice item is added to the next upcoming scheduled invoice. When set, scheduled invoices for subscriptions other than the specified subscription will ignore the invoice item. Use this when you want to express that an invoice item has been accrued within the context of a particular subscription.
+    @constraint:String {maxLength: 5000}
+    string subscription?;
+    # Only required if a [default tax behavior](https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)) was not provided in the Stripe Tax settings. Specifies whether the price is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`. Once specified as either `inclusive` or `exclusive`, it cannot be changed.
+    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
+    # A [tax code](https://stripe.com/docs/tax/tax-categories) ID.
+    string|"" tax_code?;
+    # The tax rates which apply to the invoice item. When set, the `default_tax_rates` on the invoice do not apply to this invoice item.
+    invoiceitems_bodyTaxratesItemsString[] tax_rates?;
+    # The integer unit amount in cents (or local equivalent) of the charge to be applied to the upcoming invoice. This `unit_amount` will be multiplied by the quantity to get the full amount. Passing in a negative `unit_amount` will reduce the `amount_due` on the invoice.
+    int unit_amount?;
+    # Same as `unit_amount`, but accepts a decimal value in cents (or local equivalent) with at most 12 decimal places. Only one of `unit_amount` and `unit_amount_decimal` can be set.
+    string unit_amount_decimal?;
+|};
 
 public type treasury_received_credits_bodyExpandItemsString string;
 
@@ -9136,8 +9141,6 @@ public type Treasury\.received_debit record {
     string|Treasury\.transaction? 'transaction?;
 };
 
-public type v1_subscriptions_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetTreasuryTransactionEntriesQueriesExpandItemsString string;
 
@@ -9170,18 +9173,18 @@ public type Currency_option record {
 };
 
 # 
+public type Sigma_scheduled_query_run_error record {
+    # Information about the run failure.
+    @constraint:String {maxLength: 5000}
+    string message;
+};
+
+# 
 public type Portal_subscription_cancellation_reason record {
     # Whether the feature is enabled.
     boolean enabled;
     # Which cancellation reasons will be given as options to the customer.
     ("customer_service"|"low_quality"|"missing_features"|"other"|"switched_service"|"too_complex"|"too_expensive"|"unused")[] options;
-};
-
-# 
-public type Sigma_scheduled_query_run_error record {
-    # Information about the run failure.
-    @constraint:String {maxLength: 5000}
-    string message;
 };
 
 # 
@@ -9248,6 +9251,13 @@ public type Usage_record record {
     int timestamp;
 };
 
+public type company_ownership_declaration record {
+    int date?;
+    string ip?;
+    @constraint:String {maxLength: 5000}
+    string user_agent?;
+};
+
 public type cardholders_cardholder_body record {|
     billing_specs billing?;
     company_param company?;
@@ -9267,13 +9277,6 @@ public type cardholders_cardholder_body record {|
     # Specifies whether to permit authorizations on this cardholder's cards.
     "active"|"inactive" status?;
 |};
-
-public type company_ownership_declaration record {
-    int date?;
-    string ip?;
-    @constraint:String {maxLength: 5000}
-    string user_agent?;
-};
 
 # 
 public type ShippingResourcesShippingRateList record {
@@ -9344,12 +9347,6 @@ public type authorizations_authorization_body record {|
     record {|string...;|}|"" metadata?;
 |};
 
-# Represents the Queries record for the operation: GetIssuingCardsCard
-public type GetIssuingCardsCardQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetIssuingCardsCardQueriesExpandItemsString[] expand?;
-};
-
 # A Customer Session allows you to grant Stripe's frontend SDKs (like Stripe.js) client-side access
 # control over a Customer.
 public type Customer_session record {
@@ -9371,6 +9368,15 @@ public type Customer_session record {
     "customer_session" 'object;
 };
 
+# Represents the Queries record for the operation: GetIssuingCardsCard
+public type GetIssuingCardsCardQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetIssuingCardsCardQueriesExpandItemsString[] expand?;
+};
+
+@constraint:String {maxLength: 5000}
+public type GetPromotionCodesQueriesExpandItemsString string;
+
 # 
 public type RadarListListList record {
     Radar\.value_list[] data;
@@ -9382,9 +9388,6 @@ public type RadarListListList record {
     @constraint:String {maxLength: 5000, pattern: re `^/v1/radar/value_lists`}
     string url;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetPromotionCodesQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetTaxCodesId
 public type GetTaxCodesIdQueries record {
@@ -9415,6 +9418,8 @@ public type GetRadarValueListsQueries record {
 };
 
 public type bank_account_ownership_verificationFilesItemsString string;
+
+public type sources_bodyExpandItemsString string;
 
 public type treasury_financial_accounts_bodyExpandItemsString string;
 
@@ -9508,8 +9513,6 @@ public type GetPaymentMethodsPaymentMethodQueries record {
 @constraint:String {maxLength: 5000}
 public type GetIssuingCardholdersQueriesExpandItemsString string;
 
-public type InvoiceDiscountsItemsnull string|Discount|Deleted_discount;
-
 # 
 public type Account_tos_acceptance record {
     # The Unix timestamp marking when the account representative accepted their service agreement
@@ -9522,6 +9525,8 @@ public type Account_tos_acceptance record {
     # The user agent of the browser from which the account representative accepted their service agreement
     string? user_agent?;
 };
+
+public type InvoiceDiscountsItemsnull string|Discount|Deleted_discount;
 
 public type reader_process_payment_intent_bodyExpandItemsString string;
 
@@ -9577,8 +9582,6 @@ public type bacs_debit_payments_specs record {
     string display_name?;
 };
 
-public type v1_customers_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetCountrySpecsCountryQueriesExpandItemsString string;
 
@@ -9630,6 +9633,11 @@ public type GetProductsProductFeaturesIdQueries record {
     GetProductsProductFeaturesIdQueriesExpandItemsString[] expand?;
 };
 
+public type param_6 record {
+    @constraint:String {maxLength: 5000}
+    string tax_id;
+};
+
 # 
 public type Treasury_shared_resource_initiating_payment_method_details_us_bank_account record {
     # Bank name.
@@ -9640,9 +9648,8 @@ public type Treasury_shared_resource_initiating_payment_method_details_us_bank_a
     string? routing_number?;
 };
 
-public type param_6 record {
-    @constraint:String {maxLength: 5000}
-    string tax_id;
+public type param_7 record {
+    "arzte_und_apotheker_bank"|"austrian_anadi_bank_ag"|"bank_austria"|"bankhaus_carl_spangler"|"bankhaus_schelhammer_und_schattera_ag"|"bawag_psk_ag"|"bks_bank_ag"|"brull_kallmus_bank_ag"|"btv_vier_lander_bank"|"capital_bank_grawe_gruppe_ag"|"deutsche_bank_ag"|"dolomitenbank"|"easybank_ag"|"erste_bank_und_sparkassen"|"hypo_alpeadriabank_international_ag"|"hypo_bank_burgenland_aktiengesellschaft"|"hypo_noe_lb_fur_niederosterreich_u_wien"|"hypo_oberosterreich_salzburg_steiermark"|"hypo_tirol_bank_ag"|"hypo_vorarlberg_bank_ag"|"marchfelder_bank"|"oberbank_ag"|"raiffeisen_bankengruppe_osterreich"|"schoellerbank_ag"|"sparda_bank_wien"|"volksbank_gruppe"|"volkskreditbank_ag"|"vr_bank_braunau" bank?;
 };
 
 # 
@@ -9657,10 +9664,6 @@ public type Treasury_shared_resource_initiating_payment_method_details_initiatin
     # Polymorphic type matching the originating money movement's source. This can be an external account, a Stripe balance, or a FinancialAccount.
     "balance"|"financial_account"|"issuing_card"|"stripe"|"us_bank_account" 'type;
     Treasury_shared_resource_initiating_payment_method_details_us_bank_account us_bank_account?;
-};
-
-public type param_7 record {
-    "arzte_und_apotheker_bank"|"austrian_anadi_bank_ag"|"bank_austria"|"bankhaus_carl_spangler"|"bankhaus_schelhammer_und_schattera_ag"|"bawag_psk_ag"|"bks_bank_ag"|"brull_kallmus_bank_ag"|"btv_vier_lander_bank"|"capital_bank_grawe_gruppe_ag"|"deutsche_bank_ag"|"dolomitenbank"|"easybank_ag"|"erste_bank_und_sparkassen"|"hypo_alpeadriabank_international_ag"|"hypo_bank_burgenland_aktiengesellschaft"|"hypo_noe_lb_fur_niederosterreich_u_wien"|"hypo_oberosterreich_salzburg_steiermark"|"hypo_tirol_bank_ag"|"hypo_vorarlberg_bank_ag"|"marchfelder_bank"|"oberbank_ag"|"raiffeisen_bankengruppe_osterreich"|"schoellerbank_ag"|"sparda_bank_wien"|"volksbank_gruppe"|"volkskreditbank_ag"|"vr_bank_braunau" bank?;
 };
 
 public type param_8 record {
@@ -9686,6 +9689,11 @@ public type SubscriptionsSubscriptionList record {
     string url;
 };
 
+public type param_2 record {
+    string account?;
+    "account"|"self" 'type;
+};
+
 # 
 public type Tax_product_resource_tax_transaction_line_item_resource_reversal record {
     # The `id` of the line item to reverse in the original transaction.
@@ -9693,13 +9701,13 @@ public type Tax_product_resource_tax_transaction_line_item_resource_reversal rec
     string original_line_item;
 };
 
-public type param_2 record {
+@constraint:String {maxLength: 5000}
+public type GetCheckoutSessionsSessionQueriesExpandItemsString string;
+
+public type param_3 record {
     string account?;
     "account"|"self" 'type;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetCheckoutSessionsSessionQueriesExpandItemsString string;
 
 # Prices define the unit cost, currency, and (optional) billing cycle for both recurring and one-time purchases of products.
 # [Products](https://stripe.com/docs/api#products) help you track inventory or provisioning, and prices help you track payment terms. Different physical goods or levels of service should be represented by products, and pricing options should be represented by prices. This approach lets you change prices without having to change your provisioning scheme.
@@ -9751,11 +9759,6 @@ public type Price record {
     int? unit_amount?;
     # The unit amount in cents (or local equivalent) to be charged, represented as a decimal string with at most 12 decimal places. Only set if `billing_scheme=per_unit`.
     string? unit_amount_decimal?;
-};
-
-public type param_3 record {
-    string account?;
-    "account"|"self" 'type;
 };
 
 public type param_4 record {
@@ -10030,6 +10033,8 @@ public type Plan_tier record {
     int? up_to?;
 };
 
+public type setup_intents_bodyPaymentmethodtypesItemsString string;
+
 # These fields can be used to create a new product that this price will belong to.
 public type inline_product_params record {
     boolean active?;
@@ -10083,8 +10088,6 @@ public type Payment_method_details_cashapp record {
     string? cashtag?;
 };
 
-public type documents_paramFilesItemsString string;
-
 # 
 public type Checkout_customer_balance_payment_method_options record {
     Checkout_customer_balance_bank_transfer_payment_method_options bank_transfer?;
@@ -10097,6 +10100,8 @@ public type Checkout_customer_balance_payment_method_options record {
     # When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
     "none" setup_future_usage?;
 };
+
+public type documents_paramFilesItemsString string;
 
 public type quote_cancel_bodyExpandItemsString string;
 
@@ -10124,18 +10129,6 @@ public type GetIssuingPersonalizationDesignsPersonalizationDesignQueriesExpandIt
 public type Payment_method_twint record {
 };
 
-public type Reporting\.report_type record {
-    int data_available_end;
-    int data_available_start;
-    Reporting\\\\\\\.report_typeDefaultcolumnsItemsString[]? default_columns?;
-    string id;
-    boolean livemode;
-    string name;
-    "reporting.report_type" 'object;
-    int updated;
-    int version;
-};
-
 # Represents the Queries record for the operation: GetInvoices
 public type GetInvoicesQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -10161,6 +10154,18 @@ public type GetInvoicesQueries record {
     string customer?;
     # The status of the invoice, one of `draft`, `open`, `paid`, `uncollectible`, or `void`. [Learn more](https://stripe.com/docs/billing/invoices/workflow#workflow-overview)
     "draft"|"open"|"paid"|"uncollectible"|"void" status?;
+};
+
+public type Reporting\.report_type record {
+    int data_available_end;
+    int data_available_start;
+    Reporting\.report_typeDefaultcolumnsItemsString[]? default_columns?;
+    string id;
+    boolean livemode;
+    string name;
+    "reporting.report_type" 'object;
+    int updated;
+    int version;
 };
 
 public type intent_confirm_body record {|
@@ -10269,15 +10274,15 @@ public type Customer_balance_resource_cash_balance_transaction_resource_funded_t
     string? sender_name?;
 };
 
+# Details about a failed InboundTransfer.
+public type failure_details_params record {
+    "account_closed"|"account_frozen"|"bank_account_restricted"|"bank_ownership_changed"|"debit_not_authorized"|"incorrect_account_holder_address"|"incorrect_account_holder_name"|"incorrect_account_holder_tax_id"|"insufficient_funds"|"invalid_account_number"|"invalid_currency"|"no_account"|"other" code?;
+};
+
 # Represents the Queries record for the operation: GetTreasuryFinancialAccountsFinancialAccountFeatures
 public type GetTreasuryFinancialAccountsFinancialAccountFeaturesQueries record {
     # Specifies which fields in the response should be expanded.
     GetTreasuryFinancialAccountsFinancialAccountFeaturesQueriesExpandItemsString[] expand?;
-};
-
-# Details about a failed InboundTransfer.
-public type failure_details_params record {
-    "account_closed"|"account_frozen"|"bank_account_restricted"|"bank_ownership_changed"|"debit_not_authorized"|"incorrect_account_holder_address"|"incorrect_account_holder_name"|"incorrect_account_holder_tax_id"|"insufficient_funds"|"invalid_account_number"|"invalid_currency"|"no_account"|"other" code?;
 };
 
 @constraint:String {maxLength: 5000}
@@ -10397,12 +10402,6 @@ public type Payment_intent_payment_method_options_eps record {
     "none" setup_future_usage?;
 };
 
-public type subscription_schedule_default_settings_param record {
-    AccounttaxidsItemsString[]|"" account_tax_ids?;
-    int days_until_due?;
-    param_3 issuer?;
-};
-
 public type intent_apply_customer_balance_body record {|
     # Amount that you intend to apply to this PaymentIntent from the customer’s cash balance.
     # 
@@ -10418,17 +10417,14 @@ public type intent_apply_customer_balance_body record {|
     intent_apply_customer_balance_bodyExpandItemsString[] expand?;
 |};
 
+public type subscription_schedule_default_settings_param record {
+    AccounttaxidsItemsString[]|"" account_tax_ids?;
+    int days_until_due?;
+    param_3 issuer?;
+};
+
 @constraint:String {maxLength: 5000}
 public type Payment_method_details_interac_presentPreferredlocalesItemsString string;
-
-# Information about a mandate possibility attached to a source object (generally for bank debits) as well as its acceptance status.
-public type mandate_params record {
-    mandate_acceptance_params acceptance?;
-    int|"" amount?;
-    string currency?;
-    "one_time"|"scheduled"|"variable" interval?;
-    "deprecated_none"|"email"|"manual"|"none"|"stripe_email" notification_method?;
-};
 
 # 
 public type CreditNotesList record {
@@ -10440,6 +10436,15 @@ public type CreditNotesList record {
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000}
     string url;
+};
+
+# Information about a mandate possibility attached to a source object (generally for bank debits) as well as its acceptance status.
+public type mandate_params record {
+    mandate_acceptance_params acceptance?;
+    int|"" amount?;
+    string currency?;
+    "one_time"|"scheduled"|"variable" interval?;
+    "deprecated_none"|"email"|"manual"|"none"|"stripe_email" notification_method?;
 };
 
 # 
@@ -10552,57 +10557,6 @@ public type Gelato_session_phone_options record {
     boolean require_verification?;
 };
 
-public type v1_customers_body record {|
-    # The customer's address.
-    record {string city?; string country?; string line1?; string line2?; string postal_code?; string state?;}|"" address?;
-    # An integer amount in cents (or local equivalent) that represents the customer's current balance, which affect the customer's future invoices. A negative amount represents a credit that decreases the amount due on an invoice; a positive amount increases the amount due on an invoice.
-    int balance?;
-    cash_balance_param cash_balance?;
-    @constraint:String {maxLength: 5000}
-    string coupon?;
-    # An arbitrary string that you can attach to a customer object. It is displayed alongside the customer in the dashboard.
-    @constraint:String {maxLength: 5000}
-    string description?;
-    # Customer's email address. It's displayed alongside the customer in your dashboard and can be useful for searching and tracking. This may be up to *512 characters*.
-    @constraint:String {maxLength: 512}
-    string email?;
-    # Specifies which fields in the response should be expanded.
-    v1_customers_bodyExpandItemsString[] expand?;
-    # The prefix for the customer used to generate unique invoice numbers. Must be 3–12 uppercase letters or numbers.
-    @constraint:String {maxLength: 5000}
-    string invoice_prefix?;
-    customer_param invoice_settings?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # The customer's full name or business name.
-    @constraint:String {maxLength: 256}
-    string name?;
-    # The sequence to be used on the customer's next invoice. Defaults to 1.
-    int next_invoice_sequence?;
-    @constraint:String {maxLength: 5000}
-    string payment_method?;
-    # The customer's phone number.
-    @constraint:String {maxLength: 20}
-    string phone?;
-    # Customer's preferred languages, ordered by preference.
-    v1_customers_bodyPreferredlocalesItemsString[] preferred_locales?;
-    # The ID of a promotion code to apply to the customer. The customer will have a discount applied on all recurring payments. Charges you create through the API will not have the discount.
-    @constraint:String {maxLength: 5000}
-    string promotion_code?;
-    # The customer's shipping information. Appears on invoices emailed to this customer.
-    record {record {string city?; string country?; string line1?; string line2?; string postal_code?; string state?;} address; string name; string phone?;}|"" shipping?;
-    @constraint:String {maxLength: 5000}
-    string 'source?;
-    tax_param tax?;
-    # The customer's tax exemption. One of `none`, `exempt`, or `reverse`.
-    ""|"exempt"|"none"|"reverse" tax_exempt?;
-    # The customer's tax IDs.
-    data_params[] tax_id_data?;
-    # ID of the test clock to attach to the customer.
-    @constraint:String {maxLength: 5000}
-    string test_clock?;
-|};
-
 # Represents the Queries record for the operation: GetPaymentMethods
 public type GetPaymentMethodsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -10652,6 +10606,9 @@ public type Tax_product_resource_tax_calculation_shipping_cost record {
     string tax_code;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetSourcesSourceQueriesExpandItemsString string;
+
 public type Billing_portal\.configuration record {
     boolean active;
     string|Application|Deleted_application? application?;
@@ -10667,9 +10624,6 @@ public type Billing_portal\.configuration record {
     "billing_portal.configuration" 'object;
     int updated;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetSourcesSourceQueriesExpandItemsString string;
 
 # The account holder to link accounts for.
 public type accountholder_params_1 record {
@@ -10687,13 +10641,13 @@ public type accountholder_params_2 record {
     string customer?;
 };
 
+public type transactions_create_reversal_bodyExpandItemsString string;
+
 public type id_return_body_1 record {|
     # Specifies which fields in the response should be expanded.
     id_return_body_1ExpandItemsString[] expand?;
     returned_details_params returned_details?;
 |};
-
-public type transactions_create_reversal_bodyExpandItemsString string;
 
 public type radar_value_list_items_body record {|
     # Specifies which fields in the response should be expanded.
@@ -10705,6 +10659,9 @@ public type radar_value_list_items_body record {|
     @constraint:String {maxLength: 5000}
     string value_list;
 |};
+
+@constraint:String {maxLength: 5000}
+public type GetDisputesDisputeQueriesExpandItemsString string;
 
 public type issuing_cards_body record {|
     # The [Cardholder](https://stripe.com/docs/api#issuing_cardholder_object) object with which the card will be associated.
@@ -10736,9 +10693,6 @@ public type issuing_cards_body record {|
     "physical"|"virtual" 'type;
 |};
 
-@constraint:String {maxLength: 5000}
-public type GetDisputesDisputeQueriesExpandItemsString string;
-
 # 
 public type Tax_product_registrations_resource_country_options_us_local_amusement_tax record {
     # A [FIPS code](https://www.census.gov/library/reference/code-lists/ansi.html) representing the local jurisdiction.
@@ -10757,6 +10711,10 @@ public type automatic_tax_config_3 record {
     param_3 liability?;
 };
 
+public type buy_button_param record {
+    boolean enabled;
+};
+
 public type automatic_tax_config_2 record {
     boolean enabled;
     param_2 liability?;
@@ -10771,10 +10729,6 @@ public type recurring_price_data_2 record {
     "exclusive"|"inclusive"|"unspecified" tax_behavior?;
     int unit_amount?;
     string unit_amount_decimal?;
-};
-
-public type buy_button_param record {
-    boolean enabled;
 };
 
 public type automatic_tax_config_1 record {
@@ -10807,6 +10761,10 @@ public type recurring_price_data_1 record {
     int unit_amount?;
     string unit_amount_decimal?;
 };
+
+public type file_links_bodyExpandItemsString string;
+
+public type payment_links_bodyExpandItemsString string;
 
 # 
 public type BankAccountList record {
@@ -10961,16 +10919,6 @@ public type subscription_cancel_creation_param record {
 };
 
 # 
-public type Payment_method_details_card_checks record {
-    # If a address line1 was provided, results of the check, one of `pass`, `fail`, `unavailable`, or `unchecked`.
-    string? address_line1_check?;
-    # If a address postal code was provided, results of the check, one of `pass`, `fail`, `unavailable`, or `unchecked`.
-    string? address_postal_code_check?;
-    # If a CVC was provided, results of the check, one of `pass`, `fail`, `unavailable`, or `unchecked`.
-    string? cvc_check?;
-};
-
-# 
 public type Account_payments_settings record {
     # The default text that appears on credit card statements when a charge is made. This field prefixes any dynamic `statement_descriptor` specified on the charge.
     string? statement_descriptor?;
@@ -10982,6 +10930,16 @@ public type Account_payments_settings record {
     string? statement_descriptor_prefix_kana?;
     # The Kanji variation of the default text that appears on credit card statements when a charge is made (Japan only). This field prefixes any dynamic `statement_descriptor_suffix_kanji` specified on the charge. `statement_descriptor_prefix_kanji` is useful for maximizing descriptor space for the dynamic portion.
     string? statement_descriptor_prefix_kanji?;
+};
+
+# 
+public type Payment_method_details_card_checks record {
+    # If a address line1 was provided, results of the check, one of `pass`, `fail`, `unavailable`, or `unchecked`.
+    string? address_line1_check?;
+    # If a address postal code was provided, results of the check, one of `pass`, `fail`, `unavailable`, or `unchecked`.
+    string? address_postal_code_check?;
+    # If a CVC was provided, results of the check, one of `pass`, `fail`, `unavailable`, or `unchecked`.
+    string? cvc_check?;
 };
 
 public type authorization_controls_paramAllowedcategoriesItemsString "ac_refrigeration_repair"|"accounting_bookkeeping_services"|"advertising_services"|"agricultural_cooperative"|"airlines_air_carriers"|"airports_flying_fields"|"ambulance_services"|"amusement_parks_carnivals"|"antique_reproductions"|"antique_shops"|"aquariums"|"architectural_surveying_services"|"art_dealers_and_galleries"|"artists_supply_and_craft_shops"|"auto_and_home_supply_stores"|"auto_body_repair_shops"|"auto_paint_shops"|"auto_service_shops"|"automated_cash_disburse"|"automated_fuel_dispensers"|"automobile_associations"|"automotive_parts_and_accessories_stores"|"automotive_tire_stores"|"bail_and_bond_payments"|"bakeries"|"bands_orchestras"|"barber_and_beauty_shops"|"betting_casino_gambling"|"bicycle_shops"|"billiard_pool_establishments"|"boat_dealers"|"boat_rentals_and_leases"|"book_stores"|"books_periodicals_and_newspapers"|"bowling_alleys"|"bus_lines"|"business_secretarial_schools"|"buying_shopping_services"|"cable_satellite_and_other_pay_television_and_radio"|"camera_and_photographic_supply_stores"|"candy_nut_and_confectionery_stores"|"car_and_truck_dealers_new_used"|"car_and_truck_dealers_used_only"|"car_rental_agencies"|"car_washes"|"carpentry_services"|"carpet_upholstery_cleaning"|"caterers"|"charitable_and_social_service_organizations_fundraising"|"chemicals_and_allied_products"|"child_care_services"|"childrens_and_infants_wear_stores"|"chiropodists_podiatrists"|"chiropractors"|"cigar_stores_and_stands"|"civic_social_fraternal_associations"|"cleaning_and_maintenance"|"clothing_rental"|"colleges_universities"|"commercial_equipment"|"commercial_footwear"|"commercial_photography_art_and_graphics"|"commuter_transport_and_ferries"|"computer_network_services"|"computer_programming"|"computer_repair"|"computer_software_stores"|"computers_peripherals_and_software"|"concrete_work_services"|"construction_materials"|"consulting_public_relations"|"correspondence_schools"|"cosmetic_stores"|"counseling_services"|"country_clubs"|"courier_services"|"court_costs"|"credit_reporting_agencies"|"cruise_lines"|"dairy_products_stores"|"dance_hall_studios_schools"|"dating_escort_services"|"dentists_orthodontists"|"department_stores"|"detective_agencies"|"digital_goods_applications"|"digital_goods_games"|"digital_goods_large_volume"|"digital_goods_media"|"direct_marketing_catalog_merchant"|"direct_marketing_combination_catalog_and_retail_merchant"|"direct_marketing_inbound_telemarketing"|"direct_marketing_insurance_services"|"direct_marketing_other"|"direct_marketing_outbound_telemarketing"|"direct_marketing_subscription"|"direct_marketing_travel"|"discount_stores"|"doctors"|"door_to_door_sales"|"drapery_window_covering_and_upholstery_stores"|"drinking_places"|"drug_stores_and_pharmacies"|"drugs_drug_proprietaries_and_druggist_sundries"|"dry_cleaners"|"durable_goods"|"duty_free_stores"|"eating_places_restaurants"|"educational_services"|"electric_razor_stores"|"electric_vehicle_charging"|"electrical_parts_and_equipment"|"electrical_services"|"electronics_repair_shops"|"electronics_stores"|"elementary_secondary_schools"|"emergency_services_gcas_visa_use_only"|"employment_temp_agencies"|"equipment_rental"|"exterminating_services"|"family_clothing_stores"|"fast_food_restaurants"|"financial_institutions"|"fines_government_administrative_entities"|"fireplace_fireplace_screens_and_accessories_stores"|"floor_covering_stores"|"florists"|"florists_supplies_nursery_stock_and_flowers"|"freezer_and_locker_meat_provisioners"|"fuel_dealers_non_automotive"|"funeral_services_crematories"|"furniture_home_furnishings_and_equipment_stores_except_appliances"|"furniture_repair_refinishing"|"furriers_and_fur_shops"|"general_services"|"gift_card_novelty_and_souvenir_shops"|"glass_paint_and_wallpaper_stores"|"glassware_crystal_stores"|"golf_courses_public"|"government_licensed_horse_dog_racing_us_region_only"|"government_licensed_online_casions_online_gambling_us_region_only"|"government_owned_lotteries_non_us_region"|"government_owned_lotteries_us_region_only"|"government_services"|"grocery_stores_supermarkets"|"hardware_equipment_and_supplies"|"hardware_stores"|"health_and_beauty_spas"|"hearing_aids_sales_and_supplies"|"heating_plumbing_a_c"|"hobby_toy_and_game_shops"|"home_supply_warehouse_stores"|"hospitals"|"hotels_motels_and_resorts"|"household_appliance_stores"|"industrial_supplies"|"information_retrieval_services"|"insurance_default"|"insurance_underwriting_premiums"|"intra_company_purchases"|"jewelry_stores_watches_clocks_and_silverware_stores"|"landscaping_services"|"laundries"|"laundry_cleaning_services"|"legal_services_attorneys"|"luggage_and_leather_goods_stores"|"lumber_building_materials_stores"|"manual_cash_disburse"|"marinas_service_and_supplies"|"marketplaces"|"masonry_stonework_and_plaster"|"massage_parlors"|"medical_and_dental_labs"|"medical_dental_ophthalmic_and_hospital_equipment_and_supplies"|"medical_services"|"membership_organizations"|"mens_and_boys_clothing_and_accessories_stores"|"mens_womens_clothing_stores"|"metal_service_centers"|"miscellaneous"|"miscellaneous_apparel_and_accessory_shops"|"miscellaneous_auto_dealers"|"miscellaneous_business_services"|"miscellaneous_food_stores"|"miscellaneous_general_merchandise"|"miscellaneous_general_services"|"miscellaneous_home_furnishing_specialty_stores"|"miscellaneous_publishing_and_printing"|"miscellaneous_recreation_services"|"miscellaneous_repair_shops"|"miscellaneous_specialty_retail"|"mobile_home_dealers"|"motion_picture_theaters"|"motor_freight_carriers_and_trucking"|"motor_homes_dealers"|"motor_vehicle_supplies_and_new_parts"|"motorcycle_shops_and_dealers"|"motorcycle_shops_dealers"|"music_stores_musical_instruments_pianos_and_sheet_music"|"news_dealers_and_newsstands"|"non_fi_money_orders"|"non_fi_stored_value_card_purchase_load"|"nondurable_goods"|"nurseries_lawn_and_garden_supply_stores"|"nursing_personal_care"|"office_and_commercial_furniture"|"opticians_eyeglasses"|"optometrists_ophthalmologist"|"orthopedic_goods_prosthetic_devices"|"osteopaths"|"package_stores_beer_wine_and_liquor"|"paints_varnishes_and_supplies"|"parking_lots_garages"|"passenger_railways"|"pawn_shops"|"pet_shops_pet_food_and_supplies"|"petroleum_and_petroleum_products"|"photo_developing"|"photographic_photocopy_microfilm_equipment_and_supplies"|"photographic_studios"|"picture_video_production"|"piece_goods_notions_and_other_dry_goods"|"plumbing_heating_equipment_and_supplies"|"political_organizations"|"postal_services_government_only"|"precious_stones_and_metals_watches_and_jewelry"|"professional_services"|"public_warehousing_and_storage"|"quick_copy_repro_and_blueprint"|"railroads"|"real_estate_agents_and_managers_rentals"|"record_stores"|"recreational_vehicle_rentals"|"religious_goods_stores"|"religious_organizations"|"roofing_siding_sheet_metal"|"secretarial_support_services"|"security_brokers_dealers"|"service_stations"|"sewing_needlework_fabric_and_piece_goods_stores"|"shoe_repair_hat_cleaning"|"shoe_stores"|"small_appliance_repair"|"snowmobile_dealers"|"special_trade_services"|"specialty_cleaning"|"sporting_goods_stores"|"sporting_recreation_camps"|"sports_and_riding_apparel_stores"|"sports_clubs_fields"|"stamp_and_coin_stores"|"stationary_office_supplies_printing_and_writing_paper"|"stationery_stores_office_and_school_supply_stores"|"swimming_pools_sales"|"t_ui_travel_germany"|"tailors_alterations"|"tax_payments_government_agencies"|"tax_preparation_services"|"taxicabs_limousines"|"telecommunication_equipment_and_telephone_sales"|"telecommunication_services"|"telegraph_services"|"tent_and_awning_shops"|"testing_laboratories"|"theatrical_ticket_agencies"|"timeshares"|"tire_retreading_and_repair"|"tolls_bridge_fees"|"tourist_attractions_and_exhibits"|"towing_services"|"trailer_parks_campgrounds"|"transportation_services"|"travel_agencies_tour_operators"|"truck_stop_iteration"|"truck_utility_trailer_rentals"|"typesetting_plate_making_and_related_services"|"typewriter_stores"|"u_s_federal_government_agencies_or_departments"|"uniforms_commercial_clothing"|"used_merchandise_and_secondhand_stores"|"utilities"|"variety_stores"|"veterinary_services"|"video_amusement_game_supplies"|"video_game_arcades"|"video_tape_rental_stores"|"vocational_trade_schools"|"watch_jewelry_repair"|"welding_repair"|"wholesale_clubs"|"wig_and_toupee_stores"|"wires_money_orders"|"womens_accessory_and_specialty_shops"|"womens_ready_to_wear_stores"|"wrecking_and_salvage_yards";
@@ -11066,15 +11024,15 @@ public type Payment_method_options_klarna record {
 @constraint:String {maxLength: 5000}
 public type GetCreditNotesPreviewQueriesExpandItemsString string;
 
+public type products_id_bodyExpandItemsString string;
+
 public type invoices_invoice_bodyExpandItemsString string;
 
-public type products_id_bodyExpandItemsString string;
+public type refunds_id_bodyExpandItemsString string;
 
 public type account_features_param record {
     boolean external_account_collection?;
 };
-
-public type refunds_id_bodyExpandItemsString string;
 
 public type orders_order_body record {|
     # Publicly sharable reference for the end beneficiary of carbon removal. Assumed to be the Stripe account if not set.
@@ -11284,6 +11242,36 @@ public type Payment_intent_next_action_boleto record {
     string? pdf?;
 };
 
+public type tax_rates_body record {|
+    # Flag determining whether the tax rate is active or inactive (archived). Inactive tax rates cannot be used with new applications or Checkout Sessions, but will still work for subscriptions and invoices that already have it set.
+    boolean active?;
+    # Two-letter country code ([ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)).
+    @constraint:String {maxLength: 5000}
+    string country?;
+    # An arbitrary string attached to the tax rate for your internal use only. It will not be visible to your customers.
+    @constraint:String {maxLength: 5000}
+    string description?;
+    # The display name of the tax rate, which will be shown to users.
+    @constraint:String {maxLength: 50}
+    string display_name;
+    # Specifies which fields in the response should be expanded.
+    tax_rates_bodyExpandItemsString[] expand?;
+    # This specifies if the tax rate is inclusive or exclusive.
+    boolean inclusive;
+    # The jurisdiction for the tax rate. You can use this label field for tax reporting purposes. It also appears on your customer’s invoice.
+    @constraint:String {maxLength: 50}
+    string jurisdiction?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # This represents the tax rate percent out of 100.
+    decimal percentage;
+    # [ISO 3166-2 subdivision code](https://en.wikipedia.org/wiki/ISO_3166-2:US), without country prefix. For example, "NY" for New York, United States.
+    @constraint:String {maxLength: 2}
+    string state?;
+    # The high-level tax type, such as `vat` or `sales_tax`.
+    "amusement_tax"|"communications_tax"|"gst"|"hst"|"igst"|"jct"|"lease_tax"|"pst"|"qst"|"rst"|"sales_tax"|"vat" tax_type?;
+|};
+
 # 
 public type Mandate_au_becs_debit record {
     # The URL of the mandate. This URL generally contains sensitive information about the customer and should be shared with them exclusively.
@@ -11299,6 +11287,8 @@ public type Payment_pages_checkout_session_total_details_resource_breakdown reco
     Line_items_tax_amount[] taxes;
 };
 
+public type invoice_add_lines_bodyExpandItemsString string;
+
 # 
 public type TreasuryReceivedCreditsResourceReceivedCreditList record {
     # Details about each object.
@@ -11311,8 +11301,6 @@ public type TreasuryReceivedCreditsResourceReceivedCreditList record {
     @constraint:String {maxLength: 5000}
     string url;
 };
-
-public type invoice_add_lines_bodyExpandItemsString string;
 
 public type authorization_controls_paramBlockedmerchantcountriesItemsString string;
 
@@ -11527,12 +11515,12 @@ public type Subscription_item record {
     Tax_rate[]? tax_rates?;
 };
 
+public type on_behalf_of_1 string|"";
+
 public type order_cancel_body record {|
     # Specifies which fields in the response should be expanded.
     order_cancel_bodyExpandItemsString[] expand?;
 |};
-
-public type on_behalf_of_1 string|"";
 
 # Shipping information for the charge. Helps prevent fraud on charges for physical goods.
 public type optional_fields_shipping record {
@@ -11560,9 +11548,6 @@ public type method_params record {
 
 public type financial_connections_sessions_bodyExpandItemsString string;
 
-@constraint:String {maxLength: 5000}
-public type GetIdentityVerificationSessionsSessionQueriesExpandItemsString string;
-
 public type account_refresh_body_1 record {|
     # Specifies which fields in the response should be expanded.
     account_refresh_body_1ExpandItemsString[] expand?;
@@ -11570,17 +11555,20 @@ public type account_refresh_body_1 record {|
     ("balance"|"ownership"|"transactions")[] features;
 |};
 
+@constraint:String {maxLength: 5000}
+public type GetIdentityVerificationSessionsSessionQueriesExpandItemsString string;
+
 # Specifies the requirements that Stripe collects from connected accounts in the Connect Onboarding flow.
 public type collection_options_params record {
     "currently_due"|"eventually_due" fields;
     "include"|"omit" future_requirements?;
 };
 
-public type radar_value_lists_bodyExpandItemsString string;
-
 # 
 public type Tax_product_resource_tax_settings_status_details_resource_active record {
 };
+
+public type radar_value_lists_bodyExpandItemsString string;
 
 # 
 public type Issuing_transaction_receipt_data record {
@@ -11651,6 +11639,38 @@ public type consent_collection_params record {
     "auto"|"none" promotions?;
     "none"|"required" terms_of_service?;
 };
+
+public type credit_notes_body record {|
+    # The integer amount in cents (or local equivalent) representing the total amount of the credit note.
+    int amount?;
+    # The integer amount in cents (or local equivalent) representing the amount to credit the customer's balance, which will be automatically applied to their next invoice.
+    int credit_amount?;
+    # The date when this credit note is in effect. Same as `created` unless overwritten. When defined, this value replaces the system-generated 'Date of issue' printed on the credit note PDF.
+    int effective_at?;
+    # Type of email to send to the customer, one of `credit_note` or `none` and the default is `credit_note`.
+    "credit_note"|"none" email_type?;
+    # Specifies which fields in the response should be expanded.
+    credit_notes_bodyExpandItemsString[] expand?;
+    # ID of the invoice.
+    @constraint:String {maxLength: 5000}
+    string invoice;
+    # Line items that make up the credit note.
+    credit_note_line_item_params[] lines?;
+    # The credit note's memo appears on the credit note PDF.
+    @constraint:String {maxLength: 5000}
+    string memo?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # The integer amount in cents (or local equivalent) representing the amount that is credited outside of Stripe.
+    int out_of_band_amount?;
+    # Reason for issuing this credit note, one of `duplicate`, `fraudulent`, `order_change`, or `product_unsatisfactory`
+    "duplicate"|"fraudulent"|"order_change"|"product_unsatisfactory" reason?;
+    # ID of an existing refund to link this credit note to.
+    string refund?;
+    # The integer amount in cents (or local equivalent) representing the amount to refund. If set, a refund will be created for the charge associated with the invoice.
+    int refund_amount?;
+    credit_note_shipping_cost shipping_cost?;
+|};
 
 # 
 public type Customer_balance_resource_cash_balance_transaction_resource_funded_transaction_resource_bank_transfer_resource_eu_bank_transfer record {
@@ -11834,9 +11854,6 @@ public type Charge record {
     string? transfer_group?;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetCustomersCustomerSubscriptionsSubscriptionExposedIdDiscountQueriesExpandItemsString string;
-
 # 
 public type PersonList record {
     Person[] data;
@@ -11849,6 +11866,11 @@ public type PersonList record {
     string url;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetCustomersCustomerSubscriptionsSubscriptionExposedIdDiscountQueriesExpandItemsString string;
+
+public type payment_method_domains_bodyExpandItemsString string;
+
 # 
 public type Automatic_tax record {
     # Whether Stripe automatically computes tax on this invoice. Note that incompatible invoice items (invoice items with manually specified [tax rates](https://stripe.com/docs/api/tax_rates), negative amounts, or `tax_behavior=unspecified`) cannot be added to automatic tax invoices.
@@ -11859,6 +11881,9 @@ public type Automatic_tax record {
     "complete"|"failed"|"requires_location_inputs"? status?;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetSourcesSourceSourceTransactionsQueriesExpandItemsString string;
+
 public type product_features_body record {|
     # The ID of the [Feature](https://stripe.com/docs/api/entitlements/feature) object attached to this product.
     @constraint:String {maxLength: 5000}
@@ -11866,9 +11891,6 @@ public type product_features_body record {|
     # Specifies which fields in the response should be expanded.
     product_features_bodyExpandItemsString[] expand?;
 |};
-
-@constraint:String {maxLength: 5000}
-public type GetSourcesSourceSourceTransactionsQueriesExpandItemsString string;
 
 # 
 public type Payment_flows_private_payment_methods_alipay record {
@@ -11902,12 +11924,6 @@ public type NotificationEventList record {
     string url;
 };
 
-# If you populate this hash, this SetupIntent generates a `single_use` mandate after successful completion.
-public type setup_intent_single_use_params record {
-    int amount;
-    string currency;
-};
-
 # Parameters specifying how the report should be run. Different Report Types have different required and optional parameters, listed in the [API Access to Reports](https://stripe.com/docs/reporting/statements/api) documentation.
 public type run_parameter_specs record {
     run_parameter_specsColumnsItemsString[] columns?;
@@ -11918,6 +11934,12 @@ public type run_parameter_specs record {
     string payout?;
     "advance"|"advance_funding"|"anticipation_repayment"|"charge"|"charge_failure"|"climate_order_purchase"|"climate_order_refund"|"connect_collection_transfer"|"connect_reserved_funds"|"contribution"|"dispute"|"dispute_reversal"|"fee"|"financing_paydown"|"financing_paydown_reversal"|"financing_payout"|"financing_payout_reversal"|"issuing_authorization_hold"|"issuing_authorization_release"|"issuing_dispute"|"issuing_transaction"|"network_cost"|"other_adjustment"|"partial_capture_reversal"|"payout"|"payout_reversal"|"platform_earning"|"platform_earning_refund"|"refund"|"refund_failure"|"risk_reserved_funds"|"tax"|"topup"|"topup_reversal"|"transfer"|"transfer_reversal"|"unreconciled_customer_funds" reporting_category?;
     "Africa/Abidjan"|"Africa/Accra"|"Africa/Addis_Ababa"|"Africa/Algiers"|"Africa/Asmara"|"Africa/Asmera"|"Africa/Bamako"|"Africa/Bangui"|"Africa/Banjul"|"Africa/Bissau"|"Africa/Blantyre"|"Africa/Brazzaville"|"Africa/Bujumbura"|"Africa/Cairo"|"Africa/Casablanca"|"Africa/Ceuta"|"Africa/Conakry"|"Africa/Dakar"|"Africa/Dar_es_Salaam"|"Africa/Djibouti"|"Africa/Douala"|"Africa/El_Aaiun"|"Africa/Freetown"|"Africa/Gaborone"|"Africa/Harare"|"Africa/Johannesburg"|"Africa/Juba"|"Africa/Kampala"|"Africa/Khartoum"|"Africa/Kigali"|"Africa/Kinshasa"|"Africa/Lagos"|"Africa/Libreville"|"Africa/Lome"|"Africa/Luanda"|"Africa/Lubumbashi"|"Africa/Lusaka"|"Africa/Malabo"|"Africa/Maputo"|"Africa/Maseru"|"Africa/Mbabane"|"Africa/Mogadishu"|"Africa/Monrovia"|"Africa/Nairobi"|"Africa/Ndjamena"|"Africa/Niamey"|"Africa/Nouakchott"|"Africa/Ouagadougou"|"Africa/Porto-Novo"|"Africa/Sao_Tome"|"Africa/Timbuktu"|"Africa/Tripoli"|"Africa/Tunis"|"Africa/Windhoek"|"America/Adak"|"America/Anchorage"|"America/Anguilla"|"America/Antigua"|"America/Araguaina"|"America/Argentina/Buenos_Aires"|"America/Argentina/Catamarca"|"America/Argentina/ComodRivadavia"|"America/Argentina/Cordoba"|"America/Argentina/Jujuy"|"America/Argentina/La_Rioja"|"America/Argentina/Mendoza"|"America/Argentina/Rio_Gallegos"|"America/Argentina/Salta"|"America/Argentina/San_Juan"|"America/Argentina/San_Luis"|"America/Argentina/Tucuman"|"America/Argentina/Ushuaia"|"America/Aruba"|"America/Asuncion"|"America/Atikokan"|"America/Atka"|"America/Bahia"|"America/Bahia_Banderas"|"America/Barbados"|"America/Belem"|"America/Belize"|"America/Blanc-Sablon"|"America/Boa_Vista"|"America/Bogota"|"America/Boise"|"America/Buenos_Aires"|"America/Cambridge_Bay"|"America/Campo_Grande"|"America/Cancun"|"America/Caracas"|"America/Catamarca"|"America/Cayenne"|"America/Cayman"|"America/Chicago"|"America/Chihuahua"|"America/Ciudad_Juarez"|"America/Coral_Harbour"|"America/Cordoba"|"America/Costa_Rica"|"America/Creston"|"America/Cuiaba"|"America/Curacao"|"America/Danmarkshavn"|"America/Dawson"|"America/Dawson_Creek"|"America/Denver"|"America/Detroit"|"America/Dominica"|"America/Edmonton"|"America/Eirunepe"|"America/El_Salvador"|"America/Ensenada"|"America/Fort_Nelson"|"America/Fort_Wayne"|"America/Fortaleza"|"America/Glace_Bay"|"America/Godthab"|"America/Goose_Bay"|"America/Grand_Turk"|"America/Grenada"|"America/Guadeloupe"|"America/Guatemala"|"America/Guayaquil"|"America/Guyana"|"America/Halifax"|"America/Havana"|"America/Hermosillo"|"America/Indiana/Indianapolis"|"America/Indiana/Knox"|"America/Indiana/Marengo"|"America/Indiana/Petersburg"|"America/Indiana/Tell_City"|"America/Indiana/Vevay"|"America/Indiana/Vincennes"|"America/Indiana/Winamac"|"America/Indianapolis"|"America/Inuvik"|"America/Iqaluit"|"America/Jamaica"|"America/Jujuy"|"America/Juneau"|"America/Kentucky/Louisville"|"America/Kentucky/Monticello"|"America/Knox_IN"|"America/Kralendijk"|"America/La_Paz"|"America/Lima"|"America/Los_Angeles"|"America/Louisville"|"America/Lower_Princes"|"America/Maceio"|"America/Managua"|"America/Manaus"|"America/Marigot"|"America/Martinique"|"America/Matamoros"|"America/Mazatlan"|"America/Mendoza"|"America/Menominee"|"America/Merida"|"America/Metlakatla"|"America/Mexico_City"|"America/Miquelon"|"America/Moncton"|"America/Monterrey"|"America/Montevideo"|"America/Montreal"|"America/Montserrat"|"America/Nassau"|"America/New_York"|"America/Nipigon"|"America/Nome"|"America/Noronha"|"America/North_Dakota/Beulah"|"America/North_Dakota/Center"|"America/North_Dakota/New_Salem"|"America/Nuuk"|"America/Ojinaga"|"America/Panama"|"America/Pangnirtung"|"America/Paramaribo"|"America/Phoenix"|"America/Port-au-Prince"|"America/Port_of_Spain"|"America/Porto_Acre"|"America/Porto_Velho"|"America/Puerto_Rico"|"America/Punta_Arenas"|"America/Rainy_River"|"America/Rankin_Inlet"|"America/Recife"|"America/Regina"|"America/Resolute"|"America/Rio_Branco"|"America/Rosario"|"America/Santa_Isabel"|"America/Santarem"|"America/Santiago"|"America/Santo_Domingo"|"America/Sao_Paulo"|"America/Scoresbysund"|"America/Shiprock"|"America/Sitka"|"America/St_Barthelemy"|"America/St_Johns"|"America/St_Kitts"|"America/St_Lucia"|"America/St_Thomas"|"America/St_Vincent"|"America/Swift_Current"|"America/Tegucigalpa"|"America/Thule"|"America/Thunder_Bay"|"America/Tijuana"|"America/Toronto"|"America/Tortola"|"America/Vancouver"|"America/Virgin"|"America/Whitehorse"|"America/Winnipeg"|"America/Yakutat"|"America/Yellowknife"|"Antarctica/Casey"|"Antarctica/Davis"|"Antarctica/DumontDUrville"|"Antarctica/Macquarie"|"Antarctica/Mawson"|"Antarctica/McMurdo"|"Antarctica/Palmer"|"Antarctica/Rothera"|"Antarctica/South_Pole"|"Antarctica/Syowa"|"Antarctica/Troll"|"Antarctica/Vostok"|"Arctic/Longyearbyen"|"Asia/Aden"|"Asia/Almaty"|"Asia/Amman"|"Asia/Anadyr"|"Asia/Aqtau"|"Asia/Aqtobe"|"Asia/Ashgabat"|"Asia/Ashkhabad"|"Asia/Atyrau"|"Asia/Baghdad"|"Asia/Bahrain"|"Asia/Baku"|"Asia/Bangkok"|"Asia/Barnaul"|"Asia/Beirut"|"Asia/Bishkek"|"Asia/Brunei"|"Asia/Calcutta"|"Asia/Chita"|"Asia/Choibalsan"|"Asia/Chongqing"|"Asia/Chungking"|"Asia/Colombo"|"Asia/Dacca"|"Asia/Damascus"|"Asia/Dhaka"|"Asia/Dili"|"Asia/Dubai"|"Asia/Dushanbe"|"Asia/Famagusta"|"Asia/Gaza"|"Asia/Harbin"|"Asia/Hebron"|"Asia/Ho_Chi_Minh"|"Asia/Hong_Kong"|"Asia/Hovd"|"Asia/Irkutsk"|"Asia/Istanbul"|"Asia/Jakarta"|"Asia/Jayapura"|"Asia/Jerusalem"|"Asia/Kabul"|"Asia/Kamchatka"|"Asia/Karachi"|"Asia/Kashgar"|"Asia/Kathmandu"|"Asia/Katmandu"|"Asia/Khandyga"|"Asia/Kolkata"|"Asia/Krasnoyarsk"|"Asia/Kuala_Lumpur"|"Asia/Kuching"|"Asia/Kuwait"|"Asia/Macao"|"Asia/Macau"|"Asia/Magadan"|"Asia/Makassar"|"Asia/Manila"|"Asia/Muscat"|"Asia/Nicosia"|"Asia/Novokuznetsk"|"Asia/Novosibirsk"|"Asia/Omsk"|"Asia/Oral"|"Asia/Phnom_Penh"|"Asia/Pontianak"|"Asia/Pyongyang"|"Asia/Qatar"|"Asia/Qostanay"|"Asia/Qyzylorda"|"Asia/Rangoon"|"Asia/Riyadh"|"Asia/Saigon"|"Asia/Sakhalin"|"Asia/Samarkand"|"Asia/Seoul"|"Asia/Shanghai"|"Asia/Singapore"|"Asia/Srednekolymsk"|"Asia/Taipei"|"Asia/Tashkent"|"Asia/Tbilisi"|"Asia/Tehran"|"Asia/Tel_Aviv"|"Asia/Thimbu"|"Asia/Thimphu"|"Asia/Tokyo"|"Asia/Tomsk"|"Asia/Ujung_Pandang"|"Asia/Ulaanbaatar"|"Asia/Ulan_Bator"|"Asia/Urumqi"|"Asia/Ust-Nera"|"Asia/Vientiane"|"Asia/Vladivostok"|"Asia/Yakutsk"|"Asia/Yangon"|"Asia/Yekaterinburg"|"Asia/Yerevan"|"Atlantic/Azores"|"Atlantic/Bermuda"|"Atlantic/Canary"|"Atlantic/Cape_Verde"|"Atlantic/Faeroe"|"Atlantic/Faroe"|"Atlantic/Jan_Mayen"|"Atlantic/Madeira"|"Atlantic/Reykjavik"|"Atlantic/South_Georgia"|"Atlantic/St_Helena"|"Atlantic/Stanley"|"Australia/ACT"|"Australia/Adelaide"|"Australia/Brisbane"|"Australia/Broken_Hill"|"Australia/Canberra"|"Australia/Currie"|"Australia/Darwin"|"Australia/Eucla"|"Australia/Hobart"|"Australia/LHI"|"Australia/Lindeman"|"Australia/Lord_Howe"|"Australia/Melbourne"|"Australia/NSW"|"Australia/North"|"Australia/Perth"|"Australia/Queensland"|"Australia/South"|"Australia/Sydney"|"Australia/Tasmania"|"Australia/Victoria"|"Australia/West"|"Australia/Yancowinna"|"Brazil/Acre"|"Brazil/DeNoronha"|"Brazil/East"|"Brazil/West"|"CET"|"CST6CDT"|"Canada/Atlantic"|"Canada/Central"|"Canada/Eastern"|"Canada/Mountain"|"Canada/Newfoundland"|"Canada/Pacific"|"Canada/Saskatchewan"|"Canada/Yukon"|"Chile/Continental"|"Chile/EasterIsland"|"Cuba"|"EET"|"EST"|"EST5EDT"|"Egypt"|"Eire"|"Etc/GMT"|"Etc/GMT+0"|"Etc/GMT+1"|"Etc/GMT+10"|"Etc/GMT+11"|"Etc/GMT+12"|"Etc/GMT+2"|"Etc/GMT+3"|"Etc/GMT+4"|"Etc/GMT+5"|"Etc/GMT+6"|"Etc/GMT+7"|"Etc/GMT+8"|"Etc/GMT+9"|"Etc/GMT-0"|"Etc/GMT-1"|"Etc/GMT-10"|"Etc/GMT-11"|"Etc/GMT-12"|"Etc/GMT-13"|"Etc/GMT-14"|"Etc/GMT-2"|"Etc/GMT-3"|"Etc/GMT-4"|"Etc/GMT-5"|"Etc/GMT-6"|"Etc/GMT-7"|"Etc/GMT-8"|"Etc/GMT-9"|"Etc/GMT0"|"Etc/Greenwich"|"Etc/UCT"|"Etc/UTC"|"Etc/Universal"|"Etc/Zulu"|"Europe/Amsterdam"|"Europe/Andorra"|"Europe/Astrakhan"|"Europe/Athens"|"Europe/Belfast"|"Europe/Belgrade"|"Europe/Berlin"|"Europe/Bratislava"|"Europe/Brussels"|"Europe/Bucharest"|"Europe/Budapest"|"Europe/Busingen"|"Europe/Chisinau"|"Europe/Copenhagen"|"Europe/Dublin"|"Europe/Gibraltar"|"Europe/Guernsey"|"Europe/Helsinki"|"Europe/Isle_of_Man"|"Europe/Istanbul"|"Europe/Jersey"|"Europe/Kaliningrad"|"Europe/Kiev"|"Europe/Kirov"|"Europe/Kyiv"|"Europe/Lisbon"|"Europe/Ljubljana"|"Europe/London"|"Europe/Luxembourg"|"Europe/Madrid"|"Europe/Malta"|"Europe/Mariehamn"|"Europe/Minsk"|"Europe/Monaco"|"Europe/Moscow"|"Europe/Nicosia"|"Europe/Oslo"|"Europe/Paris"|"Europe/Podgorica"|"Europe/Prague"|"Europe/Riga"|"Europe/Rome"|"Europe/Samara"|"Europe/San_Marino"|"Europe/Sarajevo"|"Europe/Saratov"|"Europe/Simferopol"|"Europe/Skopje"|"Europe/Sofia"|"Europe/Stockholm"|"Europe/Tallinn"|"Europe/Tirane"|"Europe/Tiraspol"|"Europe/Ulyanovsk"|"Europe/Uzhgorod"|"Europe/Vaduz"|"Europe/Vatican"|"Europe/Vienna"|"Europe/Vilnius"|"Europe/Volgograd"|"Europe/Warsaw"|"Europe/Zagreb"|"Europe/Zaporozhye"|"Europe/Zurich"|"Factory"|"GB"|"GB-Eire"|"GMT"|"GMT+0"|"GMT-0"|"GMT0"|"Greenwich"|"HST"|"Hongkong"|"Iceland"|"Indian/Antananarivo"|"Indian/Chagos"|"Indian/Christmas"|"Indian/Cocos"|"Indian/Comoro"|"Indian/Kerguelen"|"Indian/Mahe"|"Indian/Maldives"|"Indian/Mauritius"|"Indian/Mayotte"|"Indian/Reunion"|"Iran"|"Israel"|"Jamaica"|"Japan"|"Kwajalein"|"Libya"|"MET"|"MST"|"MST7MDT"|"Mexico/BajaNorte"|"Mexico/BajaSur"|"Mexico/General"|"NZ"|"NZ-CHAT"|"Navajo"|"PRC"|"PST8PDT"|"Pacific/Apia"|"Pacific/Auckland"|"Pacific/Bougainville"|"Pacific/Chatham"|"Pacific/Chuuk"|"Pacific/Easter"|"Pacific/Efate"|"Pacific/Enderbury"|"Pacific/Fakaofo"|"Pacific/Fiji"|"Pacific/Funafuti"|"Pacific/Galapagos"|"Pacific/Gambier"|"Pacific/Guadalcanal"|"Pacific/Guam"|"Pacific/Honolulu"|"Pacific/Johnston"|"Pacific/Kanton"|"Pacific/Kiritimati"|"Pacific/Kosrae"|"Pacific/Kwajalein"|"Pacific/Majuro"|"Pacific/Marquesas"|"Pacific/Midway"|"Pacific/Nauru"|"Pacific/Niue"|"Pacific/Norfolk"|"Pacific/Noumea"|"Pacific/Pago_Pago"|"Pacific/Palau"|"Pacific/Pitcairn"|"Pacific/Pohnpei"|"Pacific/Ponape"|"Pacific/Port_Moresby"|"Pacific/Rarotonga"|"Pacific/Saipan"|"Pacific/Samoa"|"Pacific/Tahiti"|"Pacific/Tarawa"|"Pacific/Tongatapu"|"Pacific/Truk"|"Pacific/Wake"|"Pacific/Wallis"|"Pacific/Yap"|"Poland"|"Portugal"|"ROC"|"ROK"|"Singapore"|"Turkey"|"UCT"|"US/Alaska"|"US/Aleutian"|"US/Arizona"|"US/Central"|"US/East-Indiana"|"US/Eastern"|"US/Hawaii"|"US/Indiana-Starke"|"US/Michigan"|"US/Mountain"|"US/Pacific"|"US/Pacific-New"|"US/Samoa"|"UTC"|"Universal"|"W-SU"|"WET"|"Zulu" timezone?;
+};
+
+# If you populate this hash, this SetupIntent generates a `single_use` mandate after successful completion.
+public type setup_intent_single_use_params record {
+    int amount;
+    string currency;
 };
 
 # 
@@ -11938,6 +11960,8 @@ public type Issuing_authorization_pending_request record {
     int? network_risk_score?;
 };
 
+public type plans_plan_bodyExpandItemsString string;
+
 public type refunds_refund_body_1 record {|
     # Specifies which fields in the response should be expanded.
     refunds_refund_body_1ExpandItemsString[] expand?;
@@ -11945,15 +11969,13 @@ public type refunds_refund_body_1 record {|
     record {|string...;|}|"" metadata?;
 |};
 
-public type plans_plan_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type Person_requirementsPendingverificationItemsString string;
 
-public type subscription_default_tax_rates SubscriptiondefaulttaxratesItemsString[]|"";
-
 @constraint:String {maxLength: 200}
 public type GetIssuingPersonalizationDesignsQueriesLookupkeysItemsString string;
+
+public type subscription_default_tax_rates SubscriptiondefaulttaxratesItemsString[]|"";
 
 # 
 public type Payment_intent_next_action_alipay_handle_redirect record {
@@ -12039,6 +12061,12 @@ public type Payment_method_options_wechat_pay record {
 
 public type TaxratesItemsString string;
 
+# Represents the Queries record for the operation: GetTerminalLocationsLocation
+public type GetTerminalLocationsLocationQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetTerminalLocationsLocationQueriesExpandItemsString[] expand?;
+};
+
 # 
 public type Tax_product_resource_line_item_tax_breakdown record {
     # The amount of tax, in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal).
@@ -12056,14 +12084,6 @@ public type Tax_product_resource_line_item_tax_breakdown record {
 
 public type shipping_return_bodyExpandItemsString string;
 
-# Represents the Queries record for the operation: GetTerminalLocationsLocation
-public type GetTerminalLocationsLocationQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetTerminalLocationsLocationQueriesExpandItemsString[] expand?;
-};
-
-public type v1_files_bodyExpandItemsString string;
-
 # Toggle settings for enabling/disabling a feature
 public type Treasury_financial_accounts_resource_toggle_settings record {
     # Whether the FinancialAccount should have the Feature.
@@ -12074,8 +12094,6 @@ public type Treasury_financial_accounts_resource_toggle_settings record {
     Treasury_financial_accounts_resource_toggles_setting_status_details[] status_details;
 };
 
-public type v1_file_links_bodyExpandItemsString string;
-
 # 
 public type Customer_balance_resource_cash_balance_transaction_resource_adjusted_for_overdraft record {
     # The [Balance Transaction](https://stripe.com/docs/api/balance_transactions/object) that corresponds to funds taken out of your Stripe balance.
@@ -12083,8 +12101,6 @@ public type Customer_balance_resource_cash_balance_transaction_resource_adjusted
     # The [Cash Balance Transaction](https://stripe.com/docs/api/cash_balance_transactions/object) that brought the customer balance negative, triggering the clawback of funds.
     string|Customer_cash_balance_transaction linked_transaction;
 };
-
-public type v1_invoices_bodyExpandItemsString string;
 
 public type invoices_settings_specs record {
     DefaultaccounttaxidsItemsString[]|"" default_account_tax_ids?;
@@ -12277,36 +12293,6 @@ public type Payment_intent_next_action_wechat_pay_redirect_to_ios_app record {
     string native_url;
 };
 
-public type v1_tax_rates_body record {|
-    # Flag determining whether the tax rate is active or inactive (archived). Inactive tax rates cannot be used with new applications or Checkout Sessions, but will still work for subscriptions and invoices that already have it set.
-    boolean active?;
-    # Two-letter country code ([ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)).
-    @constraint:String {maxLength: 5000}
-    string country?;
-    # An arbitrary string attached to the tax rate for your internal use only. It will not be visible to your customers.
-    @constraint:String {maxLength: 5000}
-    string description?;
-    # The display name of the tax rate, which will be shown to users.
-    @constraint:String {maxLength: 50}
-    string display_name;
-    # Specifies which fields in the response should be expanded.
-    v1_tax_rates_bodyExpandItemsString[] expand?;
-    # This specifies if the tax rate is inclusive or exclusive.
-    boolean inclusive;
-    # The jurisdiction for the tax rate. You can use this label field for tax reporting purposes. It also appears on your customer’s invoice.
-    @constraint:String {maxLength: 50}
-    string jurisdiction?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # This represents the tax rate percent out of 100.
-    decimal percentage;
-    # [ISO 3166-2 subdivision code](https://en.wikipedia.org/wiki/ISO_3166-2:US), without country prefix. For example, "NY" for New York, United States.
-    @constraint:String {maxLength: 2}
-    string state?;
-    # The high-level tax type, such as `vat` or `sales_tax`.
-    "amusement_tax"|"communications_tax"|"gst"|"hst"|"igst"|"jct"|"lease_tax"|"pst"|"qst"|"rst"|"sales_tax"|"vat" tax_type?;
-|};
-
 # Represents the Queries record for the operation: GetTreasuryTransactions
 public type GetTreasuryTransactionsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -12348,58 +12334,6 @@ public type Connect_embedded_account_session_create_components record {
     Connect_embedded_base_config_claim payouts_list;
 };
 
-public type v1_setup_intents_body record {|
-    # If present, the SetupIntent's payment method will be attached to the in-context Stripe Account.
-    # 
-    # It can only be used for this Stripe Account’s own money movement flows like InboundTransfer and OutboundTransfers. It cannot be set to true when setting up a PaymentMethod for a Customer, and defaults to false when attaching a PaymentMethod to a Customer.
-    boolean attach_to_self?;
-    automatic_payment_methods_param_1 automatic_payment_methods?;
-    # Set to `true` to attempt to confirm this SetupIntent immediately. This parameter defaults to `false`. If a card is the attached payment method, you can provide a `return_url` in case further authentication is necessary.
-    boolean confirm?;
-    # ID of the ConfirmationToken used to confirm this SetupIntent.
-    # 
-    # If the provided ConfirmationToken contains properties that are also being provided in this request, such as `payment_method`, then the values in this request will take precedence.
-    @constraint:String {maxLength: 5000}
-    string confirmation_token?;
-    # ID of the Customer this SetupIntent belongs to, if one exists.
-    # 
-    # If present, the SetupIntent's payment method will be attached to the Customer on successful setup. Payment methods attached to other Customers cannot be used with this SetupIntent.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    # An arbitrary string attached to the object. Often useful for displaying to users.
-    @constraint:String {maxLength: 1000}
-    string description?;
-    # Specifies which fields in the response should be expanded.
-    v1_setup_intents_bodyExpandItemsString[] expand?;
-    # Indicates the directions of money movement for which this payment method is intended to be used.
-    # 
-    # Include `inbound` if you intend to use the payment method as the origin to pull funds from. Include `outbound` if you intend to use the payment method as the destination to send funds to. You can include both if you intend to use the payment method for both purposes.
-    ("inbound"|"outbound")[] flow_directions?;
-    # This hash contains details about the mandate to create. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/setup_intents/create#create_setup_intent-confirm).
-    record {record {int accepted_at?; record {} offline?; record {string ip_address; string user_agent;} online?; "offline"|"online" 'type;} customer_acceptance;}|"" mandate_data?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # The Stripe account ID created for this SetupIntent.
-    string on_behalf_of?;
-    # ID of the payment method (a PaymentMethod, Card, or saved Source object) to attach to this SetupIntent.
-    @constraint:String {maxLength: 5000}
-    string payment_method?;
-    # The ID of the payment method configuration to use with this SetupIntent.
-    @constraint:String {maxLength: 100}
-    string payment_method_configuration?;
-    payment_method_data_params_1 payment_method_data?;
-    payment_method_options_param_16 payment_method_options?;
-    # The list of payment method types (for example, card) that this SetupIntent can use. If you don't provide this, it defaults to ["card"].
-    v1_setup_intents_bodyPaymentmethodtypesItemsString[] payment_method_types?;
-    # The URL to redirect your customer back to after they authenticate or cancel their payment on the payment method's app or site. To redirect to a mobile application, you can alternatively supply an application URI scheme. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/setup_intents/create#create_setup_intent-confirm).
-    string return_url?;
-    setup_intent_single_use_params single_use?;
-    # Indicates how the payment method is intended to be used in the future. If not provided, this value defaults to `off_session`.
-    "off_session"|"on_session" usage?;
-    # Set to `true` when confirming server-side and using Stripe.js, iOS, or Android client-side SDKs to handle the next actions.
-    boolean use_stripe_sdk?;
-|};
-
 # 
 public type Treasury_received_debits_resource_debit_reversal_linked_flows record {
     # Set if there is an Issuing dispute associated with the DebitReversal.
@@ -12433,6 +12367,20 @@ public type TreasuryOutboundPaymentsResourceOutboundPaymentList record {
 };
 
 # 
+public type Legal_entity_person_verification record {
+    # A document showing address, either a passport, local ID card, or utility bill from a well-known utility company.
+    Legal_entity_person_verification_document? additional_document?;
+    # A user-displayable string describing the verification state for the person. For example, this may say "Provided identity information could not be verified".
+    string? details?;
+    # One of `document_address_mismatch`, `document_dob_mismatch`, `document_duplicate_type`, `document_id_number_mismatch`, `document_name_mismatch`, `document_nationality_mismatch`, `failed_keyed_identity`, or `failed_other`. A machine-readable code specifying the verification state for the person.
+    string? details_code?;
+    Legal_entity_person_verification_document document?;
+    # The state of verification for the person. Possible values are `unverified`, `pending`, or `verified`.
+    @constraint:String {maxLength: 5000}
+    string status;
+};
+
+# 
 public type Internal_card record {
     # Brand of the card used in the transaction
     string? brand?;
@@ -12446,19 +12394,7 @@ public type Internal_card record {
     string? last4?;
 };
 
-# 
-public type Legal_entity_person_verification record {
-    # A document showing address, either a passport, local ID card, or utility bill from a well-known utility company.
-    Legal_entity_person_verification_document? additional_document?;
-    # A user-displayable string describing the verification state for the person. For example, this may say "Provided identity information could not be verified".
-    string? details?;
-    # One of `document_address_mismatch`, `document_dob_mismatch`, `document_duplicate_type`, `document_id_number_mismatch`, `document_name_mismatch`, `document_nationality_mismatch`, `failed_keyed_identity`, or `failed_other`. A machine-readable code specifying the verification state for the person.
-    string? details_code?;
-    Legal_entity_person_verification_document document?;
-    # The state of verification for the person. Possible values are `unverified`, `pending`, or `verified`.
-    @constraint:String {maxLength: 5000}
-    string status;
-};
+public type plans_bodyExpandItemsString string;
 
 # 
 public type BankConnectionsResourceTransactionList record {
@@ -13049,8 +12985,6 @@ public type Outbound_payments_payment_method_details_us_bank_account record {
 
 public type filtersAccountsubcategoriesItemsString "checking"|"savings";
 
-public type cardholders_cardholder_bodyExpandItemsString string;
-
 # 
 public type BillingMeterResourceBillingMeterEventSummaryList record {
     Billing\.meter_event_summary[] data;
@@ -13062,6 +12996,8 @@ public type BillingMeterResourceBillingMeterEventSummaryList record {
     @constraint:String {maxLength: 5000, pattern: re `^/v1/billing/meters/[^/]+/event_summaries`}
     string url;
 };
+
+public type cardholders_cardholder_bodyExpandItemsString string;
 
 # 
 public type Bank_connections_resource_accountholder record {
@@ -13106,6 +13042,87 @@ public type Checkout_giropay_payment_method_options record {
     # When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
     "none" setup_future_usage?;
 };
+
+public type payment_intents_body record {|
+    # Amount intended to be collected by this PaymentIntent. A positive integer representing how much to charge in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal) (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or [equivalent in charge currency](https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts). The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99).
+    int amount;
+    # The amount of the application fee (if any) that will be requested to be applied to the payment and transferred to the application owner's Stripe account. The amount of the application fee collected will be capped at the total payment amount. For more information, see the PaymentIntents [use case for connected accounts](https://stripe.com/docs/payments/connected-accounts).
+    int application_fee_amount?;
+    automatic_payment_methods_param automatic_payment_methods?;
+    # Controls when the funds will be captured from the customer's account.
+    "automatic"|"automatic_async"|"manual" capture_method?;
+    # Set to `true` to attempt to [confirm this PaymentIntent](https://stripe.com/docs/api/payment_intents/confirm) immediately. This parameter defaults to `false`. When creating and confirming a PaymentIntent at the same time, you can also provide the parameters available in the [Confirm API](https://stripe.com/docs/api/payment_intents/confirm).
+    boolean confirm?;
+    # Describes whether we can confirm this PaymentIntent automatically, or if it requires customer action to confirm the payment.
+    "automatic"|"manual" confirmation_method?;
+    # ID of the ConfirmationToken used to confirm this PaymentIntent.
+    # 
+    # If the provided ConfirmationToken contains properties that are also being provided in this request, such as `payment_method`, then the values in this request will take precedence.
+    @constraint:String {maxLength: 5000}
+    string confirmation_token?;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency;
+    # ID of the Customer this PaymentIntent belongs to, if one exists.
+    # 
+    # Payment methods attached to other Customers cannot be used with this PaymentIntent.
+    # 
+    # If present in combination with [setup_future_usage](https://stripe.com/docs/api#payment_intent_object-setup_future_usage), this PaymentIntent's payment method will be attached to the Customer after the PaymentIntent has been confirmed and any required actions from the user are complete.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    # An arbitrary string attached to the object. Often useful for displaying to users.
+    @constraint:String {maxLength: 1000}
+    string description?;
+    # Set to `true` to fail the payment attempt if the PaymentIntent transitions into `requires_action`. Use this parameter for simpler integrations that don't handle customer actions, such as [saving cards without authentication](https://stripe.com/docs/payments/save-card-without-authentication). This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
+    boolean error_on_requires_action?;
+    # Specifies which fields in the response should be expanded.
+    payment_intents_bodyExpandItemsString[] expand?;
+    # ID of the mandate that's used for this payment. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
+    @constraint:String {maxLength: 5000}
+    string mandate?;
+    # This hash contains details about the Mandate to create. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
+    record {record {int accepted_at?; record {} offline?; record {string ip_address; string user_agent;} online?; "offline"|"online" 'type;} customer_acceptance;}|"" mandate_data?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # Set to `true` to indicate that the customer isn't in your checkout flow during this payment attempt and can't authenticate. Use this parameter in scenarios where you collect card details and [charge them later](https://stripe.com/docs/payments/cards/charging-saved-cards). This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
+    boolean|"one_off"|"recurring" off_session?;
+    # The Stripe account ID that these funds are intended for. Learn more about the [use case for connected accounts](https://stripe.com/docs/payments/connected-accounts).
+    string on_behalf_of?;
+    # ID of the payment method (a PaymentMethod, Card, or [compatible Source](https://stripe.com/docs/payments/payment-methods/transitioning#compatibility) object) to attach to this PaymentIntent.
+    # 
+    # If you omit this parameter with `confirm=true`, `customer.default_source` attaches as this PaymentIntent's payment instrument to improve migration for users of the Charges API. We recommend that you explicitly provide the `payment_method` moving forward.
+    @constraint:String {maxLength: 5000}
+    string payment_method?;
+    # The ID of the payment method configuration to use with this PaymentIntent.
+    @constraint:String {maxLength: 100}
+    string payment_method_configuration?;
+    payment_method_data_params payment_method_data?;
+    payment_method_options_param_14 payment_method_options?;
+    # The list of payment method types (for example, a card) that this PaymentIntent can use. If you don't provide this, it defaults to ["card"]. Use `automatic_payment_methods` to manage payment methods from the [Stripe Dashboard](https://dashboard.stripe.com/settings/payment_methods).
+    payment_intents_bodyPaymentmethodtypesItemsString[] payment_method_types?;
+    radar_options_with_hidden_options_2 radar_options?;
+    # Email address to send the receipt to. If you specify `receipt_email` for a payment in live mode, you send a receipt regardless of your [email settings](https://dashboard.stripe.com/account/emails).
+    string receipt_email?;
+    # The URL to redirect your customer back to after they authenticate or cancel their payment on the payment method's app or site. If you'd prefer to redirect to a mobile application, you can alternatively supply an application URI scheme. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
+    string return_url?;
+    # Indicates that you intend to make future payments with this PaymentIntent's payment method.
+    # 
+    # Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete. If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.
+    # 
+    # When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
+    "off_session"|"on_session" setup_future_usage?;
+    optional_fields_shipping_1 shipping?;
+    # For card charges, use [statement_descriptor_suffix](https://stripe.com/docs/payments/account/statement-descriptors#dynamic). Otherwise, you can use this value as the complete description of a charge on your customers' statements. It must contain at least one letter and be 1–22 characters long.
+    @constraint:String {maxLength: 22}
+    string statement_descriptor?;
+    # Provides information about a card payment that customers see on their statements. Concatenated with the prefix (shortened descriptor) or statement descriptor that’s set on the account to form the complete statement descriptor. The concatenated descriptor must contain 1-22 characters.
+    @constraint:String {maxLength: 22}
+    string statement_descriptor_suffix?;
+    transfer_data_creation_params transfer_data?;
+    # A string that identifies the resulting payment as part of a group. Learn more about the [use case for connected accounts](https://stripe.com/docs/connect/separate-charges-and-transfers).
+    string transfer_group?;
+    # Set to `true` when confirming server-side and using Stripe.js, iOS, or Android client-side SDKs to handle the next actions.
+    boolean use_stripe_sdk?;
+|};
 
 # Represents the Queries record for the operation: GetCustomersCustomerCards
 public type GetCustomersCustomerCardsQueries record {
@@ -13200,9 +13217,6 @@ public type Tax_product_registrations_resource_country_options_europe record {
     "ioss"|"oss_non_union"|"oss_union"|"standard" 'type;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetTaxRatesTaxRateQueriesExpandItemsString string;
-
 # 
 public type PaymentLinksResourceListLineItems record {
     # Details about each object.
@@ -13215,6 +13229,9 @@ public type PaymentLinksResourceListLineItems record {
     @constraint:String {maxLength: 5000}
     string url;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetTaxRatesTaxRateQueriesExpandItemsString string;
 
 public type reader_process_setup_intent_bodyExpandItemsString string;
 
@@ -13240,6 +13257,48 @@ public type feature_access_1 record {
     outbound_payments outbound_payments?;
     outbound_transfers outbound_transfers?;
 };
+
+public type plans_body record {|
+    # Whether the plan is currently available for new subscriptions. Defaults to `true`.
+    boolean active?;
+    # Specifies a usage aggregation strategy for plans of `usage_type=metered`. Allowed values are `sum` for summing up all usage during a period, `last_during_period` for using the last usage record reported within a period, `last_ever` for using the last usage record ever (across period bounds) or `max` which uses the usage record with the maximum reported usage during a period. Defaults to `sum`.
+    "last_during_period"|"last_ever"|"max"|"sum" aggregate_usage?;
+    # A positive integer in cents (or local equivalent) (or 0 for a free plan) representing how much to charge on a recurring basis.
+    int amount?;
+    # Same as `amount`, but accepts a decimal value with at most 12 decimal places. Only one of `amount` and `amount_decimal` can be set.
+    string amount_decimal?;
+    # Describes how to compute the price per period. Either `per_unit` or `tiered`. `per_unit` indicates that the fixed amount (specified in `amount`) will be charged per unit in `quantity` (for plans with `usage_type=licensed`), or per unit of total usage (for plans with `usage_type=metered`). `tiered` indicates that the unit pricing will be computed using a tiering strategy as defined using the `tiers` and `tiers_mode` attributes.
+    "per_unit"|"tiered" billing_scheme?;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency;
+    # Specifies which fields in the response should be expanded.
+    plans_bodyExpandItemsString[] expand?;
+    # An identifier randomly generated by Stripe. Used to identify this plan when subscribing a customer. You can optionally override this ID, but the ID must be unique across all plans in your Stripe account. You can, however, use the same plan ID in both live and test modes.
+    @constraint:String {maxLength: 5000}
+    string id?;
+    # Specifies billing frequency. Either `day`, `week`, `month` or `year`.
+    "day"|"month"|"week"|"year" interval;
+    # The number of intervals between subscription billings. For example, `interval=month` and `interval_count=3` bills every 3 months. Maximum of three years interval allowed (3 years, 36 months, or 156 weeks).
+    int interval_count?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # The meter tracking the usage of a metered price
+    @constraint:String {maxLength: 5000}
+    string meter?;
+    # A brief description of the plan, hidden from customers.
+    @constraint:String {maxLength: 5000}
+    string nickname?;
+    record {boolean active?; string id?; record {|string...;|} metadata?; string name; string statement_descriptor?; string tax_code?; string unit_label?;}|string product?;
+    # Each element represents a pricing tier. This parameter requires `billing_scheme` to be set to `tiered`. See also the documentation for `billing_scheme`.
+    tier[] tiers?;
+    # Defines if the tiering price should be `graduated` or `volume` based. In `volume`-based tiering, the maximum quantity within a period determines the per unit price, in `graduated` tiering pricing can successively change as the quantity grows.
+    "graduated"|"volume" tiers_mode?;
+    transform_usage_param transform_usage?;
+    # Default number of trial days when subscribing a customer to this plan using [`trial_from_plan=true`](https://stripe.com/docs/api#create_subscription-trial_from_plan).
+    int trial_period_days?;
+    # Configures how the quantity per period should be determined. Can be either `metered` or `licensed`. `licensed` automatically bills the `quantity` set when adding it to a subscription. `metered` aggregates the total usage based on usage records. Defaults to `licensed`.
+    "licensed"|"metered" usage_type?;
+|};
 
 # Invoice Items represent the component lines of an [invoice](https://stripe.com/docs/api/invoices). An invoice item is added to an
 # invoice by creating or updating it with an `invoice` field, at which point it will be included as
@@ -13419,8 +13478,6 @@ public type id_verify_body_1 record {|
     # Specifies which fields in the response should be expanded.
     id_verify_body_1ExpandItemsString[] expand?;
 |};
-
-public type v1_setup_intents_bodyPaymentmethodtypesItemsString string;
 
 # Represents the Queries record for the operation: GetAccountsAccountPeoplePerson
 public type GetAccountsAccountPeoplePersonQueries record {
@@ -13624,6 +13681,9 @@ public type Payout record {
 public type Payment_method_zip record {
 };
 
+@constraint:String {maxLength: 5000}
+public type GetCustomersCustomerCardsIdQueriesExpandItemsString string;
+
 # 
 public type PayoutList record {
     Payout[] data;
@@ -13635,9 +13695,6 @@ public type PayoutList record {
     @constraint:String {maxLength: 5000, pattern: re `^/v1/payouts`}
     string url;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetCustomersCustomerCardsIdQueriesExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetAccountsAccountCapabilitiesQueriesExpandItemsString string;
@@ -13683,29 +13740,6 @@ public type invoice_pay_body record {|
     # A payment source to be charged. The source must be the ID of a source belonging to the customer associated with the invoice being paid.
     @constraint:String {maxLength: 5000}
     string 'source?;
-|};
-
-public type v1_promotion_codes_body record {|
-    # Whether the promotion code is currently active.
-    boolean active?;
-    # The customer-facing code. Regardless of case, this code must be unique across all active promotion codes for a specific customer. If left blank, we will generate one automatically.
-    @constraint:String {maxLength: 500}
-    string code?;
-    # The coupon for this promotion code.
-    @constraint:String {maxLength: 5000}
-    string coupon;
-    # The customer that this promotion code can be used by. If not set, the promotion code can be used by all customers.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    # Specifies which fields in the response should be expanded.
-    v1_promotion_codes_bodyExpandItemsString[] expand?;
-    # The timestamp at which this promotion code will expire. If the coupon has specified a `redeems_by`, then this value cannot be after the coupon's `redeems_by`.
-    int expires_at?;
-    # A positive integer specifying the number of times the promotion code can be redeemed. If the coupon has specified a `max_redemptions`, then this value cannot be greater than the coupon's `max_redemptions`.
-    int max_redemptions?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    restrictions_params_1 restrictions?;
 |};
 
 # 
@@ -13859,6 +13893,8 @@ public type Subscription_schedule_phase_configuration record {
     int? trial_end?;
 };
 
+public type invoice_send_bodyExpandItemsString string;
+
 # 
 public type Deleted_plan record {
     # Always true for a deleted object
@@ -13870,7 +13906,50 @@ public type Deleted_plan record {
     "plan" 'object;
 };
 
-public type invoice_send_bodyExpandItemsString string;
+public type accounts_body record {|
+    # An [account token](https://stripe.com/docs/api#create_account_token), used to securely provide details to the account.
+    @constraint:String {maxLength: 5000}
+    string account_token?;
+    # Either a token, like the ones returned by [Stripe.js](https://stripe.com/docs/js), or a dictionary containing a user's bank account details.
+    record {string account_holder_name?; "company"|"individual" account_holder_type?; string account_number; "checking"|"futsu"|"savings"|"toza" account_type?; string country; string currency?; record {record {bank_account_ownership_verificationFilesItemsString[] files?;} bank_account_ownership_verification?;} documents?; "bank_account" 'object?; string routing_number?;}|string bank_account?;
+    business_profile_specs business_profile?;
+    # The business type. Once you create an [Account Link](/api/account_links) or [Account Session](/api/account_sessions), this property can only be updated for accounts where [controller.requirement_collection](/api/accounts/object#account_object-controller-requirement_collection) is `application`, which includes Custom accounts.
+    "company"|"government_entity"|"individual"|"non_profit" business_type?;
+    capabilities_param capabilities?;
+    company_specs company?;
+    controller_specs controller?;
+    # The country in which the account holder resides, or in which the business is legally established. This should be an ISO 3166-1 alpha-2 country code. For example, if you are in the United States and the business for which you're creating an account is legally represented in Canada, you would use `CA` as the country for the account being created. Available countries include [Stripe's global markets](https://stripe.com/global) as well as countries where [cross-border payouts](https://stripe.com/docs/connect/cross-border-payouts) are supported.
+    @constraint:String {maxLength: 5000}
+    string country?;
+    # Three-letter ISO currency code representing the default currency for the account. This must be a currency that [Stripe supports in the account's country](https://docs.stripe.com/payouts).
+    string default_currency?;
+    documents_specs documents?;
+    # The email address of the account holder. This is only to make the account easier to identify to you. If [controller.requirement_collection](/api/accounts/object#account_object-controller-requirement_collection) is `application`, which includes Custom accounts, Stripe doesn't email the account without your consent.
+    string email?;
+    # Specifies which fields in the response should be expanded.
+    accounts_bodyExpandItemsString[] expand?;
+    # A card or bank account to attach to the account for receiving [payouts](/connect/bank-debit-card-payouts) (you won’t be able to use it for top-ups). You can provide either a token, like the ones returned by [Stripe.js](/js), or a dictionary, as documented in the `external_account` parameter for [bank account](/api#account_create_bank_account) creation. <br><br>By default, providing an external account sets it as the new default external account for its currency, and deletes the old default if one exists. To add additional external accounts without replacing the existing default for the currency, use the [bank account](/api#account_create_bank_account) or [card creation](/api#account_create_card) APIs. After you create an [Account Link](/api/account_links) or [Account Session](/api/account_sessions), this property can only be updated for accounts where [controller.requirement_collection](/api/accounts/object#account_object-controller-requirement_collection) is `application`, which includes Custom accounts.
+    @constraint:String {maxLength: 5000}
+    string external_account?;
+    individual_specs individual?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    settings_specs settings?;
+    tos_acceptance_specs tos_acceptance?;
+    # The type of Stripe account to create. May be one of `custom`, `express` or `standard`.
+    "custom"|"express"|"standard" 'type?;
+|};
+
+# A subset of parameters to be passed to PaymentIntent creation for Checkout Sessions in `payment` mode.
+public type payment_intent_data_update_params record {
+    string|"" description?;
+    record {|string...;|}|"" metadata?;
+    string|"" statement_descriptor?;
+    string|"" statement_descriptor_suffix?;
+    string|"" transfer_group?;
+};
+
+public type reader_set_reader_display_bodyExpandItemsString string;
 
 # Represents the Queries record for the operation: GetFinancialConnectionsAccountsAccountOwners
 public type GetFinancialConnectionsAccountsAccountOwnersQueries record {
@@ -13888,17 +13967,6 @@ public type GetFinancialConnectionsAccountsAccountOwnersQueries record {
     @constraint:String {maxLength: 5000}
     string starting_after?;
 };
-
-# A subset of parameters to be passed to PaymentIntent creation for Checkout Sessions in `payment` mode.
-public type payment_intent_data_update_params record {
-    string|"" description?;
-    record {|string...;|}|"" metadata?;
-    string|"" statement_descriptor?;
-    string|"" statement_descriptor_suffix?;
-    string|"" transfer_group?;
-};
-
-public type reader_set_reader_display_bodyExpandItemsString string;
 
 public type financial_accounts_financial_account_bodyExpandItemsString string;
 
@@ -14086,6 +14154,8 @@ public type customer_details record {
     "customer_exempt"|"none"|"reverse_charge" taxability_override?;
 };
 
+public type charges_bodyExpandItemsString string;
+
 public type customer_fund_cash_balance_body record {|
     # Amount to be used for this test cash balance transaction. A positive integer representing how much to fund in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal) (e.g., 100 cents to fund $1.00 or 100 to fund ¥100, a zero-decimal currency).
     int amount;
@@ -14127,6 +14197,11 @@ public type access_2 record {
     boolean requested;
 };
 
+# Encodes the FinancialAccount's ability to be used with the Issuing product, including attaching cards to and drawing funds from the FinancialAccount.
+public type access_1 record {
+    boolean requested;
+};
+
 # Represents the Queries record for the operation: GetCreditNotesCreditNoteLines
 public type GetCreditNotesCreditNoteLinesQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -14140,13 +14215,6 @@ public type GetCreditNotesCreditNoteLinesQueries record {
     @constraint:String {maxLength: 5000}
     string starting_after?;
 };
-
-# Encodes the FinancialAccount's ability to be used with the Issuing product, including attaching cards to and drawing funds from the FinancialAccount.
-public type access_1 record {
-    boolean requested;
-};
-
-public type v1_credit_notes_bodyExpandItemsString string;
 
 # 
 public type Portal_flows_flow_after_completion record {
@@ -14303,6 +14371,12 @@ public type GetProductsQueries record {
     string url?;
 };
 
+# The PII this token represents.
+public type pii_token_specs record {
+    @constraint:String {maxLength: 5000}
+    string id_number?;
+};
+
 public type capabilities_capability_body record {|
     # Specifies which fields in the response should be expanded.
     capabilities_capability_bodyExpandItemsString[] expand?;
@@ -14311,12 +14385,6 @@ public type capabilities_capability_body record {|
     # If a capability isn't permanent, you can remove it from the account by passing false. Some capabilities are permanent after they've been requested. Attempting to remove a permanent capability returns an error.
     boolean requested?;
 |};
-
-# The PII this token represents.
-public type pii_token_specs record {
-    @constraint:String {maxLength: 5000}
-    string id_number?;
-};
 
 public type Source_type_three_d_secure record {
     string? address_line1_check?;
@@ -14433,6 +14501,8 @@ public type documents_specs record {
     documents_param proof_of_registration?;
 };
 
+public type prices_bodyExpandItemsString string;
+
 # 
 public type Invoice_payment_method_options_acss_debit_mandate_options record {
     # Transaction type of the mandate.
@@ -14496,40 +14566,6 @@ public type source_verify_body record {|
     source_verify_bodyValuesItemsString[] values;
 |};
 
-public type v1_subscription_items_body record {|
-    # Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period. When updating, pass an empty string to remove previously-defined thresholds.
-    record {int usage_gte;}|"" billing_thresholds?;
-    # The coupons to redeem into discounts for the subscription item.
-    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
-    # Specifies which fields in the response should be expanded.
-    v1_subscription_items_bodyExpandItemsString[] expand?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # Use `allow_incomplete` to transition the subscription to `status=past_due` if a payment is required but cannot be paid. This allows you to manage scenarios where additional user actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.
-    # 
-    # Use `default_incomplete` to transition the subscription to `status=past_due` when payment is required and await explicit confirmation of the invoice's payment intent. This allows simpler management of scenarios where additional user actions are needed to pay a subscription’s invoice. Such as failed payments, [SCA regulation](https://stripe.com/docs/billing/migration/strong-customer-authentication), or collecting a mandate for a bank debit payment method.
-    # 
-    # Use `pending_if_incomplete` to update the subscription using [pending updates](https://stripe.com/docs/billing/subscriptions/pending-updates). When you use `pending_if_incomplete` you can only pass the parameters [supported by pending updates](https://stripe.com/docs/billing/pending-updates-reference#supported-attributes).
-    # 
-    # Use `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's invoice cannot be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further user action is needed, this parameter does not update the subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.
-    "allow_incomplete"|"default_incomplete"|"error_if_incomplete"|"pending_if_incomplete" payment_behavior?;
-    # The ID of the price object.
-    @constraint:String {maxLength: 5000}
-    string price?;
-    recurring_price_data_1 price_data?;
-    # Determines how to handle [prorations](https://stripe.com/docs/billing/subscriptions/prorations) when the billing cycle changes (e.g., when switching plans, resetting `billing_cycle_anchor=now`, or starting a trial), or if an item's `quantity` changes. The default value is `create_prorations`.
-    "always_invoice"|"create_prorations"|"none" proration_behavior?;
-    # If set, the proration will be calculated as though the subscription was updated at the given time. This can be used to apply the same proration that was previewed with the [upcoming invoice](https://stripe.com/docs/api#retrieve_customer_invoice) endpoint.
-    int proration_date?;
-    # The quantity you'd like to apply to the subscription item you're creating.
-    int quantity?;
-    # The identifier of the subscription to modify.
-    @constraint:String {maxLength: 5000}
-    string subscription;
-    # A list of [Tax Rate](https://stripe.com/docs/api/tax_rates) ids. These Tax Rates will override the [`default_tax_rates`](https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates) on the Subscription. When updating, pass an empty string to remove previously-defined tax rates.
-    TaxratesItemsString[]|"" tax_rates?;
-|};
-
 public type authorization_decline_body record {|
     # Specifies which fields in the response should be expanded.
     authorization_decline_bodyExpandItemsString[] expand?;
@@ -14575,6 +14611,14 @@ public type Account_card_payments_settings record {
     string? statement_descriptor_prefix_kanji?;
 };
 
+public type reporting_report_runs_body record {|
+    # Specifies which fields in the response should be expanded.
+    reporting_report_runs_bodyExpandItemsString[] expand?;
+    run_parameter_specs parameters?;
+    # The ID of the [report type](https://stripe.com/docs/reporting/statements/api#report-types) to run, such as `"balance.summary.1"`.
+    string report_type;
+|};
+
 # Represents the Queries record for the operation: GetProductsProductFeatures
 public type GetProductsProductFeaturesQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -14588,14 +14632,6 @@ public type GetProductsProductFeaturesQueries record {
     @constraint:String {maxLength: 5000}
     string starting_after?;
 };
-
-public type reporting_report_runs_body record {|
-    # Specifies which fields in the response should be expanded.
-    reporting_report_runs_bodyExpandItemsString[] expand?;
-    run_parameter_specs parameters?;
-    # The ID of the [report type](https://stripe.com/docs/reporting/statements/api#report-types) to run, such as `"balance.summary.1"`.
-    string report_type;
-|};
 
 # 
 public type Payment_method_au_becs_debit record {
@@ -14623,16 +14659,16 @@ public type access_with_ach_details record {
     boolean requested;
 };
 
-public type linked_account_options_filters_param record {
-    (linked_account_options_filters_paramAccountsubcategoriesItemsString)[] account_subcategories?;
-};
-
 # 
 public type Notification_event_data record {
     # Object containing the API resource relevant to the event. For example, an `invoice.created` event will have a full [invoice object](https://stripe.com/docs/api#invoice_object) as the value of the object key.
     record {} 'object;
     # Object containing the names of the updated attributes and their values prior to the event (only included in events of type `*.updated`). If an array attribute has any updated elements, this object contains the entire array. In Stripe API versions 2017-04-06 or earlier, an updated array attribute in this object includes only the updated array elements.
     record {} previous_attributes?;
+};
+
+public type linked_account_options_filters_param record {
+    (linked_account_options_filters_paramAccountsubcategoriesItemsString)[] account_subcategories?;
 };
 
 # 
@@ -14892,9 +14928,16 @@ public type Payment_intent_next_action_konbini_ministop record {
     string payment_code;
 };
 
-public type customs_param record {
-    @constraint:String {maxLength: 5000}
-    string eori_number?;
+# Default configuration to be used on Stripe Tax calculations.
+public type defaults_param record {
+    "exclusive"|"inclusive"|"inferred_by_currency" tax_behavior?;
+    string tax_code?;
+};
+
+public type Discounts1ItemsObject record {
+    string coupon?;
+    string discount?;
+    string promotion_code?;
 };
 
 # 
@@ -14907,10 +14950,15 @@ public type Bank_connections_resource_balance_api_resource_credit_balance record
     record {|int...;|}? used?;
 };
 
-public type Discounts1ItemsObject record {
-    string coupon?;
-    string discount?;
-    string promotion_code?;
+public type customs_param record {
+    @constraint:String {maxLength: 5000}
+    string eori_number?;
+};
+
+public type Deleted_terminal\.location record {
+    true deleted;
+    string id;
+    "terminal.location" 'object;
 };
 
 # Represents the Queries record for the operation: GetTreasuryReceivedCredits
@@ -14931,18 +14979,6 @@ public type GetTreasuryReceivedCreditsQueries record {
     string starting_after?;
     # Only return ReceivedCredits that have the given status: `succeeded` or `failed`.
     "failed"|"succeeded" status?;
-};
-
-# Default configuration to be used on Stripe Tax calculations.
-public type defaults_param record {
-    "exclusive"|"inclusive"|"inferred_by_currency" tax_behavior?;
-    string tax_code?;
-};
-
-public type Deleted_terminal\.location record {
-    true deleted;
-    string id;
-    "terminal.location" 'object;
 };
 
 # 
@@ -14994,6 +15030,18 @@ public type Payment_pages_checkout_session_consent record {
     "accepted"? terms_of_service?;
 };
 
+# 
+public type TopupList record {
+    Topup[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000, pattern: re `^/v1/topups`}
+    string url;
+};
+
 public type transactions_create_from_calculation_body record {|
     # Tax Calculation ID to be used as input when creating the transaction.
     @constraint:String {maxLength: 5000}
@@ -15009,18 +15057,6 @@ public type transactions_create_from_calculation_body record {|
     string reference;
 |};
 
-# 
-public type TopupList record {
-    Topup[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000, pattern: re `^/v1/topups`}
-    string url;
-};
-
 # Rules that control spending for this card. Refer to our [documentation](https://stripe.com/docs/issuing/controls/spending-controls) for more details.
 public type authorization_controls_param record {
     (authorization_controls_paramAllowedcategoriesItemsString)[] allowed_categories?;
@@ -15029,6 +15065,11 @@ public type authorization_controls_param record {
     authorization_controls_paramBlockedmerchantcountriesItemsString[] blocked_merchant_countries?;
     spending_limits_param[] spending_limits?;
 };
+
+@constraint:String {maxLength: 5000}
+public type Bank_connections_resource_link_account_session_filtersCountriesItemsString string;
+
+public type account_unsubscribe_bodyExpandItemsString string;
 
 public type customer_balance_transactions_body record {|
     # The integer amount in **cents (or local equivalent)** to apply to the customer's credit balance.
@@ -15044,12 +15085,9 @@ public type customer_balance_transactions_body record {|
     record {|string...;|}|"" metadata?;
 |};
 
-@constraint:String {maxLength: 5000}
-public type Bank_connections_resource_link_account_session_filtersCountriesItemsString string;
-
-public type account_unsubscribe_bodyExpandItemsString string;
-
 public type customer_cash_balance_bodyExpandItemsString string;
+
+public type coupons_bodyExpandItemsString string;
 
 # Configuration settings for the PaymentIntent that is generated when the invoice is finalized.
 public type payment_settings_1 record {
@@ -15119,11 +15157,6 @@ public type Person_additional_tos_acceptances record {
     Person_additional_tos_acceptance account;
 };
 
-@constraint:String {maxLength: 5000}
-public type Account_capability_requirementsEventuallydueItemsString string;
-
-public type subscription_schedules_schedule_bodyExpandItemsString string;
-
 public type customer_cards_body record {|
     # A token returned by [Stripe.js](https://stripe.com/docs/js) representing the user’s Alipay account details.
     @constraint:String {maxLength: 5000}
@@ -15140,6 +15173,11 @@ public type customer_cards_body record {|
     @constraint:String {maxLength: 5000}
     string 'source?;
 |};
+
+@constraint:String {maxLength: 5000}
+public type Account_capability_requirementsEventuallydueItemsString string;
+
+public type subscription_schedules_schedule_bodyExpandItemsString string;
 
 public type subscriptions_subscription_exposed_id_bodyExpandItemsString string;
 
@@ -15287,8 +15325,6 @@ public type canada record {
     "province_standard"|"simplified"|"standard" 'type;
 };
 
-public type verification_sessions_session_bodyExpandItemsString string;
-
 # Encodes whether a FinancialAccount has access to a particular feature. Stripe or the platform can control features via the requested field.
 public type feature_access record {
     access card_issuing?;
@@ -15317,7 +15353,7 @@ public type GetEntitlementsActiveEntitlementsQueries record {
     string customer;
 };
 
-public type v1_tax_ids_bodyExpandItemsString string;
+public type verification_sessions_session_bodyExpandItemsString string;
 
 # 
 public type Payment_pages_checkout_session_shipping_cost record {
@@ -15463,11 +15499,6 @@ public type invoice_settings_param record {
     param issuer?;
 };
 
-# Documents that may be submitted to satisfy various informational requests.
-public type external_account_documents_param record {
-    documents_param bank_account_ownership_verification?;
-};
-
 public type discount_params record {
     @constraint:String {maxLength: 5000}
     string coupon?;
@@ -15495,6 +15526,11 @@ public type prices_price_body record {|
     # If set to true, will atomically remove the lookup key from the existing price, and assign it to this price.
     boolean transfer_lookup_key?;
 |};
+
+# Documents that may be submitted to satisfy various informational requests.
+public type external_account_documents_param record {
+    documents_param bank_account_ownership_verification?;
+};
 
 # 
 public type Payment_links_resource_tax_id_collection record {
@@ -15528,10 +15564,12 @@ public type Treasury_received_credits_resource_reversal_details record {
     "already_reversed"|"deadline_passed"|"network_restricted"|"other"|"source_flow_restricted"? restricted_reason?;
 };
 
-public type customer_funding_instructions_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetCustomersCustomerSourcesQueriesExpandItemsString string;
+
+public type customer_funding_instructions_bodyExpandItemsString string;
+
+public type customers_bodyPreferredlocalesItemsString string;
 
 public type price_data_with_product_data record {
     string currency;
@@ -15575,39 +15613,6 @@ public type Payment_pages_checkout_session_after_expiration record {
     # When set, configuration used to recover the Checkout Session on expiry.
     Payment_pages_checkout_session_after_expiration_recovery? recovery?;
 };
-
-public type v1_sources_body record {|
-    # Amount associated with the source. This is the amount for which the source will be chargeable once ready. Required for `single_use` sources. Not supported for `receiver` type sources, where charge amount may not be specified until funds land.
-    int amount?;
-    # Three-letter [ISO code for the currency](https://stripe.com/docs/currencies) associated with the source. This is the currency for which the source will be chargeable once ready.
-    string currency?;
-    # The `Customer` to whom the original source is attached to. Must be set when the original source is not a `Source` (e.g., `Card`).
-    @constraint:String {maxLength: 500}
-    string customer?;
-    # Specifies which fields in the response should be expanded.
-    v1_sources_bodyExpandItemsString[] expand?;
-    # The authentication `flow` of the source to create. `flow` is one of `redirect`, `receiver`, `code_verification`, `none`. It is generally inferred unless a type supports multiple flows.
-    "code_verification"|"none"|"receiver"|"redirect" flow?;
-    mandate_params mandate?;
-    record {|string...;|} metadata?;
-    # The source to share.
-    @constraint:String {maxLength: 5000}
-    string original_source?;
-    owner_1 owner?;
-    receiver_params receiver?;
-    redirect_params redirect?;
-    shallow_order_specs source_order?;
-    # An arbitrary string to be displayed on your customer's statement. As an example, if your website is `RunClub` and the item you're charging for is a race ticket, you may want to specify a `statement_descriptor` of `RunClub 5K race ticket.` While many payment types will display this information, some may not display it at all.
-    @constraint:String {maxLength: 5000}
-    string statement_descriptor?;
-    # An optional token used to create the source. When passed, token properties will override source parameters.
-    @constraint:String {maxLength: 5000}
-    string token?;
-    # The `type` of the source to create. Required unless `customer` and `original_source` are specified (see the [Cloning card Sources](https://stripe.com/docs/sources/connect#cloning-card-sources) guide)
-    @constraint:String {maxLength: 5000}
-    string 'type?;
-    "reusable"|"single_use" usage?;
-|};
 
 # Represents the Queries record for the operation: GetIdentityVerificationReportsReport
 public type GetIdentityVerificationReportsReportQueries record {
@@ -15668,6 +15673,12 @@ public type SubscriptionItemList record {
     string url;
 };
 
+public type apple_pay_domains_body record {|
+    string domain_name;
+    # Specifies which fields in the response should be expanded.
+    apple_pay_domains_bodyExpandItemsString[] expand?;
+|};
+
 public type payment_method_configurations_configuration_body record {|
     payment_method_param_2 acss_debit?;
     # Whether the configuration can be used for new payments.
@@ -15718,12 +15729,6 @@ public type payment_method_configurations_configuration_body record {|
     payment_method_param_41 zip?;
 |};
 
-public type apple_pay_domains_body record {|
-    string domain_name;
-    # Specifies which fields in the response should be expanded.
-    apple_pay_domains_bodyExpandItemsString[] expand?;
-|};
-
 public type spending_limits_paramCategoriesItemsString "ac_refrigeration_repair"|"accounting_bookkeeping_services"|"advertising_services"|"agricultural_cooperative"|"airlines_air_carriers"|"airports_flying_fields"|"ambulance_services"|"amusement_parks_carnivals"|"antique_reproductions"|"antique_shops"|"aquariums"|"architectural_surveying_services"|"art_dealers_and_galleries"|"artists_supply_and_craft_shops"|"auto_and_home_supply_stores"|"auto_body_repair_shops"|"auto_paint_shops"|"auto_service_shops"|"automated_cash_disburse"|"automated_fuel_dispensers"|"automobile_associations"|"automotive_parts_and_accessories_stores"|"automotive_tire_stores"|"bail_and_bond_payments"|"bakeries"|"bands_orchestras"|"barber_and_beauty_shops"|"betting_casino_gambling"|"bicycle_shops"|"billiard_pool_establishments"|"boat_dealers"|"boat_rentals_and_leases"|"book_stores"|"books_periodicals_and_newspapers"|"bowling_alleys"|"bus_lines"|"business_secretarial_schools"|"buying_shopping_services"|"cable_satellite_and_other_pay_television_and_radio"|"camera_and_photographic_supply_stores"|"candy_nut_and_confectionery_stores"|"car_and_truck_dealers_new_used"|"car_and_truck_dealers_used_only"|"car_rental_agencies"|"car_washes"|"carpentry_services"|"carpet_upholstery_cleaning"|"caterers"|"charitable_and_social_service_organizations_fundraising"|"chemicals_and_allied_products"|"child_care_services"|"childrens_and_infants_wear_stores"|"chiropodists_podiatrists"|"chiropractors"|"cigar_stores_and_stands"|"civic_social_fraternal_associations"|"cleaning_and_maintenance"|"clothing_rental"|"colleges_universities"|"commercial_equipment"|"commercial_footwear"|"commercial_photography_art_and_graphics"|"commuter_transport_and_ferries"|"computer_network_services"|"computer_programming"|"computer_repair"|"computer_software_stores"|"computers_peripherals_and_software"|"concrete_work_services"|"construction_materials"|"consulting_public_relations"|"correspondence_schools"|"cosmetic_stores"|"counseling_services"|"country_clubs"|"courier_services"|"court_costs"|"credit_reporting_agencies"|"cruise_lines"|"dairy_products_stores"|"dance_hall_studios_schools"|"dating_escort_services"|"dentists_orthodontists"|"department_stores"|"detective_agencies"|"digital_goods_applications"|"digital_goods_games"|"digital_goods_large_volume"|"digital_goods_media"|"direct_marketing_catalog_merchant"|"direct_marketing_combination_catalog_and_retail_merchant"|"direct_marketing_inbound_telemarketing"|"direct_marketing_insurance_services"|"direct_marketing_other"|"direct_marketing_outbound_telemarketing"|"direct_marketing_subscription"|"direct_marketing_travel"|"discount_stores"|"doctors"|"door_to_door_sales"|"drapery_window_covering_and_upholstery_stores"|"drinking_places"|"drug_stores_and_pharmacies"|"drugs_drug_proprietaries_and_druggist_sundries"|"dry_cleaners"|"durable_goods"|"duty_free_stores"|"eating_places_restaurants"|"educational_services"|"electric_razor_stores"|"electric_vehicle_charging"|"electrical_parts_and_equipment"|"electrical_services"|"electronics_repair_shops"|"electronics_stores"|"elementary_secondary_schools"|"emergency_services_gcas_visa_use_only"|"employment_temp_agencies"|"equipment_rental"|"exterminating_services"|"family_clothing_stores"|"fast_food_restaurants"|"financial_institutions"|"fines_government_administrative_entities"|"fireplace_fireplace_screens_and_accessories_stores"|"floor_covering_stores"|"florists"|"florists_supplies_nursery_stock_and_flowers"|"freezer_and_locker_meat_provisioners"|"fuel_dealers_non_automotive"|"funeral_services_crematories"|"furniture_home_furnishings_and_equipment_stores_except_appliances"|"furniture_repair_refinishing"|"furriers_and_fur_shops"|"general_services"|"gift_card_novelty_and_souvenir_shops"|"glass_paint_and_wallpaper_stores"|"glassware_crystal_stores"|"golf_courses_public"|"government_licensed_horse_dog_racing_us_region_only"|"government_licensed_online_casions_online_gambling_us_region_only"|"government_owned_lotteries_non_us_region"|"government_owned_lotteries_us_region_only"|"government_services"|"grocery_stores_supermarkets"|"hardware_equipment_and_supplies"|"hardware_stores"|"health_and_beauty_spas"|"hearing_aids_sales_and_supplies"|"heating_plumbing_a_c"|"hobby_toy_and_game_shops"|"home_supply_warehouse_stores"|"hospitals"|"hotels_motels_and_resorts"|"household_appliance_stores"|"industrial_supplies"|"information_retrieval_services"|"insurance_default"|"insurance_underwriting_premiums"|"intra_company_purchases"|"jewelry_stores_watches_clocks_and_silverware_stores"|"landscaping_services"|"laundries"|"laundry_cleaning_services"|"legal_services_attorneys"|"luggage_and_leather_goods_stores"|"lumber_building_materials_stores"|"manual_cash_disburse"|"marinas_service_and_supplies"|"marketplaces"|"masonry_stonework_and_plaster"|"massage_parlors"|"medical_and_dental_labs"|"medical_dental_ophthalmic_and_hospital_equipment_and_supplies"|"medical_services"|"membership_organizations"|"mens_and_boys_clothing_and_accessories_stores"|"mens_womens_clothing_stores"|"metal_service_centers"|"miscellaneous"|"miscellaneous_apparel_and_accessory_shops"|"miscellaneous_auto_dealers"|"miscellaneous_business_services"|"miscellaneous_food_stores"|"miscellaneous_general_merchandise"|"miscellaneous_general_services"|"miscellaneous_home_furnishing_specialty_stores"|"miscellaneous_publishing_and_printing"|"miscellaneous_recreation_services"|"miscellaneous_repair_shops"|"miscellaneous_specialty_retail"|"mobile_home_dealers"|"motion_picture_theaters"|"motor_freight_carriers_and_trucking"|"motor_homes_dealers"|"motor_vehicle_supplies_and_new_parts"|"motorcycle_shops_and_dealers"|"motorcycle_shops_dealers"|"music_stores_musical_instruments_pianos_and_sheet_music"|"news_dealers_and_newsstands"|"non_fi_money_orders"|"non_fi_stored_value_card_purchase_load"|"nondurable_goods"|"nurseries_lawn_and_garden_supply_stores"|"nursing_personal_care"|"office_and_commercial_furniture"|"opticians_eyeglasses"|"optometrists_ophthalmologist"|"orthopedic_goods_prosthetic_devices"|"osteopaths"|"package_stores_beer_wine_and_liquor"|"paints_varnishes_and_supplies"|"parking_lots_garages"|"passenger_railways"|"pawn_shops"|"pet_shops_pet_food_and_supplies"|"petroleum_and_petroleum_products"|"photo_developing"|"photographic_photocopy_microfilm_equipment_and_supplies"|"photographic_studios"|"picture_video_production"|"piece_goods_notions_and_other_dry_goods"|"plumbing_heating_equipment_and_supplies"|"political_organizations"|"postal_services_government_only"|"precious_stones_and_metals_watches_and_jewelry"|"professional_services"|"public_warehousing_and_storage"|"quick_copy_repro_and_blueprint"|"railroads"|"real_estate_agents_and_managers_rentals"|"record_stores"|"recreational_vehicle_rentals"|"religious_goods_stores"|"religious_organizations"|"roofing_siding_sheet_metal"|"secretarial_support_services"|"security_brokers_dealers"|"service_stations"|"sewing_needlework_fabric_and_piece_goods_stores"|"shoe_repair_hat_cleaning"|"shoe_stores"|"small_appliance_repair"|"snowmobile_dealers"|"special_trade_services"|"specialty_cleaning"|"sporting_goods_stores"|"sporting_recreation_camps"|"sports_and_riding_apparel_stores"|"sports_clubs_fields"|"stamp_and_coin_stores"|"stationary_office_supplies_printing_and_writing_paper"|"stationery_stores_office_and_school_supply_stores"|"swimming_pools_sales"|"t_ui_travel_germany"|"tailors_alterations"|"tax_payments_government_agencies"|"tax_preparation_services"|"taxicabs_limousines"|"telecommunication_equipment_and_telephone_sales"|"telecommunication_services"|"telegraph_services"|"tent_and_awning_shops"|"testing_laboratories"|"theatrical_ticket_agencies"|"timeshares"|"tire_retreading_and_repair"|"tolls_bridge_fees"|"tourist_attractions_and_exhibits"|"towing_services"|"trailer_parks_campgrounds"|"transportation_services"|"travel_agencies_tour_operators"|"truck_stop_iteration"|"truck_utility_trailer_rentals"|"typesetting_plate_making_and_related_services"|"typewriter_stores"|"u_s_federal_government_agencies_or_departments"|"uniforms_commercial_clothing"|"used_merchandise_and_secondhand_stores"|"utilities"|"variety_stores"|"veterinary_services"|"video_amusement_game_supplies"|"video_game_arcades"|"video_tape_rental_stores"|"vocational_trade_schools"|"watch_jewelry_repair"|"welding_repair"|"wholesale_clubs"|"wig_and_toupee_stores"|"wires_money_orders"|"womens_accessory_and_specialty_shops"|"womens_ready_to_wear_stores"|"wrecking_and_salvage_yards";
 
 # 
@@ -15748,6 +15753,14 @@ public type Payment_method_details_interac_present_receipt record {
     string? transaction_status_information?;
 };
 
+public type account_sessions_body record {|
+    # The identifier of the account to create an Account Session for.
+    string account;
+    account_session_create_components_param components;
+    # Specifies which fields in the response should be expanded.
+    account_sessions_bodyExpandItemsString[] expand?;
+|};
+
 public type FullnamealiasesItemsString string;
 
 public type sources_id_body_1ExpandItemsString string;
@@ -15762,7 +15775,7 @@ public type Payment_links_resource_automatic_tax record {
 
 public type TaxamountsItemsObject record {
     int amount;
-    string tax_rate;
+    record {string country?; string description?; string display_name; boolean inclusive; string jurisdiction?; decimal percentage; string state?; "amusement_tax"|"communications_tax"|"gst"|"hst"|"igst"|"jct"|"lease_tax"|"pst"|"qst"|"rst"|"sales_tax"|"vat" tax_type?;} tax_rate_data;
     int taxable_amount;
 };
 
@@ -15822,15 +15835,15 @@ public type Payment_method_details_card record {
     Payment_method_details_card_wallet? wallet?;
 };
 
+public type coupon_offer_param record {
+    @constraint:String {maxLength: 5000}
+    string coupon;
+};
+
 # Represents the Queries record for the operation: GetPlansPlan
 public type GetPlansPlanQueries record {
     # Specifies which fields in the response should be expanded.
     GetPlansPlanQueriesExpandItemsString[] expand?;
-};
-
-public type coupon_offer_param record {
-    @constraint:String {maxLength: 5000}
-    string coupon;
 };
 
 # Settings for automatic tax lookup for this session and resulting payments, invoices, and subscriptions.
@@ -15874,11 +15887,6 @@ public type transfer_schedule_specs record {
     "friday"|"monday"|"saturday"|"sunday"|"thursday"|"tuesday"|"wednesday" weekly_anchor?;
 };
 
-public type id_fail_body_1 record {|
-    # Specifies which fields in the response should be expanded.
-    id_fail_body_1ExpandItemsString[] expand?;
-|};
-
 # Stripe needs to collect certain pieces of information about each account
 # created. These requirements can differ depending on the account's country. The
 # Country Specs API makes these rules available to your integration.
@@ -15904,6 +15912,11 @@ public type Country_spec record {
     Country_specSupportedtransfercountriesItemsString[] supported_transfer_countries;
     Country_spec_verification_fields verification_fields;
 };
+
+public type id_fail_body_1 record {|
+    # Specifies which fields in the response should be expanded.
+    id_fail_body_1ExpandItemsString[] expand?;
+|};
 
 @constraint:String {maxLength: 5000}
 public type GetEventsQueriesExpandItemsString string;
@@ -15965,13 +15978,13 @@ public type GetIssuingCardsQueries record {
     "active"|"canceled"|"inactive" status?;
 };
 
+public type transactions_create_unlinked_refund_bodyExpandItemsString string;
+
 # Simulated data for the interac_present payment method.
 public type interac_present record {
     @constraint:String {maxLength: 5000}
     string number?;
 };
-
-public type transactions_create_unlinked_refund_bodyExpandItemsString string;
 
 # 
 public type Payment_intent_next_action_swish_qr_code record {
@@ -16003,8 +16016,6 @@ public type verification_sessions_session_body record {|
 @constraint:String {maxLength: 5000}
 public type GetTaxRegistrationsQueriesExpandItemsString string;
 
-public type intent_verify_microdeposits_body_1ExpandItemsString string;
-
 # Represents the Queries record for the operation: GetInvoiceitems
 public type GetInvoiceitemsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -16028,6 +16039,8 @@ public type GetInvoiceitemsQueries record {
     @constraint:String {maxLength: 5000}
     string customer?;
 };
+
+public type intent_verify_microdeposits_body_1ExpandItemsString string;
 
 public type decline_charge_on_specs record {
     boolean avs_failure?;
@@ -16104,7 +16117,45 @@ public type refund_cancel_body record {|
     refund_cancel_bodyExpandItemsString[] expand?;
 |};
 
-public type reader_present_payment_method_bodyExpandItemsString string;
+public type prices_body record {|
+    # Whether the price can be used for new purchases. Defaults to `true`.
+    boolean active?;
+    # Describes how to compute the price per period. Either `per_unit` or `tiered`. `per_unit` indicates that the fixed amount (specified in `unit_amount` or `unit_amount_decimal`) will be charged per unit in `quantity` (for prices with `usage_type=licensed`), or per unit of total usage (for prices with `usage_type=metered`). `tiered` indicates that the unit pricing will be computed using a tiering strategy as defined using the `tiers` and `tiers_mode` attributes.
+    "per_unit"|"tiered" billing_scheme?;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency;
+    # Prices defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+    record {|currency_option_2...;|} currency_options?;
+    custom_unit_amount_1 custom_unit_amount?;
+    # Specifies which fields in the response should be expanded.
+    prices_bodyExpandItemsString[] expand?;
+    # A lookup key used to retrieve prices dynamically from a static string. This may be up to 200 characters.
+    @constraint:String {maxLength: 200}
+    string lookup_key?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # A brief description of the price, hidden from customers.
+    @constraint:String {maxLength: 5000}
+    string nickname?;
+    # The ID of the product that this price will belong to.
+    @constraint:String {maxLength: 5000}
+    string product?;
+    inline_product_params product_data?;
+    recurring recurring?;
+    # Only required if a [default tax behavior](https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)) was not provided in the Stripe Tax settings. Specifies whether the price is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`. Once specified as either `inclusive` or `exclusive`, it cannot be changed.
+    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
+    # Each element represents a pricing tier. This parameter requires `billing_scheme` to be set to `tiered`. See also the documentation for `billing_scheme`.
+    tier[] tiers?;
+    # Defines if the tiering price should be `graduated` or `volume` based. In `volume`-based tiering, the maximum quantity within a period determines the per unit price, in `graduated` tiering pricing can successively change as the quantity grows.
+    "graduated"|"volume" tiers_mode?;
+    # If set to true, will atomically remove the lookup key from the existing price, and assign it to this price.
+    boolean transfer_lookup_key?;
+    transform_usage_param transform_quantity?;
+    # A positive integer in cents (or local equivalent) (or 0 for a free price) representing how much to charge. One of `unit_amount`, `unit_amount_decimal`, or `custom_unit_amount` is required, unless `billing_scheme=tiered`.
+    int unit_amount?;
+    # Same as `unit_amount`, but accepts a decimal value in cents (or local equivalent) with at most 12 decimal places. Only one of `unit_amount` and `unit_amount_decimal` can be set.
+    string unit_amount_decimal?;
+|};
 
 # 
 public type TreasuryOutboundTransfersResourceOutboundTransferList record {
@@ -16118,6 +16169,8 @@ public type TreasuryOutboundTransfersResourceOutboundTransferList record {
     @constraint:String {maxLength: 5000}
     string url;
 };
+
+public type reader_present_payment_method_bodyExpandItemsString string;
 
 public type customer_subscriptions_body record {|
     # A list of prices and quantities that will generate invoice items appended to the next invoice for this subscription. You may pass up to 20 items.
@@ -16200,6 +16253,8 @@ public type account_reject_body record {|
     @constraint:String {maxLength: 5000}
     string reason;
 |};
+
+public type transfers_bodyExpandItemsString string;
 
 # 
 public type Checkout_boleto_payment_method_options record {
@@ -16309,6 +16364,10 @@ public type receiver_params record {
     "email"|"manual"|"none" refund_attributes_method?;
 };
 
+public type MarketingfeaturesItemsObject record {
+    string name;
+};
+
 # 
 public type SecretServiceResourceSecretList record {
     Apps\.secret[] data;
@@ -16319,10 +16378,6 @@ public type SecretServiceResourceSecretList record {
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000, pattern: re `^/v1/apps/secrets`}
     string url;
-};
-
-public type MarketingfeaturesItemsObject record {
-    string name;
 };
 
 public type person_additional_tos_acceptances_specs_1 record {
@@ -16383,9 +16438,6 @@ public type Account_branding_settings record {
     string? secondary_color?;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetCustomersCustomerQueriesExpandItemsString string;
-
 public type charge_capture_body record {|
     # The amount to capture, which must be less than or equal to the original amount. Any additional amount will be automatically refunded.
     int amount?;
@@ -16408,7 +16460,8 @@ public type charge_capture_body record {|
     string transfer_group?;
 |};
 
-public type bank_accounts_id_bodyExpandItemsString string;
+@constraint:String {maxLength: 5000}
+public type GetCustomersCustomerQueriesExpandItemsString string;
 
 # 
 public type Customer_balance_customer_balance_settings record {
@@ -16420,6 +16473,8 @@ public type Customer_balance_customer_balance_settings record {
 
 @constraint:String {maxLength: 5000}
 public type GetApplicationFeesQueriesExpandItemsString string;
+
+public type bank_accounts_id_bodyExpandItemsString string;
 
 public type subscriptions_subscription_exposed_id_body_3ExpandItemsString string;
 
@@ -16485,24 +16540,6 @@ public type Person record {
     Legal_entity_person_verification verification?;
 };
 
-public type v1_shipping_rates_body record {|
-    delivery_estimate_1 delivery_estimate?;
-    # The name of the shipping rate, meant to be displayable to the customer. This will appear on CheckoutSessions.
-    @constraint:String {maxLength: 100}
-    string display_name;
-    # Specifies which fields in the response should be expanded.
-    v1_shipping_rates_bodyExpandItemsString[] expand?;
-    fixed_amount_1 fixed_amount?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # Specifies whether the rate is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`.
-    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
-    # A [tax code](https://stripe.com/docs/tax/tax-categories) ID. The Shipping tax code is `txcd_92010001`.
-    string tax_code?;
-    # The type of calculation to use on the shipping rate.
-    "fixed_amount" 'type?;
-|};
-
 # 
 public type Payment_method_paypal record {
     # Owner's email. Values are provided by PayPal directly
@@ -16537,10 +16574,6 @@ public type Quotes_resource_automatic_tax record {
     "complete"|"failed"|"requires_location_inputs"? status?;
 };
 
-public type networks_update_api_param record {
-    ""|"cartes_bancaires"|"mastercard"|"visa" preferred?;
-};
-
 # 
 public type IssuingTransactionList record {
     Issuing\.transaction[] data;
@@ -16551,6 +16584,10 @@ public type IssuingTransactionList record {
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000, pattern: re `^/v1/issuing/transactions`}
     string url;
+};
+
+public type networks_update_api_param record {
+    ""|"cartes_bancaires"|"mastercard"|"visa" preferred?;
 };
 
 public type calculation_line_item record {
@@ -16569,13 +16606,6 @@ public type Payment_method_klarna record {
     # The customer's date of birth, if provided.
     Payment_flows_private_payment_methods_klarna_dob? dob?;
 };
-
-public type payment_method_domains_payment_method_domain_body record {|
-    # Whether this payment method domain is enabled. If the domain is not enabled, payment methods that require a payment method domain will not appear in Elements.
-    boolean enabled?;
-    # Specifies which fields in the response should be expanded.
-    payment_method_domains_payment_method_domain_bodyExpandItemsString[] expand?;
-|};
 
 public type connect_js_account_token_company_specs record {
     legal_entity_and_kyc_address_specs address?;
@@ -16609,6 +16639,13 @@ public type connect_js_account_token_company_specs record {
     string vat_id?;
     verification_specs verification?;
 };
+
+public type payment_method_domains_payment_method_domain_body record {|
+    # Whether this payment method domain is enabled. If the domain is not enabled, payment methods that require a payment method domain will not appear in Elements.
+    boolean enabled?;
+    # Specifies which fields in the response should be expanded.
+    payment_method_domains_payment_method_domain_bodyExpandItemsString[] expand?;
+|};
 
 # Represents the Queries record for the operation: GetCustomersCustomerCashBalanceTransactionsTransaction
 public type GetCustomersCustomerCashBalanceTransactionsTransactionQueries record {
@@ -16693,6 +16730,14 @@ public type merchant_postal_address record {
 };
 
 # 
+public type Account_bacs_debit_payments_settings record {
+    # The Bacs Direct Debit display name for this account. For payments made with Bacs Direct Debit, this name appears on the mandate as the statement descriptor. Mobile banking apps display it as the name of the business. To use custom branding, set the Bacs Direct Debit Display Name during or right after creation. Custom branding incurs an additional monthly fee for the platform. The fee appears 5 business days after requesting Bacs. If you don't set the display name before requesting Bacs capability, it's automatically set as "Stripe" and the account is onboarded to Stripe branding, which is free.
+    string? display_name?;
+    # The Bacs Direct Debit Service user number for this account. For payments made with Bacs Direct Debit, this number is a unique identifier of the account with our banking partners.
+    string? service_user_number?;
+};
+
+# 
 public type Payment_method_options_revolut_pay record {
     # Controls when the funds will be captured from the customer's account.
     "manual" capture_method?;
@@ -16702,14 +16747,6 @@ public type Payment_method_options_revolut_pay record {
     # 
     # When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
     "none"|"off_session" setup_future_usage?;
-};
-
-# 
-public type Account_bacs_debit_payments_settings record {
-    # The Bacs Direct Debit display name for this account. For payments made with Bacs Direct Debit, this name appears on the mandate as the statement descriptor. Mobile banking apps display it as the name of the business. To use custom branding, set the Bacs Direct Debit Display Name during or right after creation. Custom branding incurs an additional monthly fee for the platform. The fee appears 5 business days after requesting Bacs. If you don't set the display name before requesting Bacs capability, it's automatically set as "Stripe" and the account is onboarded to Stripe branding, which is free.
-    string? display_name?;
-    # The Bacs Direct Debit Service user number for this account. For payments made with Bacs Direct Debit, this number is a unique identifier of the account with our banking partners.
-    string? service_user_number?;
 };
 
 # 
@@ -16783,8 +16820,6 @@ public type Api_errors record {
     "api_error"|"card_error"|"idempotency_error"|"invalid_request_error" 'type;
 };
 
-public type setup_intents_intent_bodyExpandItemsString string;
-
 # Represents the Queries record for the operation: GetBalanceTransactions
 public type GetBalanceTransactionsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -16811,6 +16846,8 @@ public type GetBalanceTransactionsQueries record {
     @constraint:String {maxLength: 5000}
     string 'type?;
 };
+
+public type setup_intents_intent_bodyExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetPayoutsQueriesExpandItemsString string;
@@ -16889,14 +16926,16 @@ public type Tax\.calculation_line_item record {
 @constraint:String {maxLength: 5000}
 public type Account_future_requirementsPastdueItemsString string;
 
+public type invoiceitems_bodyExpandItemsString string;
+
+public type controller_dashboard_specs record {
+    "express"|"full"|"none" 'type?;
+};
+
 public type Deleted_terminal\.reader record {
     true deleted;
     string id;
     "terminal.reader" 'object;
-};
-
-public type controller_dashboard_specs record {
-    "express"|"full"|"none" 'type?;
 };
 
 # 
@@ -16961,14 +17000,14 @@ public type Payment_method_details_promptpay record {
     string? reference?;
 };
 
-public type invoice_mark_uncollectible_bodyExpandItemsString string;
-
 public type tokens_token_body record {|
     # Specifies which fields in the response should be expanded.
     tokens_token_bodyExpandItemsString[] expand?;
     # Specifies which status the token should be updated to.
     "active"|"deleted"|"suspended" status;
 |};
+
+public type invoice_mark_uncollectible_bodyExpandItemsString string;
 
 # 
 public type Customer_balance_resource_cash_balance_transaction_resource_unapplied_from_payment_transaction record {
@@ -17051,11 +17090,7 @@ public type GetCustomersSearchQueriesExpandItemsString string;
 @constraint:String {maxLength: 5000}
 public type Person_requirementsEventuallydueItemsString string;
 
-# 
-public type Payment_method_details_card_installments record {
-    # Installment plan selected for the payment.
-    Payment_method_details_card_installments_plan? plan?;
-};
+public type link_account_sessions_bodyExpandItemsString string;
 
 # 
 public type Account_payout_settings record {
@@ -17064,6 +17099,12 @@ public type Account_payout_settings record {
     Transfer_schedule schedule;
     # The text that appears on the bank account statement for payouts. If not set, this defaults to the platform's bank descriptor as set in the Dashboard.
     string? statement_descriptor?;
+};
+
+# 
+public type Payment_method_details_card_installments record {
+    # Installment plan selected for the payment.
+    Payment_method_details_card_installments_plan? plan?;
 };
 
 # 
@@ -17183,6 +17224,12 @@ public type accounts_account_body record {|
     tos_acceptance_specs tos_acceptance?;
 |};
 
+# Represents the Queries record for the operation: GetTreasuryTransactionsId
+public type GetTreasuryTransactionsIdQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetTreasuryTransactionsIdQueriesExpandItemsString[] expand?;
+};
+
 public type postal_address record {
     string|"" city?;
     @constraint:String {maxLength: 5000}
@@ -17191,12 +17238,6 @@ public type postal_address record {
     string|"" line2?;
     string|"" postal_code?;
     string|"" state?;
-};
-
-# Represents the Queries record for the operation: GetTreasuryTransactionsId
-public type GetTreasuryTransactionsIdQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetTreasuryTransactionsIdQueriesExpandItemsString[] expand?;
 };
 
 # 
@@ -17274,9 +17315,9 @@ public type Issuing\.dispute record {
     Issuing_dispute_treasury? treasury?;
 };
 
-public type customer_balance_transactions_bodyExpandItemsString string;
-
 public type financial_account_features_bodyExpandItemsString string;
+
+public type customer_balance_transactions_bodyExpandItemsString string;
 
 public type personalization_design_activate_bodyExpandItemsString string;
 
@@ -17323,50 +17364,6 @@ public type GetAccountsAccountCapabilitiesQueries record {
 
 @constraint:String {maxLength: 5000}
 public type GetReportingReportTypesQueriesExpandItemsString string;
-
-public type v1_invoiceitems_body record {|
-    # The integer amount in cents (or local equivalent) of the charge to be applied to the upcoming invoice. Passing in a negative `amount` will reduce the `amount_due` on the invoice.
-    int amount?;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency?;
-    # The ID of the customer who will be billed when this invoice item is billed.
-    @constraint:String {maxLength: 5000}
-    string customer;
-    # An arbitrary string which you can attach to the invoice item. The description is displayed in the invoice for easy tracking.
-    @constraint:String {maxLength: 5000}
-    string description?;
-    # Controls whether discounts apply to this invoice item. Defaults to false for prorations or negative invoice items, and true for all other invoice items.
-    boolean discountable?;
-    # The coupons and promotion codes to redeem into discounts for the invoice item or invoice line item.
-    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
-    # Specifies which fields in the response should be expanded.
-    v1_invoiceitems_bodyExpandItemsString[] expand?;
-    # The ID of an existing invoice to add this invoice item to. When left blank, the invoice item will be added to the next upcoming scheduled invoice. This is useful when adding invoice items in response to an invoice.created webhook. You can only add invoice items to draft invoices and there is a maximum of 250 items per invoice.
-    @constraint:String {maxLength: 5000}
-    string invoice?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    period period?;
-    # The ID of the price object. One of `price` or `price_data` is required.
-    @constraint:String {maxLength: 5000}
-    string price?;
-    one_time_price_data price_data?;
-    # Non-negative integer. The quantity of units for the invoice item.
-    int quantity?;
-    # The ID of a subscription to add this invoice item to. When left blank, the invoice item is added to the next upcoming scheduled invoice. When set, scheduled invoices for subscriptions other than the specified subscription will ignore the invoice item. Use this when you want to express that an invoice item has been accrued within the context of a particular subscription.
-    @constraint:String {maxLength: 5000}
-    string subscription?;
-    # Only required if a [default tax behavior](https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)) was not provided in the Stripe Tax settings. Specifies whether the price is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`. Once specified as either `inclusive` or `exclusive`, it cannot be changed.
-    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
-    # A [tax code](https://stripe.com/docs/tax/tax-categories) ID.
-    string|"" tax_code?;
-    # The tax rates which apply to the invoice item. When set, the `default_tax_rates` on the invoice do not apply to this invoice item.
-    v1_invoiceitems_bodyTaxratesItemsString[] tax_rates?;
-    # The integer unit amount in cents (or local equivalent) of the charge to be applied to the upcoming invoice. This `unit_amount` will be multiplied by the quantity to get the full amount. Passing in a negative `unit_amount` will reduce the `amount_due` on the invoice.
-    int unit_amount?;
-    # Same as `unit_amount`, but accepts a decimal value in cents (or local equivalent) with at most 12 decimal places. Only one of `unit_amount` and `unit_amount_decimal` can be set.
-    string unit_amount_decimal?;
-|};
 
 public type ProductsItemsObject record {
     ProductsItemsObjectPricesItemsString[] prices;
@@ -17732,6 +17729,8 @@ public type Account_capabilities record {
     "active"|"inactive"|"pending" zip_payments?;
 };
 
+public type payment_intents_bodyPaymentmethodtypesItemsString string;
+
 # 
 public type Invoice_line_item_period record {
     # The end of the period, which must be greater than or equal to the start. This value is inclusive.
@@ -17791,8 +17790,6 @@ public type line_item_params record {
 
 @constraint:String {maxLength: 5000}
 public type GetPaymentMethodsPaymentMethodQueriesExpandItemsString string;
-
-public type v1_sources_bodyExpandItemsString string;
 
 # FinancialAddresses contain identifying information that resolves to a FinancialAccount.
 public type Treasury_financial_accounts_resource_financial_address record {
@@ -17878,6 +17875,8 @@ public type terminal_readers_body record {|
     string registration_code;
 |};
 
+public type billing_meters_bodyExpandItemsString string;
+
 # 
 public type Connect_embedded_payments_features record {
     # Whether to allow capturing and cancelling payment intents. This is `true` by default.
@@ -17888,15 +17887,6 @@ public type Connect_embedded_payments_features record {
     boolean dispute_management;
     # Whether to allow sending refunds. This is `true` by default.
     boolean refund_management;
-};
-
-public type billing_meters_bodyExpandItemsString string;
-
-# The business information shown to customers in the portal.
-public type business_profile_update_param record {
-    string|"" headline?;
-    string|"" privacy_policy_url?;
-    string|"" terms_of_service_url?;
 };
 
 # 
@@ -17918,6 +17908,13 @@ public type Payment_links_resource_payment_intent_data record {
 };
 
 public type application string|"";
+
+# The business information shown to customers in the portal.
+public type business_profile_update_param record {
+    string|"" headline?;
+    string|"" privacy_policy_url?;
+    string|"" terms_of_service_url?;
+};
 
 # 
 public type Gelato_phone_report_error record {
@@ -18003,13 +18000,13 @@ public type Sepa_debit_generated_from record {
     string|Setup_attempt? setup_attempt?;
 };
 
-public type External_account Bank_account|Card;
-
 # Represents the Queries record for the operation: GetShippingRatesShippingRateToken
 public type GetShippingRatesShippingRateTokenQueries record {
     # Specifies which fields in the response should be expanded.
     GetShippingRatesShippingRateTokenQueriesExpandItemsString[] expand?;
 };
+
+public type External_account Bank_account|Card;
 
 # 
 public type Payment_method_giropay record {
@@ -18036,8 +18033,6 @@ public type dispute_close_body record {|
     # Specifies which fields in the response should be expanded.
     dispute_close_bodyExpandItemsString[] expand?;
 |};
-
-public type v1_payment_methods_bodyExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetTopupsQueriesExpandItemsString string;
@@ -18072,8 +18067,6 @@ public type Checkout_pix_payment_method_options record {
     int? expires_after_seconds?;
 };
 
-public type linked_account_options_filters_paramAccountsubcategoriesItemsString "checking"|"savings";
-
 # This hash contains the features the Payment Element supports.
 public type Customer_session_resource_components_resource_payment_element_resource_features record {
     # A list of [`allow_redisplay`](https://docs.stripe.com/api/payment_methods/object#payment_method_object-allow_redisplay) values that controls which saved payment methods the Payment Element displays by filtering to only show payment methods with an `allow_redisplay` value that is present in this list.
@@ -18097,6 +18090,8 @@ public type Customer_session_resource_components_resource_payment_element_resour
     # When using SetupIntents, directly configure the [`usage`](https://docs.stripe.com/api/setup_intents/object#setup_intent_object-usage) value on SetupIntent creation.
     "off_session"|"on_session"? payment_method_save_usage?;
 };
+
+public type linked_account_options_filters_paramAccountsubcategoriesItemsString "checking"|"savings";
 
 public type schedule_details_params_2 record {
     "cancel"|"release" end_behavior?;
@@ -18176,6 +18171,28 @@ public type GetCountrySpecsQueriesExpandItemsString string;
 @constraint:String {maxLength: 5000}
 public type GetFileLinksQueriesExpandItemsString string;
 
+public type transfers_body record {|
+    # A positive integer in cents (or local equivalent) representing how much to transfer.
+    int amount?;
+    # 3-letter [ISO code for currency](https://stripe.com/docs/payouts).
+    string currency;
+    # An arbitrary string attached to the object. Often useful for displaying to users.
+    @constraint:String {maxLength: 5000}
+    string description?;
+    # The ID of a connected Stripe account. <a href="/docs/connect/separate-charges-and-transfers">See the Connect documentation</a> for details.
+    string destination;
+    # Specifies which fields in the response should be expanded.
+    transfers_bodyExpandItemsString[] expand?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # You can use this parameter to transfer funds from a charge before they are added to your available balance. A pending balance will transfer immediately but the funds will not become available until the original charge becomes available. [See the Connect documentation](https://stripe.com/docs/connect/separate-charges-and-transfers#transfer-availability) for details.
+    string source_transaction?;
+    # The source balance to use for this transfer. One of `bank_account`, `card`, or `fpx`. For most users, this will default to `card`.
+    "bank_account"|"card"|"fpx" source_type?;
+    # A string that identifies this transaction as part of a group. See the [Connect documentation](https://stripe.com/docs/connect/separate-charges-and-transfers#transfer-options) for details.
+    string transfer_group?;
+|};
+
 @constraint:String {maxLength: 5000}
 public type GetDisputesQueriesExpandItemsString string;
 
@@ -18194,15 +18211,6 @@ public type GetInvoicesInvoiceLinesQueries record {
     @constraint:String {maxLength: 5000}
     string starting_after?;
 };
-
-public type v1_customer_sessions_body record {|
-    components components;
-    # The ID of an existing customer for which to create the Customer Session.
-    @constraint:String {maxLength: 5000}
-    string customer;
-    # Specifies which fields in the response should be expanded.
-    v1_customer_sessions_bodyExpandItemsString[] expand?;
-|};
 
 # Refund objects allow you to refund a previously created charge that isn't
 # refunded yet. Funds are refunded to the credit or debit card that's
@@ -18447,6 +18455,8 @@ public type default record {
     "standard" 'type;
 };
 
+public type invoice_void_bodyExpandItemsString string;
+
 # Updated shipping information for the card.
 public type shipping_specs_1 record {
     required_address address;
@@ -18460,8 +18470,6 @@ public type shipping_specs_1 record {
     "bulk"|"individual" 'type?;
 };
 
-public type invoice_void_bodyExpandItemsString string;
-
 # 
 public type Legal_entity_ubo_declaration record {
     # The Unix timestamp marking when the beneficial owner attestation was made.
@@ -18472,13 +18480,13 @@ public type Legal_entity_ubo_declaration record {
     string? user_agent?;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetTreasuryReceivedCreditsIdQueriesExpandItemsString string;
+
 public type ephemeral_keys_key_body record {|
     # Specifies which fields in the response should be expanded.
     ephemeral_keys_key_bodyExpandItemsString[] expand?;
 |};
-
-@constraint:String {maxLength: 5000}
-public type GetTreasuryReceivedCreditsIdQueriesExpandItemsString string;
 
 # 
 public type Issuing_card_apple_pay record {
@@ -18560,17 +18568,17 @@ public type GetCustomersCustomerCashBalanceQueries record {
     GetCustomersCustomerCashBalanceQueriesExpandItemsString[] expand?;
 };
 
-# Represents the Queries record for the operation: GetReviewsReview
-public type GetReviewsReviewQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetReviewsReviewQueriesExpandItemsString[] expand?;
-};
-
 # Configuration for the components supported by this Customer Session.
 public type Customer_session_resource_components record {
     Customer_session_resource_components_resource_buy_button buy_button;
     Customer_session_resource_components_resource_payment_element payment_element;
     Customer_session_resource_components_resource_pricing_table pricing_table;
+};
+
+# Represents the Queries record for the operation: GetReviewsReview
+public type GetReviewsReviewQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetReviewsReviewQueriesExpandItemsString[] expand?;
 };
 
 # Information about fuel that was purchased with this transaction.
@@ -18618,8 +18626,6 @@ public type custom_field_dropdown_param record {
     custom_field_option_param[] options;
 };
 
-public type configurations_configuration_body_1ExpandItemsString string;
-
 # 
 public type Billing_meter_resource_customer_mapping_settings record {
     # The key in the meter event payload to use for mapping the event to a customer.
@@ -18628,6 +18634,8 @@ public type Billing_meter_resource_customer_mapping_settings record {
     # The method for mapping a meter event to a customer.
     "by_id" 'type;
 };
+
+public type configurations_configuration_body_1ExpandItemsString string;
 
 # 
 public type Legal_entity_dob record {
@@ -18827,6 +18835,11 @@ public type GetIssuingDisputesQueriesExpandItemsString string;
 public type Setup_attempt_payment_method_details_link record {
 };
 
+public type features record {
+    @constraint:String {maxLength: 5000}
+    string name;
+};
+
 # Represents the Queries record for the operation: GetBalanceHistory
 public type GetBalanceHistoryQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -18854,24 +18867,17 @@ public type GetBalanceHistoryQueries record {
     string 'type?;
 };
 
-public type features record {
-    @constraint:String {maxLength: 5000}
-    string name;
-};
-
 # 
 public type Payment_pages_checkout_session_phone_number_collection record {
     # Indicates whether phone number collection is enabled for the session
     boolean enabled;
 };
 
-# Hash used to generate the PaymentMethod to be used for this OutboundPayment. Exclusive with `destination_payment_method`.
-public type payment_method_data record {
-    billing_details_inner_params billing_details?;
-    string financial_account?;
-    record {|string...;|} metadata?;
-    "financial_account"|"us_bank_account" 'type;
-    payment_method_param_1 us_bank_account?;
+# Revise an existing invoice. The new invoice will be created in `status=draft`. See the [revision documentation](https://stripe.com/docs/invoicing/invoice-revisions) for more details.
+public type from_invoice record {
+    "revision" action;
+    @constraint:String {maxLength: 5000}
+    string invoice;
 };
 
 # 
@@ -18886,11 +18892,13 @@ public type FinancialReportingFinanceReportRunList record {
     string url;
 };
 
-# Revise an existing invoice. The new invoice will be created in `status=draft`. See the [revision documentation](https://stripe.com/docs/invoicing/invoice-revisions) for more details.
-public type from_invoice record {
-    "revision" action;
-    @constraint:String {maxLength: 5000}
-    string invoice;
+# Hash used to generate the PaymentMethod to be used for this OutboundPayment. Exclusive with `destination_payment_method`.
+public type payment_method_data record {
+    billing_details_inner_params billing_details?;
+    string financial_account?;
+    record {|string...;|} metadata?;
+    "financial_account"|"us_bank_account" 'type;
+    payment_method_param_1 us_bank_account?;
 };
 
 # 
@@ -18899,17 +18907,6 @@ public type Outbound_transfers_payment_method_details record {
     # The type of the payment method used in the OutboundTransfer.
     "us_bank_account" 'type;
     Outbound_transfers_payment_method_details_us_bank_account us_bank_account?;
-};
-
-public type order_item_specs record {
-    int amount?;
-    string currency?;
-    @constraint:String {maxLength: 1000}
-    string description?;
-    @constraint:String {maxLength: 5000}
-    string parent?;
-    int quantity?;
-    "discount"|"shipping"|"sku"|"tax" 'type?;
 };
 
 # 
@@ -18922,7 +18919,16 @@ public type Payment_pages_checkout_session_custom_fields_dropdown record {
     string? value?;
 };
 
-public type v1_customers_bodyPreferredlocalesItemsString string;
+public type order_item_specs record {
+    int amount?;
+    string currency?;
+    @constraint:String {maxLength: 1000}
+    string description?;
+    @constraint:String {maxLength: 5000}
+    string parent?;
+    int quantity?;
+    "discount"|"shipping"|"sku"|"tax" 'type?;
+};
 
 # Automatic tax settings for this subscription. We recommend you only include this parameter when the existing value is being changed.
 public type automatic_tax_config record {
@@ -19012,7 +19018,15 @@ public type Treasury_financial_accounts_resource_financial_addresses_features re
     Treasury_financial_accounts_resource_aba_toggle_settings aba?;
 };
 
-public type v1_payment_intents_bodyExpandItemsString string;
+public type files_body record {|
+    # Specifies which fields in the response should be expanded.
+    files_bodyExpandItemsString[] expand?;
+    # A file to upload. Make sure that the specifications follow RFC 2388, which defines file transfers for the `multipart/form-data` protocol.
+    record {byte[] fileContent; string fileName;} file;
+    file_link_creation_params file_link_data?;
+    # The [purpose](https://stripe.com/docs/file-upload#uploading-a-file) of the uploaded file.
+    "account_requirement"|"additional_verification"|"business_icon"|"business_logo"|"customer_signature"|"dispute_evidence"|"identity_document"|"pci_document"|"tax_document_user_upload"|"terminal_reader_splashscreen" purpose;
+|};
 
 # 
 public type Invoice_payment_method_options_us_bank_account record {
@@ -19248,6 +19262,20 @@ public type invoice_settings_params_1 record {
     record {""|"exclude_tax"|"include_inclusive_tax" amount_tax_display?;}|"" rendering_options?;
 };
 
+# Represents the Queries record for the operation: GetCustomersCustomerSubscriptions
+public type GetCustomersCustomerSubscriptionsQueries record {
+    # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
+    @constraint:String {maxLength: 5000}
+    string ending_before?;
+    # Specifies which fields in the response should be expanded.
+    GetCustomersCustomerSubscriptionsQueriesExpandItemsString[] expand?;
+    # A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    int 'limit?;
+    # A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.
+    @constraint:String {maxLength: 5000}
+    string starting_after?;
+};
+
 # 
 public type Portal_features record {
     Portal_customer_update customer_update;
@@ -19268,19 +19296,21 @@ public type Funding_instructions_bank_transfer record {
     "eu_bank_transfer"|"jp_bank_transfer" 'type;
 };
 
-# Represents the Queries record for the operation: GetCustomersCustomerSubscriptions
-public type GetCustomersCustomerSubscriptionsQueries record {
-    # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
-    @constraint:String {maxLength: 5000}
-    string ending_before?;
+public type link_account_sessions_body record {|
+    accountholder_params_1 account_holder;
     # Specifies which fields in the response should be expanded.
-    GetCustomersCustomerSubscriptionsQueriesExpandItemsString[] expand?;
-    # A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
-    int 'limit?;
-    # A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.
+    link_account_sessions_bodyExpandItemsString[] expand?;
+    filters_params filters?;
+    # List of data features that you would like to request access to.
+    # 
+    # Possible values are `balances`, `transactions`, `ownership`, and `payment_method`.
+    (link_account_sessions_bodyPermissionsItemsString)[] permissions;
+    # List of data features that you would like to retrieve upon account creation.
+    ("balances"|"ownership"|"transactions")[] prefetch?;
+    # For webview integrations only. Upon completing OAuth login in the native browser, the user will be redirected to this URL to return to your app.
     @constraint:String {maxLength: 5000}
-    string starting_after?;
-};
+    string return_url?;
+|};
 
 public type united_states record {
     local_amusement_tax local_amusement_tax?;
@@ -19321,6 +19351,8 @@ public type tipping_config record {
 public type currency_option_1 record {
     int amount_off;
 };
+
+public type tokens_bodyExpandItemsString string;
 
 # Represents the Queries record for the operation: GetIssuingCardholders
 public type GetIssuingCardholdersQueries record {
@@ -19375,12 +19407,6 @@ public type Mandate record {
 
 public type session_cancel_bodyExpandItemsString string;
 
-# End user details.
-public type end_user_details_params record {
-    string ip_address?;
-    boolean present;
-};
-
 # If you have [scheduled a Sigma query](https://stripe.com/docs/sigma/scheduled-queries), you'll
 # receive a `sigma.scheduled_query_run.created` webhook each time the query
 # runs. The webhook contains a `ScheduledQueryRun` object, which you can use to
@@ -19411,6 +19437,12 @@ public type Scheduled_query_run record {
     # Title of the query.
     @constraint:String {maxLength: 5000}
     string title;
+};
+
+# End user details.
+public type end_user_details_params record {
+    string ip_address?;
+    boolean present;
 };
 
 # A Quote is a way to model prices that you'd like to provide to a customer.
@@ -19489,6 +19521,24 @@ public type Setup_attempt_payment_method_details_paypal record {
 @constraint:String {maxLength: 5000}
 public type GetChargesChargeDisputeQueriesExpandItemsString string;
 
+public type shipping_rates_body record {|
+    delivery_estimate_1 delivery_estimate?;
+    # The name of the shipping rate, meant to be displayable to the customer. This will appear on CheckoutSessions.
+    @constraint:String {maxLength: 100}
+    string display_name;
+    # Specifies which fields in the response should be expanded.
+    shipping_rates_bodyExpandItemsString[] expand?;
+    fixed_amount_1 fixed_amount?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # Specifies whether the rate is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`.
+    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
+    # A [tax code](https://stripe.com/docs/tax/tax-categories) ID. The Shipping tax code is `txcd_92010001`.
+    string tax_code?;
+    # The type of calculation to use on the shipping rate.
+    "fixed_amount" 'type?;
+|};
+
 # 
 public type ExternalAccountList record {
     # The list contains all external accounts that have been attached to the Stripe account. These may be bank accounts or cards.
@@ -19505,7 +19555,11 @@ public type ExternalAccountList record {
 @constraint:String {maxLength: 5000}
 public type GetInvoiceitemsInvoiceitemQueriesExpandItemsString string;
 
-public type v1_charges_bodyExpandItemsString string;
+@constraint:String {maxLength: 5000}
+public type GetTestHelpersTestClocksTestClockQueriesExpandItemsString string;
+
+@constraint:String {maxLength: 5000}
+public type GetSubscriptionItemsQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetCreditNotesPreviewLines
 public type GetCreditNotesPreviewLinesQueries record {
@@ -19548,12 +19602,6 @@ public type GetCreditNotesPreviewLinesQueries record {
     # ID of an existing refund to link this credit note to.
     string refund?;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetSubscriptionItemsQueriesExpandItemsString string;
-
-@constraint:String {maxLength: 5000}
-public type GetTestHelpersTestClocksTestClockQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetCustomersCustomerBalanceTransactionsTransaction
 public type GetCustomersCustomerBalanceTransactionsTransactionQueries record {
@@ -19632,6 +19680,8 @@ public type GetChargesChargeRefundsQueries record {
     string starting_after?;
 };
 
+public type canceled_at record {int gt?; int gte?; int lt?; int lte?;}|int;
+
 public type charge_refunds_body record {|
     int amount?;
     # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
@@ -19657,8 +19707,6 @@ public type charge_refunds_body record {|
     # Boolean indicating whether the transfer should be reversed when refunding this charge. The transfer will be reversed proportionally to the amount being refunded (either the entire or partial amount).<br><br>A transfer can be reversed only by the application that created the charge.
     boolean reverse_transfer?;
 |};
-
-public type canceled_at record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type cards_id_body_1 record {|
     # Specifies which fields in the response should be expanded.
@@ -19699,7 +19747,7 @@ public type order_shipping record {
     string tracking_number?;
 };
 
-public type v1_account_links_bodyExpandItemsString string;
+public type customer_cards_bodyExpandItemsString string;
 
 # Specific options for a registration in the specified `country`.
 public type country_options record {
@@ -19761,8 +19809,6 @@ public type country_options record {
     default za?;
 };
 
-public type customer_cards_bodyExpandItemsString string;
-
 # 
 public type Issuing_dispute_not_received_evidence record {
     # (ID of a [file upload](https://stripe.com/docs/guides/file-upload)) Additional documentation supporting the dispute.
@@ -19788,6 +19834,8 @@ public type cart record {
     int tax?;
     int total;
 };
+
+public type customers_bodyExpandItemsString string;
 
 # 
 public type Payment_pages_checkout_session_invoice_creation record {
@@ -19837,8 +19885,6 @@ public type Checkout_card_payment_method_options record {
     string statement_descriptor_suffix_kanji?;
 };
 
-public type v1_shipping_rates_bodyExpandItemsString string;
-
 # Represents the Queries record for the operation: GetTestHelpersTestClocksTestClock
 public type GetTestHelpersTestClocksTestClockQueries record {
     # Specifies which fields in the response should be expanded.
@@ -19868,8 +19914,6 @@ public type Payment_method_p24 record {
     "alior_bank"|"bank_millennium"|"bank_nowy_bfg_sa"|"bank_pekao_sa"|"banki_spbdzielcze"|"blik"|"bnp_paribas"|"boz"|"citi_handlowy"|"credit_agricole"|"envelobank"|"etransfer_pocztowy24"|"getin_bank"|"ideabank"|"ing"|"inteligo"|"mbank_mtransfer"|"nest_przelew"|"noble_pay"|"pbac_z_ipko"|"plus_bank"|"santander_przelew24"|"tmobile_usbugi_bankowe"|"toyota_bank"|"velobank"|"volkswagen_bank"? bank?;
 };
 
-public type account_reject_bodyExpandItemsString string;
-
 # 
 public type Terminal_configuration_configuration_resource_tipping record {
     Terminal_configuration_configuration_resource_currency_specific_config aud?;
@@ -19888,7 +19932,7 @@ public type Terminal_configuration_configuration_resource_tipping record {
     Terminal_configuration_configuration_resource_currency_specific_config usd?;
 };
 
-public type v1_products_bodyExpandItemsString string;
+public type account_reject_bodyExpandItemsString string;
 
 public type all_people_relationship_specs_1 record {
     boolean director?;
@@ -19898,45 +19942,7 @@ public type all_people_relationship_specs_1 record {
     boolean representative?;
 };
 
-public type v1_prices_body record {|
-    # Whether the price can be used for new purchases. Defaults to `true`.
-    boolean active?;
-    # Describes how to compute the price per period. Either `per_unit` or `tiered`. `per_unit` indicates that the fixed amount (specified in `unit_amount` or `unit_amount_decimal`) will be charged per unit in `quantity` (for prices with `usage_type=licensed`), or per unit of total usage (for prices with `usage_type=metered`). `tiered` indicates that the unit pricing will be computed using a tiering strategy as defined using the `tiers` and `tiers_mode` attributes.
-    "per_unit"|"tiered" billing_scheme?;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency;
-    # Prices defined in each available currency option. Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
-    record {|currency_option_2...;|} currency_options?;
-    custom_unit_amount_1 custom_unit_amount?;
-    # Specifies which fields in the response should be expanded.
-    v1_prices_bodyExpandItemsString[] expand?;
-    # A lookup key used to retrieve prices dynamically from a static string. This may be up to 200 characters.
-    @constraint:String {maxLength: 200}
-    string lookup_key?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # A brief description of the price, hidden from customers.
-    @constraint:String {maxLength: 5000}
-    string nickname?;
-    # The ID of the product that this price will belong to.
-    @constraint:String {maxLength: 5000}
-    string product?;
-    inline_product_params product_data?;
-    recurring recurring?;
-    # Only required if a [default tax behavior](https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)) was not provided in the Stripe Tax settings. Specifies whether the price is considered inclusive of taxes or exclusive of taxes. One of `inclusive`, `exclusive`, or `unspecified`. Once specified as either `inclusive` or `exclusive`, it cannot be changed.
-    "exclusive"|"inclusive"|"unspecified" tax_behavior?;
-    # Each element represents a pricing tier. This parameter requires `billing_scheme` to be set to `tiered`. See also the documentation for `billing_scheme`.
-    tier[] tiers?;
-    # Defines if the tiering price should be `graduated` or `volume` based. In `volume`-based tiering, the maximum quantity within a period determines the per unit price, in `graduated` tiering pricing can successively change as the quantity grows.
-    "graduated"|"volume" tiers_mode?;
-    # If set to true, will atomically remove the lookup key from the existing price, and assign it to this price.
-    boolean transfer_lookup_key?;
-    transform_usage_param transform_quantity?;
-    # A positive integer in cents (or local equivalent) (or 0 for a free price) representing how much to charge. One of `unit_amount`, `unit_amount_decimal`, or `custom_unit_amount` is required, unless `billing_scheme=tiered`.
-    int unit_amount?;
-    # Same as `unit_amount`, but accepts a decimal value in cents (or local equivalent) with at most 12 decimal places. Only one of `unit_amount` and `unit_amount_decimal` can be set.
-    string unit_amount_decimal?;
-|};
+public type link_account_sessions_bodyPermissionsItemsString "balances"|"ownership"|"payment_method"|"transactions";
 
 # 
 public type Payment_method_options_card_mandate_options record {
@@ -19974,6 +19980,12 @@ public type amount_details_specs record {
     int cashback_amount?;
 };
 
+public type customer_cash_balance_body record {|
+    # Specifies which fields in the response should be expanded.
+    customer_cash_balance_bodyExpandItemsString[] expand?;
+    balance_settings_param_1 settings?;
+|};
+
 public type credit_note_line_item_params record {
     int amount?;
     @constraint:String {maxLength: 5000}
@@ -19987,12 +19999,6 @@ public type credit_note_line_item_params record {
     int unit_amount?;
     string unit_amount_decimal?;
 };
-
-public type customer_cash_balance_body record {|
-    # Specifies which fields in the response should be expanded.
-    customer_cash_balance_bodyExpandItemsString[] expand?;
-    balance_settings_param_1 settings?;
-|};
 
 public type quote_cancel_body record {|
     # Specifies which fields in the response should be expanded.
@@ -20049,16 +20055,6 @@ public type Payment_method_details_multibanco record {
     string? reference?;
 };
 
-public type v1_tax_ids_body record {|
-    # Specifies which fields in the response should be expanded.
-    v1_tax_ids_bodyExpandItemsString[] expand?;
-    owner_params_1 owner?;
-    # Type of the tax ID, one of `ad_nrt`, `ae_trn`, `ar_cuit`, `au_abn`, `au_arn`, `bg_uic`, `bh_vat`, `bo_tin`, `br_cnpj`, `br_cpf`, `ca_bn`, `ca_gst_hst`, `ca_pst_bc`, `ca_pst_mb`, `ca_pst_sk`, `ca_qst`, `ch_uid`, `ch_vat`, `cl_tin`, `cn_tin`, `co_nit`, `cr_tin`, `de_stn`, `do_rcn`, `ec_ruc`, `eg_tin`, `es_cif`, `eu_oss_vat`, `eu_vat`, `gb_vat`, `ge_vat`, `hk_br`, `hu_tin`, `id_npwp`, `il_vat`, `in_gst`, `is_vat`, `jp_cn`, `jp_rn`, `jp_trn`, `ke_pin`, `kr_brn`, `kz_bin`, `li_uid`, `mx_rfc`, `my_frp`, `my_itn`, `my_sst`, `ng_tin`, `no_vat`, `no_voec`, `nz_gst`, `om_vat`, `pe_ruc`, `ph_tin`, `ro_tin`, `rs_pib`, `ru_inn`, `ru_kpp`, `sa_vat`, `sg_gst`, `sg_uen`, `si_tin`, `sv_nit`, `th_vat`, `tr_tin`, `tw_vat`, `ua_vat`, `us_ein`, `uy_ruc`, `ve_rif`, `vn_tin`, or `za_vat`
-    "ad_nrt"|"ae_trn"|"ar_cuit"|"au_abn"|"au_arn"|"bg_uic"|"bh_vat"|"bo_tin"|"br_cnpj"|"br_cpf"|"ca_bn"|"ca_gst_hst"|"ca_pst_bc"|"ca_pst_mb"|"ca_pst_sk"|"ca_qst"|"ch_uid"|"ch_vat"|"cl_tin"|"cn_tin"|"co_nit"|"cr_tin"|"de_stn"|"do_rcn"|"ec_ruc"|"eg_tin"|"es_cif"|"eu_oss_vat"|"eu_vat"|"gb_vat"|"ge_vat"|"hk_br"|"hu_tin"|"id_npwp"|"il_vat"|"in_gst"|"is_vat"|"jp_cn"|"jp_rn"|"jp_trn"|"ke_pin"|"kr_brn"|"kz_bin"|"li_uid"|"mx_rfc"|"my_frp"|"my_itn"|"my_sst"|"ng_tin"|"no_vat"|"no_voec"|"nz_gst"|"om_vat"|"pe_ruc"|"ph_tin"|"ro_tin"|"rs_pib"|"ru_inn"|"ru_kpp"|"sa_vat"|"sg_gst"|"sg_uen"|"si_tin"|"sv_nit"|"th_vat"|"tr_tin"|"tw_vat"|"ua_vat"|"us_ein"|"uy_ruc"|"ve_rif"|"vn_tin"|"za_vat" 'type;
-    # Value of the tax ID.
-    string value;
-|};
-
 # Represents the Queries record for the operation: GetCountrySpecs
 public type GetCountrySpecsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -20088,6 +20084,18 @@ public type CustomerCashBalanceTransactionList record {
     @constraint:String {maxLength: 5000}
     string url;
 };
+
+public type file_links_body record {|
+    # Specifies which fields in the response should be expanded.
+    file_links_bodyExpandItemsString[] expand?;
+    # The link isn't usable after this future timestamp.
+    int expires_at?;
+    # The ID of the file. The file's `purpose` must be one of the following: `business_icon`, `business_logo`, `customer_signature`, `dispute_evidence`, `finance_report_run`, `identity_document_downloadable`, `pci_document`, `selfie`, `sigma_scheduled_query`, `tax_document_user_upload`, or `terminal_reader_splashscreen`.
+    @constraint:String {maxLength: 5000}
+    string file;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+|};
 
 @constraint:String {maxLength: 5000}
 public type GetRefundsRefundQueriesExpandItemsString string;
@@ -20204,6 +20212,23 @@ public type Payment_method_options_giropay record {
     "none" setup_future_usage?;
 };
 
+public type webhook_endpoints_body record {|
+    # Events sent to this endpoint will be generated with this Stripe Version instead of your account's default Stripe Version.
+    "2011-01-01"|"2011-06-21"|"2011-06-28"|"2011-08-01"|"2011-09-15"|"2011-11-17"|"2012-02-23"|"2012-03-25"|"2012-06-18"|"2012-06-28"|"2012-07-09"|"2012-09-24"|"2012-10-26"|"2012-11-07"|"2013-02-11"|"2013-02-13"|"2013-07-05"|"2013-08-12"|"2013-08-13"|"2013-10-29"|"2013-12-03"|"2014-01-31"|"2014-03-13"|"2014-03-28"|"2014-05-19"|"2014-06-13"|"2014-06-17"|"2014-07-22"|"2014-07-26"|"2014-08-04"|"2014-08-20"|"2014-09-08"|"2014-10-07"|"2014-11-05"|"2014-11-20"|"2014-12-08"|"2014-12-17"|"2014-12-22"|"2015-01-11"|"2015-01-26"|"2015-02-10"|"2015-02-16"|"2015-02-18"|"2015-03-24"|"2015-04-07"|"2015-06-15"|"2015-07-07"|"2015-07-13"|"2015-07-28"|"2015-08-07"|"2015-08-19"|"2015-09-03"|"2015-09-08"|"2015-09-23"|"2015-10-01"|"2015-10-12"|"2015-10-16"|"2016-02-03"|"2016-02-19"|"2016-02-22"|"2016-02-23"|"2016-02-29"|"2016-03-07"|"2016-06-15"|"2016-07-06"|"2016-10-19"|"2017-01-27"|"2017-02-14"|"2017-04-06"|"2017-05-25"|"2017-06-05"|"2017-08-15"|"2017-12-14"|"2018-01-23"|"2018-02-05"|"2018-02-06"|"2018-02-28"|"2018-05-21"|"2018-07-27"|"2018-08-23"|"2018-09-06"|"2018-09-24"|"2018-10-31"|"2018-11-08"|"2019-02-11"|"2019-02-19"|"2019-03-14"|"2019-05-16"|"2019-08-14"|"2019-09-09"|"2019-10-08"|"2019-10-17"|"2019-11-05"|"2019-12-03"|"2020-03-02"|"2020-08-27"|"2022-08-01"|"2022-11-15"|"2023-08-16"|"2023-10-16"|"2024-04-10"|"2024-06-20" api_version?;
+    # Whether this endpoint should receive events from connected accounts (`true`), or from your account (`false`). Defaults to `false`.
+    boolean connect?;
+    # An optional description of what the webhook is used for.
+    string|"" description?;
+    # The list of events to enable for this endpoint. You may specify `['*']` to enable all events, except those that require explicit selection.
+    ("*"|"account.application.authorized"|"account.application.deauthorized"|"account.external_account.created"|"account.external_account.deleted"|"account.external_account.updated"|"account.updated"|"application_fee.created"|"application_fee.refund.updated"|"application_fee.refunded"|"balance.available"|"billing_portal.configuration.created"|"billing_portal.configuration.updated"|"billing_portal.session.created"|"capability.updated"|"cash_balance.funds_available"|"charge.captured"|"charge.dispute.closed"|"charge.dispute.created"|"charge.dispute.funds_reinstated"|"charge.dispute.funds_withdrawn"|"charge.dispute.updated"|"charge.expired"|"charge.failed"|"charge.pending"|"charge.refund.updated"|"charge.refunded"|"charge.succeeded"|"charge.updated"|"checkout.session.async_payment_failed"|"checkout.session.async_payment_succeeded"|"checkout.session.completed"|"checkout.session.expired"|"climate.order.canceled"|"climate.order.created"|"climate.order.delayed"|"climate.order.delivered"|"climate.order.product_substituted"|"climate.product.created"|"climate.product.pricing_updated"|"coupon.created"|"coupon.deleted"|"coupon.updated"|"credit_note.created"|"credit_note.updated"|"credit_note.voided"|"customer.created"|"customer.deleted"|"customer.discount.created"|"customer.discount.deleted"|"customer.discount.updated"|"customer.source.created"|"customer.source.deleted"|"customer.source.expiring"|"customer.source.updated"|"customer.subscription.created"|"customer.subscription.deleted"|"customer.subscription.paused"|"customer.subscription.pending_update_applied"|"customer.subscription.pending_update_expired"|"customer.subscription.resumed"|"customer.subscription.trial_will_end"|"customer.subscription.updated"|"customer.tax_id.created"|"customer.tax_id.deleted"|"customer.tax_id.updated"|"customer.updated"|"customer_cash_balance_transaction.created"|"entitlements.active_entitlement_summary.updated"|"file.created"|"financial_connections.account.created"|"financial_connections.account.deactivated"|"financial_connections.account.disconnected"|"financial_connections.account.reactivated"|"financial_connections.account.refreshed_balance"|"financial_connections.account.refreshed_ownership"|"financial_connections.account.refreshed_transactions"|"identity.verification_session.canceled"|"identity.verification_session.created"|"identity.verification_session.processing"|"identity.verification_session.redacted"|"identity.verification_session.requires_input"|"identity.verification_session.verified"|"invoice.created"|"invoice.deleted"|"invoice.finalization_failed"|"invoice.finalized"|"invoice.marked_uncollectible"|"invoice.paid"|"invoice.payment_action_required"|"invoice.payment_failed"|"invoice.payment_succeeded"|"invoice.sent"|"invoice.upcoming"|"invoice.updated"|"invoice.voided"|"invoiceitem.created"|"invoiceitem.deleted"|"issuing_authorization.created"|"issuing_authorization.request"|"issuing_authorization.updated"|"issuing_card.created"|"issuing_card.updated"|"issuing_cardholder.created"|"issuing_cardholder.updated"|"issuing_dispute.closed"|"issuing_dispute.created"|"issuing_dispute.funds_reinstated"|"issuing_dispute.submitted"|"issuing_dispute.updated"|"issuing_personalization_design.activated"|"issuing_personalization_design.deactivated"|"issuing_personalization_design.rejected"|"issuing_personalization_design.updated"|"issuing_token.created"|"issuing_token.updated"|"issuing_transaction.created"|"issuing_transaction.updated"|"mandate.updated"|"payment_intent.amount_capturable_updated"|"payment_intent.canceled"|"payment_intent.created"|"payment_intent.partially_funded"|"payment_intent.payment_failed"|"payment_intent.processing"|"payment_intent.requires_action"|"payment_intent.succeeded"|"payment_link.created"|"payment_link.updated"|"payment_method.attached"|"payment_method.automatically_updated"|"payment_method.detached"|"payment_method.updated"|"payout.canceled"|"payout.created"|"payout.failed"|"payout.paid"|"payout.reconciliation_completed"|"payout.updated"|"person.created"|"person.deleted"|"person.updated"|"plan.created"|"plan.deleted"|"plan.updated"|"price.created"|"price.deleted"|"price.updated"|"product.created"|"product.deleted"|"product.updated"|"promotion_code.created"|"promotion_code.updated"|"quote.accepted"|"quote.canceled"|"quote.created"|"quote.finalized"|"radar.early_fraud_warning.created"|"radar.early_fraud_warning.updated"|"refund.created"|"refund.updated"|"reporting.report_run.failed"|"reporting.report_run.succeeded"|"reporting.report_type.updated"|"review.closed"|"review.opened"|"setup_intent.canceled"|"setup_intent.created"|"setup_intent.requires_action"|"setup_intent.setup_failed"|"setup_intent.succeeded"|"sigma.scheduled_query_run.created"|"source.canceled"|"source.chargeable"|"source.failed"|"source.mandate_notification"|"source.refund_attributes_required"|"source.transaction.created"|"source.transaction.updated"|"subscription_schedule.aborted"|"subscription_schedule.canceled"|"subscription_schedule.completed"|"subscription_schedule.created"|"subscription_schedule.expiring"|"subscription_schedule.released"|"subscription_schedule.updated"|"tax.settings.updated"|"tax_rate.created"|"tax_rate.updated"|"terminal.reader.action_failed"|"terminal.reader.action_succeeded"|"test_helpers.test_clock.advancing"|"test_helpers.test_clock.created"|"test_helpers.test_clock.deleted"|"test_helpers.test_clock.internal_failure"|"test_helpers.test_clock.ready"|"topup.canceled"|"topup.created"|"topup.failed"|"topup.reversed"|"topup.succeeded"|"transfer.created"|"transfer.reversed"|"transfer.updated"|"treasury.credit_reversal.created"|"treasury.credit_reversal.posted"|"treasury.debit_reversal.completed"|"treasury.debit_reversal.created"|"treasury.debit_reversal.initial_credit_granted"|"treasury.financial_account.closed"|"treasury.financial_account.created"|"treasury.financial_account.features_status_updated"|"treasury.inbound_transfer.canceled"|"treasury.inbound_transfer.created"|"treasury.inbound_transfer.failed"|"treasury.inbound_transfer.succeeded"|"treasury.outbound_payment.canceled"|"treasury.outbound_payment.created"|"treasury.outbound_payment.expected_arrival_date_updated"|"treasury.outbound_payment.failed"|"treasury.outbound_payment.posted"|"treasury.outbound_payment.returned"|"treasury.outbound_payment.tracking_details_updated"|"treasury.outbound_transfer.canceled"|"treasury.outbound_transfer.created"|"treasury.outbound_transfer.expected_arrival_date_updated"|"treasury.outbound_transfer.failed"|"treasury.outbound_transfer.posted"|"treasury.outbound_transfer.returned"|"treasury.outbound_transfer.tracking_details_updated"|"treasury.received_credit.created"|"treasury.received_credit.failed"|"treasury.received_credit.succeeded"|"treasury.received_debit.created")[] enabled_events;
+    # Specifies which fields in the response should be expanded.
+    webhook_endpoints_bodyExpandItemsString[] expand?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # The URL of the webhook endpoint.
+    string url;
+|};
+
 # Options for customizing how the account functions within Stripe.
 public type settings_specs record {
     bacs_debit_payments_specs bacs_debit_payments?;
@@ -20251,11 +20276,11 @@ public type Checkout_session_payment_method_options record {
     Checkout_us_bank_account_payment_method_options us_bank_account?;
 };
 
-public type payout_reverse_bodyExpandItemsString string;
+public type filters_paramsCountriesItemsString string;
 
 public type schedule_release_bodyExpandItemsString string;
 
-public type filters_paramsCountriesItemsString string;
+public type payout_reverse_bodyExpandItemsString string;
 
 # Represents the Queries record for the operation: GetApplePayDomainsDomain
 public type GetApplePayDomainsDomainQueries record {
@@ -20263,10 +20288,59 @@ public type GetApplePayDomainsDomainQueries record {
     GetApplePayDomainsDomainQueriesExpandItemsString[] expand?;
 };
 
-public type v1_setup_intents_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetConfirmationTokensConfirmationTokenQueriesExpandItemsString string;
+
+public type customers_body record {|
+    # The customer's address.
+    record {string city?; string country?; string line1?; string line2?; string postal_code?; string state?;}|"" address?;
+    # An integer amount in cents (or local equivalent) that represents the customer's current balance, which affect the customer's future invoices. A negative amount represents a credit that decreases the amount due on an invoice; a positive amount increases the amount due on an invoice.
+    int balance?;
+    cash_balance_param cash_balance?;
+    @constraint:String {maxLength: 5000}
+    string coupon?;
+    # An arbitrary string that you can attach to a customer object. It is displayed alongside the customer in the dashboard.
+    @constraint:String {maxLength: 5000}
+    string description?;
+    # Customer's email address. It's displayed alongside the customer in your dashboard and can be useful for searching and tracking. This may be up to *512 characters*.
+    @constraint:String {maxLength: 512}
+    string email?;
+    # Specifies which fields in the response should be expanded.
+    customers_bodyExpandItemsString[] expand?;
+    # The prefix for the customer used to generate unique invoice numbers. Must be 3–12 uppercase letters or numbers.
+    @constraint:String {maxLength: 5000}
+    string invoice_prefix?;
+    customer_param invoice_settings?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # The customer's full name or business name.
+    @constraint:String {maxLength: 256}
+    string name?;
+    # The sequence to be used on the customer's next invoice. Defaults to 1.
+    int next_invoice_sequence?;
+    @constraint:String {maxLength: 5000}
+    string payment_method?;
+    # The customer's phone number.
+    @constraint:String {maxLength: 20}
+    string phone?;
+    # Customer's preferred languages, ordered by preference.
+    customers_bodyPreferredlocalesItemsString[] preferred_locales?;
+    # The ID of a promotion code to apply to the customer. The customer will have a discount applied on all recurring payments. Charges you create through the API will not have the discount.
+    @constraint:String {maxLength: 5000}
+    string promotion_code?;
+    # The customer's shipping information. Appears on invoices emailed to this customer.
+    record {record {string city?; string country?; string line1?; string line2?; string postal_code?; string state?;} address; string name; string phone?;}|"" shipping?;
+    @constraint:String {maxLength: 5000}
+    string 'source?;
+    tax_param tax?;
+    # The customer's tax exemption. One of `none`, `exempt`, or `reverse`.
+    ""|"exempt"|"none"|"reverse" tax_exempt?;
+    # The customer's tax IDs.
+    data_params[] tax_id_data?;
+    # ID of the test clock to attach to the customer.
+    @constraint:String {maxLength: 5000}
+    string test_clock?;
+|};
 
 public type treasury_outbound_transfers_bodyExpandItemsString string;
 
@@ -20292,14 +20366,14 @@ public type Source_order record {
 
 public type account_login_links_bodyExpandItemsString string;
 
-@constraint:String {maxLength: 5000}
-public type GetRadarEarlyFraudWarningsQueriesExpandItemsString string;
-
 # Represents the Queries record for the operation: GetSourcesSourceSourceTransactionsSourceTransaction
 public type GetSourcesSourceSourceTransactionsSourceTransactionQueries record {
     # Specifies which fields in the response should be expanded.
     GetSourcesSourceSourceTransactionsSourceTransactionQueriesExpandItemsString[] expand?;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetRadarEarlyFraudWarningsQueriesExpandItemsString string;
 
 # Evidence provided for the dispute.
 public type evidence_param record {
@@ -20365,8 +20439,6 @@ public type restrictions_params_1 record {
 public type restrictions_params_2 record {
     record {|currency_option_3...;|} currency_options?;
 };
-
-public type v1_link_account_sessions_bodyPermissionsItemsString "balances"|"ownership"|"payment_method"|"transactions";
 
 # A PaymentIntent guides you through the process of collecting a payment from your customer.
 # We recommend that you create exactly one PaymentIntent for each order or
@@ -20472,29 +20544,6 @@ public type Payment_intent record {
     string? transfer_group?;
 };
 
-public type v1_payouts_body record {|
-    # A positive integer in cents representing how much to payout.
-    int amount;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency;
-    # An arbitrary string attached to the object. Often useful for displaying to users.
-    @constraint:String {maxLength: 5000}
-    string description?;
-    # The ID of a bank account or a card to send the payout to. If you don't provide a destination, we use the default external account for the specified currency.
-    string destination?;
-    # Specifies which fields in the response should be expanded.
-    v1_payouts_bodyExpandItemsString[] expand?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # The method used to send this payout, which is `standard` or `instant`. We support `instant` for payouts to debit cards and bank accounts in certain countries. Learn more about [bank support for Instant Payouts](https://stripe.com/docs/payouts/instant-payouts-banks).
-    "instant"|"standard" method?;
-    # The balance type of your Stripe balance to draw this payout from. Balances for different payment sources are kept separately. You can find the amounts with the Balances API. One of `bank_account`, `card`, or `fpx`.
-    "bank_account"|"card"|"fpx" source_type?;
-    # A string that displays on the recipient's bank or card statement (up to 22 characters). A `statement_descriptor` that's longer than 22 characters return an error. Most banks truncate this information and display it inconsistently. Some banks might not display it at all.
-    @constraint:String {maxLength: 22}
-    string statement_descriptor?;
-|};
-
 # 
 public type Payment_method_details_card_wallet_masterpass record {
     # Owner's verified billing address. Values are verified or provided by the wallet directly (if supported) at the time of authorization or settlement. They cannot be set or mutated.
@@ -20567,6 +20616,13 @@ public type balance_settings_param_1 record {
     "automatic"|"manual"|"merchant_default" reconciliation_mode?;
 };
 
+# Documents that may be submitted to satisfy various informational requests.
+public type person_documents_specs record {
+    documents_param_1 company_authorization?;
+    documents_param_1 passport?;
+    documents_param_1 visa?;
+};
+
 public type required_address record {
     @constraint:String {maxLength: 5000}
     string city;
@@ -20582,21 +20638,14 @@ public type required_address record {
     string state?;
 };
 
-# Documents that may be submitted to satisfy various informational requests.
-public type person_documents_specs record {
-    documents_param_1 company_authorization?;
-    documents_param_1 passport?;
-    documents_param_1 visa?;
-};
-
 # 
 public type Payment_method_wechat_pay record {
 };
 
-public type treasury_credit_reversals_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetTaxIdsIdQueriesExpandItemsString string;
+
+public type treasury_credit_reversals_bodyExpandItemsString string;
 
 # 
 public type Checkout_bacs_debit_payment_method_options record {
@@ -20665,14 +20714,14 @@ public type installments_param record {
     boolean enabled?;
 };
 
-public type payment_method_configurations_configuration_bodyExpandItemsString string;
-
 public type header_param record {
     @constraint:String {maxLength: 5000}
     string name;
     @constraint:String {maxLength: 5000}
     string value;
 };
+
+public type payment_method_configurations_configuration_bodyExpandItemsString string;
 
 public type custom_field_numeric_param_1 record {
     int maximum_length?;
@@ -20756,16 +20805,16 @@ public type login_page_update_param record {
     boolean enabled;
 };
 
-# Represents the Queries record for the operation: GetTransfersTransferReversalsId
-public type GetTransfersTransferReversalsIdQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetTransfersTransferReversalsIdQueriesExpandItemsString[] expand?;
-};
-
 # The desired PIN for this card.
 public type encrypted_pin_param record {
     @constraint:String {maxLength: 5000}
     string encrypted_number?;
+};
+
+# Represents the Queries record for the operation: GetTransfersTransferReversalsId
+public type GetTransfersTransferReversalsIdQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetTransfersTransferReversalsIdQueriesExpandItemsString[] expand?;
 };
 
 public type Treasury\.transaction record {
@@ -20891,10 +20940,10 @@ public type GetFinancialConnectionsSessionsSessionQueries record {
     GetFinancialConnectionsSessionsSessionQueriesExpandItemsString[] expand?;
 };
 
-public type id_return_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetCustomersCustomerBankAccountsIdQueriesExpandItemsString string;
+
+public type id_return_bodyExpandItemsString string;
 
 public type payment_method_param record {
     @constraint:String {maxLength: 5000}
@@ -20904,8 +20953,6 @@ public type payment_method_param record {
     @constraint:String {maxLength: 5000}
     string transit_number;
 };
-
-public type v1_payment_method_domains_bodyExpandItemsString string;
 
 # Represents the Queries record for the operation: GetBillingPortalConfigurationsConfiguration
 public type GetBillingPortalConfigurationsConfigurationQueries record {
@@ -20933,14 +20980,6 @@ public type issuing_disputes_bodyExpandItemsString string;
 public type inline_response_200 Customer|Deleted_customer;
 
 # 
-public type Subscription_schedules_resource_default_settings_automatic_tax record {
-    # Whether Stripe automatically computes tax on invoices created during this phase.
-    boolean enabled;
-    # The account that's liable for tax. If set, the business address and tax registrations required to perform the tax calculation are loaded from this account. The tax transaction is returned in the report of the connected account.
-    Connect_account_reference? liability?;
-};
-
-# 
 public type Card_issuing_account_terms_of_service record {
     # The Unix timestamp marking when the account representative accepted the service agreement.
     int? date?;
@@ -20949,6 +20988,14 @@ public type Card_issuing_account_terms_of_service record {
     # The user agent of the browser from which the account representative accepted the service agreement.
     @constraint:String {maxLength: 5000}
     string user_agent?;
+};
+
+# 
+public type Subscription_schedules_resource_default_settings_automatic_tax record {
+    # Whether Stripe automatically computes tax on invoices created during this phase.
+    boolean enabled;
+    # The account that's liable for tax. If set, the business address and tax registrations required to perform the tax calculation are loaded from this account. The tax transaction is returned in the report of the connected account.
+    Connect_account_reference? liability?;
 };
 
 public type amount record {int gt?; int gte?; int lt?; int lte?;}|int;
@@ -21090,10 +21137,12 @@ public type Payment_pages_checkout_session_total_details record {
 @constraint:String {maxLength: 5000}
 public type GetFilesQueriesExpandItemsString string;
 
-@constraint:String {maxLength: 5000}
-public type GetIssuingPhysicalBundlesQueriesExpandItemsString string;
+public type products_bodyExpandItemsString string;
 
 public type reader_refund_payment_bodyExpandItemsString string;
+
+@constraint:String {maxLength: 5000}
+public type GetIssuingPhysicalBundlesQueriesExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetPaymentLinksPaymentLinkQueriesExpandItemsString string;
@@ -21114,6 +21163,55 @@ public type token_create_bank_account record {
     @constraint:String {maxLength: 5000}
     string routing_number?;
 };
+
+public type customer_sessions_body record {|
+    components components;
+    # The ID of an existing customer for which to create the Customer Session.
+    @constraint:String {maxLength: 5000}
+    string customer;
+    # Specifies which fields in the response should be expanded.
+    customer_sessions_bodyExpandItemsString[] expand?;
+|};
+
+public type products_body record {|
+    # Whether the product is currently available for purchase. Defaults to `true`.
+    boolean active?;
+    price_data_without_product default_price_data?;
+    # The product's description, meant to be displayable to the customer. Use this field to optionally store a long form explanation of the product being sold for your own rendering purposes.
+    @constraint:String {maxLength: 40000}
+    string description?;
+    # Specifies which fields in the response should be expanded.
+    products_bodyExpandItemsString[] expand?;
+    # An identifier will be randomly generated by Stripe. You can optionally override this ID, but the ID must be unique across all products in your Stripe account.
+    @constraint:String {maxLength: 5000}
+    string id?;
+    # A list of up to 8 URLs of images for this product, meant to be displayable to the customer.
+    string[] images?;
+    # A list of up to 15 marketing features for this product. These are displayed in [pricing tables](https://stripe.com/docs/payments/checkout/pricing-table).
+    features[] marketing_features?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # The product's name, meant to be displayable to the customer.
+    @constraint:String {maxLength: 5000}
+    string name;
+    package_dimensions_specs package_dimensions?;
+    # Whether this product is shipped (i.e., physical goods).
+    boolean shippable?;
+    # An arbitrary string to be displayed on your customer's credit card or bank statement. While most banks display this information consistently, some may display it incorrectly or not at all.
+    # 
+    # This may be up to 22 characters. The statement description may not include `<`, `>`, `\`, `"`, `'` characters, and will appear on your customer's statement in capital letters. Non-ASCII characters are automatically stripped.
+    #  It must contain at least one letter. Only used for subscription payments.
+    @constraint:String {maxLength: 22}
+    string statement_descriptor?;
+    # A [tax code](https://stripe.com/docs/tax/tax-categories) ID.
+    string tax_code?;
+    # A label that represents units of this product. When set, this will be included in customers' receipts, invoices, Checkout, and the customer portal.
+    @constraint:String {maxLength: 12}
+    string unit_label?;
+    # A URL of a publicly-accessible webpage for this product.
+    @constraint:String {maxLength: 5000}
+    string url?;
+|};
 
 # 
 public type Payment_method_details_paypal record {
@@ -21242,23 +21340,6 @@ public type Payment_links_resource_shipping_address_collection record {
     ("AC"|"AD"|"AE"|"AF"|"AG"|"AI"|"AL"|"AM"|"AO"|"AQ"|"AR"|"AT"|"AU"|"AW"|"AX"|"AZ"|"BA"|"BB"|"BD"|"BE"|"BF"|"BG"|"BH"|"BI"|"BJ"|"BL"|"BM"|"BN"|"BO"|"BQ"|"BR"|"BS"|"BT"|"BV"|"BW"|"BY"|"BZ"|"CA"|"CD"|"CF"|"CG"|"CH"|"CI"|"CK"|"CL"|"CM"|"CN"|"CO"|"CR"|"CV"|"CW"|"CY"|"CZ"|"DE"|"DJ"|"DK"|"DM"|"DO"|"DZ"|"EC"|"EE"|"EG"|"EH"|"ER"|"ES"|"ET"|"FI"|"FJ"|"FK"|"FO"|"FR"|"GA"|"GB"|"GD"|"GE"|"GF"|"GG"|"GH"|"GI"|"GL"|"GM"|"GN"|"GP"|"GQ"|"GR"|"GS"|"GT"|"GU"|"GW"|"GY"|"HK"|"HN"|"HR"|"HT"|"HU"|"ID"|"IE"|"IL"|"IM"|"IN"|"IO"|"IQ"|"IS"|"IT"|"JE"|"JM"|"JO"|"JP"|"KE"|"KG"|"KH"|"KI"|"KM"|"KN"|"KR"|"KW"|"KY"|"KZ"|"LA"|"LB"|"LC"|"LI"|"LK"|"LR"|"LS"|"LT"|"LU"|"LV"|"LY"|"MA"|"MC"|"MD"|"ME"|"MF"|"MG"|"MK"|"ML"|"MM"|"MN"|"MO"|"MQ"|"MR"|"MS"|"MT"|"MU"|"MV"|"MW"|"MX"|"MY"|"MZ"|"NA"|"NC"|"NE"|"NG"|"NI"|"NL"|"NO"|"NP"|"NR"|"NU"|"NZ"|"OM"|"PA"|"PE"|"PF"|"PG"|"PH"|"PK"|"PL"|"PM"|"PN"|"PR"|"PS"|"PT"|"PY"|"QA"|"RE"|"RO"|"RS"|"RU"|"RW"|"SA"|"SB"|"SC"|"SE"|"SG"|"SH"|"SI"|"SJ"|"SK"|"SL"|"SM"|"SN"|"SO"|"SR"|"SS"|"ST"|"SV"|"SX"|"SZ"|"TA"|"TC"|"TD"|"TF"|"TG"|"TH"|"TJ"|"TK"|"TL"|"TM"|"TN"|"TO"|"TR"|"TT"|"TV"|"TW"|"TZ"|"UA"|"UG"|"US"|"UY"|"UZ"|"VA"|"VC"|"VE"|"VG"|"VN"|"VU"|"WF"|"WS"|"XK"|"YE"|"YT"|"ZA"|"ZM"|"ZW"|"ZZ")[] allowed_countries;
 };
 
-public type v1_webhook_endpoints_body record {|
-    # Events sent to this endpoint will be generated with this Stripe Version instead of your account's default Stripe Version.
-    "2011-01-01"|"2011-06-21"|"2011-06-28"|"2011-08-01"|"2011-09-15"|"2011-11-17"|"2012-02-23"|"2012-03-25"|"2012-06-18"|"2012-06-28"|"2012-07-09"|"2012-09-24"|"2012-10-26"|"2012-11-07"|"2013-02-11"|"2013-02-13"|"2013-07-05"|"2013-08-12"|"2013-08-13"|"2013-10-29"|"2013-12-03"|"2014-01-31"|"2014-03-13"|"2014-03-28"|"2014-05-19"|"2014-06-13"|"2014-06-17"|"2014-07-22"|"2014-07-26"|"2014-08-04"|"2014-08-20"|"2014-09-08"|"2014-10-07"|"2014-11-05"|"2014-11-20"|"2014-12-08"|"2014-12-17"|"2014-12-22"|"2015-01-11"|"2015-01-26"|"2015-02-10"|"2015-02-16"|"2015-02-18"|"2015-03-24"|"2015-04-07"|"2015-06-15"|"2015-07-07"|"2015-07-13"|"2015-07-28"|"2015-08-07"|"2015-08-19"|"2015-09-03"|"2015-09-08"|"2015-09-23"|"2015-10-01"|"2015-10-12"|"2015-10-16"|"2016-02-03"|"2016-02-19"|"2016-02-22"|"2016-02-23"|"2016-02-29"|"2016-03-07"|"2016-06-15"|"2016-07-06"|"2016-10-19"|"2017-01-27"|"2017-02-14"|"2017-04-06"|"2017-05-25"|"2017-06-05"|"2017-08-15"|"2017-12-14"|"2018-01-23"|"2018-02-05"|"2018-02-06"|"2018-02-28"|"2018-05-21"|"2018-07-27"|"2018-08-23"|"2018-09-06"|"2018-09-24"|"2018-10-31"|"2018-11-08"|"2019-02-11"|"2019-02-19"|"2019-03-14"|"2019-05-16"|"2019-08-14"|"2019-09-09"|"2019-10-08"|"2019-10-17"|"2019-11-05"|"2019-12-03"|"2020-03-02"|"2020-08-27"|"2022-08-01"|"2022-11-15"|"2023-08-16"|"2023-10-16"|"2024-04-10"|"2024-06-20" api_version?;
-    # Whether this endpoint should receive events from connected accounts (`true`), or from your account (`false`). Defaults to `false`.
-    boolean connect?;
-    # An optional description of what the webhook is used for.
-    string|"" description?;
-    # The list of events to enable for this endpoint. You may specify `['*']` to enable all events, except those that require explicit selection.
-    ("*"|"account.application.authorized"|"account.application.deauthorized"|"account.external_account.created"|"account.external_account.deleted"|"account.external_account.updated"|"account.updated"|"application_fee.created"|"application_fee.refund.updated"|"application_fee.refunded"|"balance.available"|"billing_portal.configuration.created"|"billing_portal.configuration.updated"|"billing_portal.session.created"|"capability.updated"|"cash_balance.funds_available"|"charge.captured"|"charge.dispute.closed"|"charge.dispute.created"|"charge.dispute.funds_reinstated"|"charge.dispute.funds_withdrawn"|"charge.dispute.updated"|"charge.expired"|"charge.failed"|"charge.pending"|"charge.refund.updated"|"charge.refunded"|"charge.succeeded"|"charge.updated"|"checkout.session.async_payment_failed"|"checkout.session.async_payment_succeeded"|"checkout.session.completed"|"checkout.session.expired"|"climate.order.canceled"|"climate.order.created"|"climate.order.delayed"|"climate.order.delivered"|"climate.order.product_substituted"|"climate.product.created"|"climate.product.pricing_updated"|"coupon.created"|"coupon.deleted"|"coupon.updated"|"credit_note.created"|"credit_note.updated"|"credit_note.voided"|"customer.created"|"customer.deleted"|"customer.discount.created"|"customer.discount.deleted"|"customer.discount.updated"|"customer.source.created"|"customer.source.deleted"|"customer.source.expiring"|"customer.source.updated"|"customer.subscription.created"|"customer.subscription.deleted"|"customer.subscription.paused"|"customer.subscription.pending_update_applied"|"customer.subscription.pending_update_expired"|"customer.subscription.resumed"|"customer.subscription.trial_will_end"|"customer.subscription.updated"|"customer.tax_id.created"|"customer.tax_id.deleted"|"customer.tax_id.updated"|"customer.updated"|"customer_cash_balance_transaction.created"|"entitlements.active_entitlement_summary.updated"|"file.created"|"financial_connections.account.created"|"financial_connections.account.deactivated"|"financial_connections.account.disconnected"|"financial_connections.account.reactivated"|"financial_connections.account.refreshed_balance"|"financial_connections.account.refreshed_ownership"|"financial_connections.account.refreshed_transactions"|"identity.verification_session.canceled"|"identity.verification_session.created"|"identity.verification_session.processing"|"identity.verification_session.redacted"|"identity.verification_session.requires_input"|"identity.verification_session.verified"|"invoice.created"|"invoice.deleted"|"invoice.finalization_failed"|"invoice.finalized"|"invoice.marked_uncollectible"|"invoice.paid"|"invoice.payment_action_required"|"invoice.payment_failed"|"invoice.payment_succeeded"|"invoice.sent"|"invoice.upcoming"|"invoice.updated"|"invoice.voided"|"invoiceitem.created"|"invoiceitem.deleted"|"issuing_authorization.created"|"issuing_authorization.request"|"issuing_authorization.updated"|"issuing_card.created"|"issuing_card.updated"|"issuing_cardholder.created"|"issuing_cardholder.updated"|"issuing_dispute.closed"|"issuing_dispute.created"|"issuing_dispute.funds_reinstated"|"issuing_dispute.submitted"|"issuing_dispute.updated"|"issuing_personalization_design.activated"|"issuing_personalization_design.deactivated"|"issuing_personalization_design.rejected"|"issuing_personalization_design.updated"|"issuing_token.created"|"issuing_token.updated"|"issuing_transaction.created"|"issuing_transaction.updated"|"mandate.updated"|"payment_intent.amount_capturable_updated"|"payment_intent.canceled"|"payment_intent.created"|"payment_intent.partially_funded"|"payment_intent.payment_failed"|"payment_intent.processing"|"payment_intent.requires_action"|"payment_intent.succeeded"|"payment_link.created"|"payment_link.updated"|"payment_method.attached"|"payment_method.automatically_updated"|"payment_method.detached"|"payment_method.updated"|"payout.canceled"|"payout.created"|"payout.failed"|"payout.paid"|"payout.reconciliation_completed"|"payout.updated"|"person.created"|"person.deleted"|"person.updated"|"plan.created"|"plan.deleted"|"plan.updated"|"price.created"|"price.deleted"|"price.updated"|"product.created"|"product.deleted"|"product.updated"|"promotion_code.created"|"promotion_code.updated"|"quote.accepted"|"quote.canceled"|"quote.created"|"quote.finalized"|"radar.early_fraud_warning.created"|"radar.early_fraud_warning.updated"|"refund.created"|"refund.updated"|"reporting.report_run.failed"|"reporting.report_run.succeeded"|"reporting.report_type.updated"|"review.closed"|"review.opened"|"setup_intent.canceled"|"setup_intent.created"|"setup_intent.requires_action"|"setup_intent.setup_failed"|"setup_intent.succeeded"|"sigma.scheduled_query_run.created"|"source.canceled"|"source.chargeable"|"source.failed"|"source.mandate_notification"|"source.refund_attributes_required"|"source.transaction.created"|"source.transaction.updated"|"subscription_schedule.aborted"|"subscription_schedule.canceled"|"subscription_schedule.completed"|"subscription_schedule.created"|"subscription_schedule.expiring"|"subscription_schedule.released"|"subscription_schedule.updated"|"tax.settings.updated"|"tax_rate.created"|"tax_rate.updated"|"terminal.reader.action_failed"|"terminal.reader.action_succeeded"|"test_helpers.test_clock.advancing"|"test_helpers.test_clock.created"|"test_helpers.test_clock.deleted"|"test_helpers.test_clock.internal_failure"|"test_helpers.test_clock.ready"|"topup.canceled"|"topup.created"|"topup.failed"|"topup.reversed"|"topup.succeeded"|"transfer.created"|"transfer.reversed"|"transfer.updated"|"treasury.credit_reversal.created"|"treasury.credit_reversal.posted"|"treasury.debit_reversal.completed"|"treasury.debit_reversal.created"|"treasury.debit_reversal.initial_credit_granted"|"treasury.financial_account.closed"|"treasury.financial_account.created"|"treasury.financial_account.features_status_updated"|"treasury.inbound_transfer.canceled"|"treasury.inbound_transfer.created"|"treasury.inbound_transfer.failed"|"treasury.inbound_transfer.succeeded"|"treasury.outbound_payment.canceled"|"treasury.outbound_payment.created"|"treasury.outbound_payment.expected_arrival_date_updated"|"treasury.outbound_payment.failed"|"treasury.outbound_payment.posted"|"treasury.outbound_payment.returned"|"treasury.outbound_payment.tracking_details_updated"|"treasury.outbound_transfer.canceled"|"treasury.outbound_transfer.created"|"treasury.outbound_transfer.expected_arrival_date_updated"|"treasury.outbound_transfer.failed"|"treasury.outbound_transfer.posted"|"treasury.outbound_transfer.returned"|"treasury.outbound_transfer.tracking_details_updated"|"treasury.received_credit.created"|"treasury.received_credit.failed"|"treasury.received_credit.succeeded"|"treasury.received_debit.created")[] enabled_events;
-    # Specifies which fields in the response should be expanded.
-    v1_webhook_endpoints_bodyExpandItemsString[] expand?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # The URL of the webhook endpoint.
-    string url;
-|};
-
 # 
 public type Payment_method_acss_debit record {
     # Name of the bank associated with the bank account.
@@ -21348,6 +21429,58 @@ public type GetQuotesQuoteLineItemsQueriesExpandItemsString string;
 public type payment_method_options_param_1 record {
     "none" setup_future_usage?;
 };
+
+public type payment_links_body record {|
+    after_completion_params after_completion?;
+    # Enables user redeemable promotion codes.
+    boolean allow_promotion_codes?;
+    # The amount of the application fee (if any) that will be requested to be applied to the payment and transferred to the application owner's Stripe account. Can only be applied when there are no line items with recurring prices.
+    int application_fee_amount?;
+    # A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice total that will be transferred to the application owner's Stripe account. There must be at least 1 line item with a recurring price to use this field.
+    decimal application_fee_percent?;
+    automatic_tax_params_1 automatic_tax?;
+    # Configuration for collecting the customer's billing address. Defaults to `auto`.
+    "auto"|"required" billing_address_collection?;
+    consent_collection_params_1 consent_collection?;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies) and supported by each line item's price.
+    string currency?;
+    # Collect additional information from your customer using custom fields. Up to 3 fields are supported.
+    custom_field_param_1[] custom_fields?;
+    custom_text_param custom_text?;
+    # Configures whether [checkout sessions](https://stripe.com/docs/api/checkout/sessions) created by this payment link create a [Customer](https://stripe.com/docs/api/customers).
+    "always"|"if_required" customer_creation?;
+    # Specifies which fields in the response should be expanded.
+    payment_links_bodyExpandItemsString[] expand?;
+    # The custom message to be displayed to a customer when a payment link is no longer active.
+    @constraint:String {maxLength: 500}
+    string inactive_message?;
+    invoice_creation_create_params invoice_creation?;
+    # The line items representing what is being sold. Each line item represents an item being sold. Up to 20 line items are supported.
+    line_items_create_params[] line_items;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`. Metadata associated with this Payment Link will automatically be copied to [checkout sessions](https://stripe.com/docs/api/checkout/sessions) created by this payment link.
+    record {|string...;|} metadata?;
+    # The account on behalf of which to charge.
+    string on_behalf_of?;
+    payment_intent_data_params_1 payment_intent_data?;
+    # Specify whether Checkout should collect a payment method. When set to `if_required`, Checkout will not collect a payment method when the total due for the session is 0.This may occur if the Checkout Session includes a free trial or a discount.
+    # 
+    # Can only be set in `subscription` mode. Defaults to `always`.
+    # 
+    # If you'd like information on how to collect a payment method outside of Checkout, read the guide on [configuring subscriptions with a free trial](https://stripe.com/docs/payments/checkout/free-trials).
+    "always"|"if_required" payment_method_collection?;
+    # The list of payment method types that customers can use. If no value is passed, Stripe will dynamically show relevant payment methods from your [payment method settings](https://dashboard.stripe.com/settings/payment_methods) (20+ payment methods [supported](https://stripe.com/docs/payments/payment-methods/integration-options#payment-method-product-support)).
+    ("affirm"|"afterpay_clearpay"|"alipay"|"au_becs_debit"|"bacs_debit"|"bancontact"|"blik"|"boleto"|"card"|"cashapp"|"eps"|"fpx"|"giropay"|"grabpay"|"ideal"|"klarna"|"konbini"|"link"|"mobilepay"|"multibanco"|"oxxo"|"p24"|"paynow"|"paypal"|"pix"|"promptpay"|"sepa_debit"|"sofort"|"swish"|"twint"|"us_bank_account"|"wechat_pay"|"zip")[] payment_method_types?;
+    phone_number_collection_params_1 phone_number_collection?;
+    restrictions_params restrictions?;
+    shipping_address_collection_params_1 shipping_address_collection?;
+    # The shipping rate options to apply to [checkout sessions](https://stripe.com/docs/api/checkout/sessions) created by this payment link.
+    shipping_option_params_1[] shipping_options?;
+    # Describes the type of transaction being performed in order to customize relevant text on the page, such as the submit button. Changing this value will also affect the hostname in the [url](https://stripe.com/docs/api/payment_links/payment_links/object#url) property (example: `donate.stripe.com`).
+    "auto"|"book"|"donate"|"pay" submit_type?;
+    subscription_data_params_1 subscription_data?;
+    tax_id_collection_params tax_id_collection?;
+    transfer_data_params_1 transfer_data?;
+|};
 
 public type payment_method_options_param_2 record {
     "none"|"off_session" setup_future_usage?;
@@ -21444,12 +21577,6 @@ public type Gelato_document_report record {
     "driving_license"|"id_card"|"passport"? 'type?;
 };
 
-public type payment_method_options_param_6 record {
-    bank_transfer_param bank_transfer?;
-    "bank_transfer" funding_type?;
-    "none" setup_future_usage?;
-};
-
 public type invoice_item_preview_params record {
     int amount?;
     string currency?;
@@ -21470,6 +21597,12 @@ public type invoice_item_preview_params record {
     TaxratesItemsString[]|"" tax_rates?;
     int unit_amount?;
     string unit_amount_decimal?;
+};
+
+public type payment_method_options_param_6 record {
+    bank_transfer_param bank_transfer?;
+    "bank_transfer" funding_type?;
+    "none" setup_future_usage?;
 };
 
 public type payment_method_options_param_7 record {
@@ -21775,16 +21908,14 @@ public type line_item_create_params record {
     TaxratesItemsString[]|"" tax_rates?;
 };
 
-public type account_config_param record {
-    boolean enabled;
-    account_features_param features?;
-};
-
 public type subscription_data_invoice_settings_params record {
     param_3 issuer?;
 };
 
-public type v1_ephemeral_keys_bodyExpandItemsString string;
+public type account_config_param record {
+    boolean enabled;
+    account_features_param features?;
+};
 
 public type Financial_connections\.account_ownership record {
     int created;
@@ -21809,6 +21940,57 @@ public type Payment_method_options_promptpay record {
     # When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
     "none" setup_future_usage?;
 };
+
+public type payment_method_configurations_body record {|
+    payment_method_param_2 acss_debit?;
+    payment_method_param_3 affirm?;
+    payment_method_param_4 afterpay_clearpay?;
+    payment_method_param_5 alipay?;
+    payment_method_param_6 amazon_pay?;
+    payment_method_param_7 apple_pay?;
+    payment_method_param_8 apple_pay_later?;
+    payment_method_param_9 au_becs_debit?;
+    payment_method_param_10 bacs_debit?;
+    payment_method_param_11 bancontact?;
+    payment_method_param_12 blik?;
+    payment_method_param_13 boleto?;
+    payment_method_param_14 card?;
+    payment_method_param_15 cartes_bancaires?;
+    payment_method_param_16 cashapp?;
+    payment_method_param_17 customer_balance?;
+    payment_method_param_18 eps?;
+    # Specifies which fields in the response should be expanded.
+    payment_method_configurations_bodyExpandItemsString[] expand?;
+    payment_method_param_19 fpx?;
+    payment_method_param_20 giropay?;
+    payment_method_param_21 google_pay?;
+    payment_method_param_22 grabpay?;
+    payment_method_param_23 ideal?;
+    payment_method_param_24 jcb?;
+    payment_method_param_25 klarna?;
+    payment_method_param_26 konbini?;
+    payment_method_param_27 link?;
+    payment_method_param_28 mobilepay?;
+    payment_method_param_29 multibanco?;
+    # Configuration name.
+    @constraint:String {maxLength: 100}
+    string name?;
+    payment_method_param_30 oxxo?;
+    payment_method_param_31 p24?;
+    # Configuration's parent configuration. Specify to create a child configuration.
+    @constraint:String {maxLength: 100}
+    string parent?;
+    payment_method_param_32 paynow?;
+    payment_method_param_33 paypal?;
+    payment_method_param_34 promptpay?;
+    payment_method_param_35 revolut_pay?;
+    payment_method_param_36 sepa_debit?;
+    payment_method_param_37 sofort?;
+    payment_method_param_38 swish?;
+    payment_method_param_39 us_bank_account?;
+    payment_method_param_40 wechat_pay?;
+    payment_method_param_41 zip?;
+|};
 
 public type phase_configuration_params record {
     add_invoice_item_entry[] add_invoice_items?;
@@ -21855,6 +22037,89 @@ public type Gelato_data_verified_outputs_date record {
 
 public type readers_reader_bodyExpandItemsString string;
 
+public type payment_methods_body record {|
+    payment_method_param_42 acss_debit?;
+    # If this is an `affirm` PaymentMethod, this hash contains details about the Affirm payment method.
+    record {} affirm?;
+    # If this is an `AfterpayClearpay` PaymentMethod, this hash contains details about the AfterpayClearpay payment method.
+    record {} afterpay_clearpay?;
+    # If this is an `Alipay` PaymentMethod, this hash contains details about the Alipay payment method.
+    record {} alipay?;
+    # This field indicates whether this payment method can be shown again to its customer in a checkout flow. Stripe products such as Checkout and Elements use this field to determine whether a payment method can be shown as a saved payment method in a checkout flow. The field defaults to `unspecified`.
+    "always"|"limited"|"unspecified" allow_redisplay?;
+    # If this is a AmazonPay PaymentMethod, this hash contains details about the AmazonPay payment method.
+    record {} amazon_pay?;
+    param_14 au_becs_debit?;
+    param_15 bacs_debit?;
+    # If this is a `bancontact` PaymentMethod, this hash contains details about the Bancontact payment method.
+    record {} bancontact?;
+    billing_details_inner_params_1 billing_details?;
+    # If this is a `blik` PaymentMethod, this hash contains details about the BLIK payment method.
+    record {} blik?;
+    param_16 boleto?;
+    # If this is a `card` PaymentMethod, this hash contains the user's card details. For backwards compatibility, you can alternatively provide a Stripe token (e.g., for Apple Pay, Amex Express Checkout, or legacy Checkout) into the card hash with format `card: {token: "tok_visa"}`. When providing a card number, you must meet the requirements for [PCI compliance](https://stripe.com/docs/security#validating-pci-compliance). We strongly recommend using Stripe.js instead of interacting with this API directly.
+    record {string cvc?; int exp_month; int exp_year; record {"cartes_bancaires"|"mastercard"|"visa" preferred?;} networks?; string number;}|record {string token;} card?;
+    # If this is a `cashapp` PaymentMethod, this hash contains details about the Cash App Pay payment method.
+    record {} cashapp?;
+    # The `Customer` to whom the original PaymentMethod is attached.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    # If this is a `customer_balance` PaymentMethod, this hash contains details about the CustomerBalance payment method.
+    record {} customer_balance?;
+    param_17 eps?;
+    # Specifies which fields in the response should be expanded.
+    payment_methods_bodyExpandItemsString[] expand?;
+    param_18 fpx?;
+    # If this is a `giropay` PaymentMethod, this hash contains details about the Giropay payment method.
+    record {} giropay?;
+    # If this is a `grabpay` PaymentMethod, this hash contains details about the GrabPay payment method.
+    record {} grabpay?;
+    param_19 ideal?;
+    # If this is an `interac_present` PaymentMethod, this hash contains details about the Interac Present payment method.
+    record {} interac_present?;
+    param_20 klarna?;
+    # If this is a `konbini` PaymentMethod, this hash contains details about the Konbini payment method.
+    record {} konbini?;
+    # If this is an `Link` PaymentMethod, this hash contains details about the Link payment method.
+    record {} link?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # If this is a `mobilepay` PaymentMethod, this hash contains details about the MobilePay payment method.
+    record {} mobilepay?;
+    # If this is a `multibanco` PaymentMethod, this hash contains details about the Multibanco payment method.
+    record {} multibanco?;
+    # If this is an `oxxo` PaymentMethod, this hash contains details about the OXXO payment method.
+    record {} oxxo?;
+    param_21 p24?;
+    # The PaymentMethod to share.
+    @constraint:String {maxLength: 5000}
+    string payment_method?;
+    # If this is a `paynow` PaymentMethod, this hash contains details about the PayNow payment method.
+    record {} paynow?;
+    # If this is a `paypal` PaymentMethod, this hash contains details about the PayPal payment method.
+    record {} paypal?;
+    # If this is a `pix` PaymentMethod, this hash contains details about the Pix payment method.
+    record {} pix?;
+    # If this is a `promptpay` PaymentMethod, this hash contains details about the PromptPay payment method.
+    record {} promptpay?;
+    radar_options_with_hidden_options radar_options?;
+    # If this is a `Revolut Pay` PaymentMethod, this hash contains details about the Revolut Pay payment method.
+    record {} revolut_pay?;
+    param_22 sepa_debit?;
+    param_23 sofort?;
+    # If this is a `swish` PaymentMethod, this hash contains details about the Swish payment method.
+    record {} swish?;
+    # If this is a TWINT PaymentMethod, this hash contains details about the TWINT payment method.
+    record {} twint?;
+    # The type of the PaymentMethod. An additional hash is included on the PaymentMethod with a name matching this value. It contains additional information specific to the PaymentMethod type.
+    "acss_debit"|"affirm"|"afterpay_clearpay"|"alipay"|"amazon_pay"|"au_becs_debit"|"bacs_debit"|"bancontact"|"blik"|"boleto"|"card"|"cashapp"|"customer_balance"|"eps"|"fpx"|"giropay"|"grabpay"|"ideal"|"klarna"|"konbini"|"link"|"mobilepay"|"multibanco"|"oxxo"|"p24"|"paynow"|"paypal"|"pix"|"promptpay"|"revolut_pay"|"sepa_debit"|"sofort"|"swish"|"twint"|"us_bank_account"|"wechat_pay"|"zip" 'type?;
+    payment_method_param_43 us_bank_account?;
+    # If this is an `wechat_pay` PaymentMethod, this hash contains details about the wechat_pay payment method.
+    record {} wechat_pay?;
+    # If this is a `zip` PaymentMethod, this hash contains details about the Zip payment method.
+    record {} zip?;
+|};
+
 # 
 public type Issuing_authorization_fleet_data record {
     # Answers to prompts presented to the cardholder at the point of sale. Prompted fields vary depending on the configuration of your physical fleet cards. Typical points of sale support only numeric entry.
@@ -21899,6 +22164,12 @@ public type GetIssuingSettlementsSettlementQueries record {
     GetIssuingSettlementsSettlementQueriesExpandItemsString[] expand?;
 };
 
+# Settings for automatic tax lookup for this invoice.
+public type automatic_tax_param record {
+    boolean enabled;
+    param liability?;
+};
+
 public type apps_secrets_body record {|
     # Specifies which fields in the response should be expanded.
     apps_secrets_bodyExpandItemsString[] expand?;
@@ -21912,12 +22183,6 @@ public type apps_secrets_body record {|
     string payload;
     scope_param_1 scope;
 |};
-
-# Settings for automatic tax lookup for this invoice.
-public type automatic_tax_param record {
-    boolean enabled;
-    param liability?;
-};
 
 # 
 public type IssuingPhysicalBundleList record {
@@ -21950,12 +22215,6 @@ public type shipping_return_body record {|
     shipping_return_bodyExpandItemsString[] expand?;
 |};
 
-# Information about the items and shipping associated with the source. Required for transactional credit (for example Klarna) sources before you can charge it.
-public type order_params record {
-    order_item_specs[] items?;
-    order_shipping shipping?;
-};
-
 # 
 public type BalanceTransactionsList record {
     Balance_transaction[] data;
@@ -21966,6 +22225,12 @@ public type BalanceTransactionsList record {
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000, pattern: re `^/v1/balance_transactions`}
     string url;
+};
+
+# Information about the items and shipping associated with the source. Required for transactional credit (for example Klarna) sources before you can charge it.
+public type order_params record {
+    order_item_specs[] items?;
+    order_shipping shipping?;
 };
 
 public type after_completion_confirmation_page_params record {
@@ -22017,16 +22282,6 @@ public type payment_intent_data_params record {
     string transfer_group?;
 };
 
-# Information about the owner of the payment instrument that may be used or required by particular source types.
-public type owner_1 record {
-    source_address address?;
-    string email?;
-    @constraint:String {maxLength: 5000}
-    string name?;
-    @constraint:String {maxLength: 5000}
-    string phone?;
-};
-
 # 
 public type Tax_product_resource_line_item_tax_rate_details record {
     # A localized display name for tax type, intended to be human-readable. For example, "Local Sales and Use Tax", "Value-added tax (VAT)", or "Umsatzsteuer (USt.)".
@@ -22037,6 +22292,16 @@ public type Tax_product_resource_line_item_tax_rate_details record {
     string percentage_decimal;
     # The tax type, such as `vat` or `sales_tax`.
     "amusement_tax"|"communications_tax"|"gst"|"hst"|"igst"|"jct"|"lease_tax"|"pst"|"qst"|"rst"|"sales_tax"|"vat" tax_type;
+};
+
+# Information about the owner of the payment instrument that may be used or required by particular source types.
+public type owner_1 record {
+    source_address address?;
+    string email?;
+    @constraint:String {maxLength: 5000}
+    string name?;
+    @constraint:String {maxLength: 5000}
+    string phone?;
 };
 
 # 
@@ -22093,28 +22358,6 @@ public type quote_param record {
     int days_until_due?;
     param_3 issuer?;
 };
-
-public type v1_transfers_body record {|
-    # A positive integer in cents (or local equivalent) representing how much to transfer.
-    int amount?;
-    # 3-letter [ISO code for currency](https://stripe.com/docs/payouts).
-    string currency;
-    # An arbitrary string attached to the object. Often useful for displaying to users.
-    @constraint:String {maxLength: 5000}
-    string description?;
-    # The ID of a connected Stripe account. <a href="/docs/connect/separate-charges-and-transfers">See the Connect documentation</a> for details.
-    string destination;
-    # Specifies which fields in the response should be expanded.
-    v1_transfers_bodyExpandItemsString[] expand?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # You can use this parameter to transfer funds from a charge before they are added to your available balance. A pending balance will transfer immediately but the funds will not become available until the original charge becomes available. [See the Connect documentation](https://stripe.com/docs/connect/separate-charges-and-transfers#transfer-availability) for details.
-    string source_transaction?;
-    # The source balance to use for this transfer. One of `bank_account`, `card`, or `fpx`. For most users, this will default to `card`.
-    "bank_account"|"card"|"fpx" source_type?;
-    # A string that identifies this transaction as part of a group. See the [Connect documentation](https://stripe.com/docs/connect/separate-charges-and-transfers#transfer-options) for details.
-    string transfer_group?;
-|};
 
 # Details on the legal guardian's acceptance of the required Stripe agreements.
 public type person_additional_tos_acceptances_specs record {
@@ -22377,8 +22620,6 @@ public type Payment_method_details_card_wallet_visa_checkout record {
     Address? shipping_address?;
 };
 
-public type v1_tokens_bodyExpandItemsString string;
-
 public type account_people_body record {|
     person_additional_tos_acceptances_specs additional_tos_acceptances?;
     legal_entity_and_kyc_address_specs_1 address?;
@@ -22460,36 +22701,69 @@ public type Payment_method_details_card_wallet record {
     Payment_method_details_card_wallet_visa_checkout visa_checkout?;
 };
 
-public type v1_credit_notes_body record {|
-    # The integer amount in cents (or local equivalent) representing the total amount of the credit note.
-    int amount?;
-    # The integer amount in cents (or local equivalent) representing the amount to credit the customer's balance, which will be automatically applied to their next invoice.
-    int credit_amount?;
-    # The date when this credit note is in effect. Same as `created` unless overwritten. When defined, this value replaces the system-generated 'Date of issue' printed on the credit note PDF.
+public type invoices_body record {|
+    # The account tax IDs associated with the invoice. Only editable when the invoice is a draft.
+    AccounttaxidsItemsString[]|"" account_tax_ids?;
+    # A fee in cents (or local equivalent) that will be applied to the invoice and transferred to the application owner's Stripe account. The request must be made with an OAuth key or the Stripe-Account header in order to take an application fee. For more information, see the application fees [documentation](https://stripe.com/docs/billing/invoices/connect#collecting-fees).
+    int application_fee_amount?;
+    # Controls whether Stripe performs [automatic collection](https://stripe.com/docs/invoicing/integration/automatic-advancement-collection) of the invoice. If `false`, the invoice's state doesn't automatically advance without an explicit action.
+    boolean auto_advance?;
+    automatic_tax_param automatic_tax?;
+    # Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay this invoice using the default source attached to the customer. When sending an invoice, Stripe will email this invoice to the customer with payment instructions. Defaults to `charge_automatically`.
+    "charge_automatically"|"send_invoice" collection_method?;
+    # The currency to create this invoice in. Defaults to that of `customer` if not specified.
+    string currency?;
+    # A list of up to 4 custom fields to be displayed on the invoice.
+    record {string name; string value;}[]|"" custom_fields?;
+    # The ID of the customer who will be billed.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    # The number of days from when the invoice is created until it is due. Valid only for invoices where `collection_method=send_invoice`.
+    int days_until_due?;
+    # ID of the default payment method for the invoice. It must belong to the customer associated with the invoice. If not set, defaults to the subscription's default payment method, if any, or to the default payment method in the customer's invoice settings.
+    @constraint:String {maxLength: 5000}
+    string default_payment_method?;
+    # ID of the default payment source for the invoice. It must belong to the customer associated with the invoice and be in a chargeable state. If not set, defaults to the subscription's default source, if any, or to the customer's default source.
+    @constraint:String {maxLength: 5000}
+    string default_source?;
+    # The tax rates that will apply to any line item that does not have `tax_rates` set.
+    invoices_bodyDefaulttaxratesItemsString[] default_tax_rates?;
+    # An arbitrary string attached to the object. Often useful for displaying to users. Referenced as 'memo' in the Dashboard.
+    @constraint:String {maxLength: 1500}
+    string description?;
+    # The coupons and promotion codes to redeem into discounts for the invoice. If not specified, inherits the discount from the invoice's customer. Pass an empty string to avoid inheriting any discounts.
+    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
+    # The date on which payment for this invoice is due. Valid only for invoices where `collection_method=send_invoice`.
+    int due_date?;
+    # The date when this invoice is in effect. Same as `finalized_at` unless overwritten. When defined, this value replaces the system-generated 'Date of issue' printed on the invoice PDF and receipt.
     int effective_at?;
-    # Type of email to send to the customer, one of `credit_note` or `none` and the default is `credit_note`.
-    "credit_note"|"none" email_type?;
     # Specifies which fields in the response should be expanded.
-    v1_credit_notes_bodyExpandItemsString[] expand?;
-    # ID of the invoice.
+    invoices_bodyExpandItemsString[] expand?;
+    # Footer to be displayed on the invoice.
     @constraint:String {maxLength: 5000}
-    string invoice;
-    # Line items that make up the credit note.
-    credit_note_line_item_params[] lines?;
-    # The credit note's memo appears on the credit note PDF.
-    @constraint:String {maxLength: 5000}
-    string memo?;
+    string footer?;
+    from_invoice from_invoice?;
+    param_1 issuer?;
     # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # The integer amount in cents (or local equivalent) representing the amount that is credited outside of Stripe.
-    int out_of_band_amount?;
-    # Reason for issuing this credit note, one of `duplicate`, `fraudulent`, `order_change`, or `product_unsatisfactory`
-    "duplicate"|"fraudulent"|"order_change"|"product_unsatisfactory" reason?;
-    # ID of an existing refund to link this credit note to.
-    string refund?;
-    # The integer amount in cents (or local equivalent) representing the amount to refund. If set, a refund will be created for the charge associated with the invoice.
-    int refund_amount?;
-    credit_note_shipping_cost shipping_cost?;
+    record {|string...;|}|"" metadata?;
+    # Set the number for this invoice. If no number is present then a number will be assigned automatically when the invoice is finalized. In many markets, regulations require invoices to be unique, sequential and / or gapless. You are responsible for ensuring this is true across all your different invoicing systems in the event that you edit the invoice number using our API. If you use only Stripe for your invoices and do not change invoice numbers, Stripe handles this aspect of compliance for you automatically.
+    @constraint:String {maxLength: 26}
+    string number?;
+    # The account (if any) for which the funds of the invoice payment are intended. If set, the invoice will be presented with the branding and support information of the specified account. See the [Invoices with Connect](https://stripe.com/docs/billing/invoices/connect) documentation for details.
+    string on_behalf_of?;
+    payment_settings_1 payment_settings?;
+    # How to handle pending invoice items on invoice creation. Defaults to `exclude` if the parameter is omitted.
+    "exclude"|"include" pending_invoice_items_behavior?;
+    rendering_param rendering?;
+    shipping_cost shipping_cost?;
+    recipient_shipping_with_optional_fields_address shipping_details?;
+    # Extra information about a charge for the customer's credit card statement. It must contain at least one letter. If not specified and this invoice is part of a subscription, the default `statement_descriptor` will be set to the first subscription item's product's `statement_descriptor`.
+    @constraint:String {maxLength: 22}
+    string statement_descriptor?;
+    # The ID of the subscription to invoice, if any. If set, the created invoice will only include pending invoice items for that subscription. The subscription's billing cycle and regular subscription events won't be affected.
+    @constraint:String {maxLength: 5000}
+    string subscription?;
+    transfer_data_specs_4 transfer_data?;
 |};
 
 # 
@@ -22558,40 +22832,6 @@ public type Gelato_session_email_options record {
     # Request one time password verification of `provided_details.email`.
     boolean require_verification?;
 };
-
-public type v1_accounts_body record {|
-    # An [account token](https://stripe.com/docs/api#create_account_token), used to securely provide details to the account.
-    @constraint:String {maxLength: 5000}
-    string account_token?;
-    # Either a token, like the ones returned by [Stripe.js](https://stripe.com/docs/js), or a dictionary containing a user's bank account details.
-    record {string account_holder_name?; "company"|"individual" account_holder_type?; string account_number; "checking"|"futsu"|"savings"|"toza" account_type?; string country; string currency?; record {record {bank_account_ownership_verificationFilesItemsString[] files?;} bank_account_ownership_verification?;} documents?; "bank_account" 'object?; string routing_number?;}|string bank_account?;
-    business_profile_specs business_profile?;
-    # The business type. Once you create an [Account Link](/api/account_links) or [Account Session](/api/account_sessions), this property can only be updated for accounts where [controller.requirement_collection](/api/accounts/object#account_object-controller-requirement_collection) is `application`, which includes Custom accounts.
-    "company"|"government_entity"|"individual"|"non_profit" business_type?;
-    capabilities_param capabilities?;
-    company_specs company?;
-    controller_specs controller?;
-    # The country in which the account holder resides, or in which the business is legally established. This should be an ISO 3166-1 alpha-2 country code. For example, if you are in the United States and the business for which you're creating an account is legally represented in Canada, you would use `CA` as the country for the account being created. Available countries include [Stripe's global markets](https://stripe.com/global) as well as countries where [cross-border payouts](https://stripe.com/docs/connect/cross-border-payouts) are supported.
-    @constraint:String {maxLength: 5000}
-    string country?;
-    # Three-letter ISO currency code representing the default currency for the account. This must be a currency that [Stripe supports in the account's country](https://docs.stripe.com/payouts).
-    string default_currency?;
-    documents_specs documents?;
-    # The email address of the account holder. This is only to make the account easier to identify to you. If [controller.requirement_collection](/api/accounts/object#account_object-controller-requirement_collection) is `application`, which includes Custom accounts, Stripe doesn't email the account without your consent.
-    string email?;
-    # Specifies which fields in the response should be expanded.
-    v1_accounts_bodyExpandItemsString[] expand?;
-    # A card or bank account to attach to the account for receiving [payouts](/connect/bank-debit-card-payouts) (you won’t be able to use it for top-ups). You can provide either a token, like the ones returned by [Stripe.js](/js), or a dictionary, as documented in the `external_account` parameter for [bank account](/api#account_create_bank_account) creation. <br><br>By default, providing an external account sets it as the new default external account for its currency, and deletes the old default if one exists. To add additional external accounts without replacing the existing default for the currency, use the [bank account](/api#account_create_bank_account) or [card creation](/api#account_create_card) APIs. After you create an [Account Link](/api/account_links) or [Account Session](/api/account_sessions), this property can only be updated for accounts where [controller.requirement_collection](/api/accounts/object#account_object-controller-requirement_collection) is `application`, which includes Custom accounts.
-    @constraint:String {maxLength: 5000}
-    string external_account?;
-    individual_specs individual?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    settings_specs settings?;
-    tos_acceptance_specs tos_acceptance?;
-    # The type of Stripe account to create. May be one of `custom`, `express` or `standard`.
-    "custom"|"express"|"standard" 'type?;
-|};
 
 # 
 public type Portal_customer_update record {
@@ -22800,10 +23040,10 @@ public type Issuing_authorization_authentication_exemption record {
 };
 
 @constraint:String {maxLength: 5000}
-public type GetBillingPortalConfigurationsConfigurationQueriesExpandItemsString string;
+public type GetQuotesQuoteComputedUpfrontLineItemsQueriesExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
-public type GetQuotesQuoteComputedUpfrontLineItemsQueriesExpandItemsString string;
+public type GetBillingPortalConfigurationsConfigurationQueriesExpandItemsString string;
 
 public type registrations_id_body record {|
     # Time at which the registration becomes active. It can be either `now` to indicate the current time, or a timestamp measured in seconds since the Unix epoch.
@@ -22813,12 +23053,6 @@ public type registrations_id_body record {|
     # If set, the registration stops being active at this time. If not set, the registration will be active indefinitely. It can be either `now` to indicate the current time, or a timestamp measured in seconds since the Unix epoch.
     "now"|int|"" expires_at?;
 |};
-
-# Represents the Queries record for the operation: GetPaymentMethodConfigurationsConfiguration
-public type GetPaymentMethodConfigurationsConfigurationQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetPaymentMethodConfigurationsConfigurationQueriesExpandItemsString[] expand?;
-};
 
 # 
 public type BillingClocksResourceBillingClockList record {
@@ -22830,6 +23064,12 @@ public type BillingClocksResourceBillingClockList record {
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000, pattern: re `^/v1/test_helpers/test_clocks`}
     string url;
+};
+
+# Represents the Queries record for the operation: GetPaymentMethodConfigurationsConfiguration
+public type GetPaymentMethodConfigurationsConfigurationQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetPaymentMethodConfigurationsConfigurationQueriesExpandItemsString[] expand?;
 };
 
 # Represents the Queries record for the operation: GetTreasuryCreditReversalsCreditReversal
@@ -22902,8 +23142,6 @@ public type Radar_review_resource_session record {
 
 public type invoices_create_preview_bodyExpandItemsString string;
 
-public type charge_refunds_bodyExpandItemsString string;
-
 public type subscriptions_subscription_exposed_id_body record {|
     # A list of prices and quantities that will generate invoice items appended to the next invoice for this subscription. You may pass up to 20 items.
     add_invoice_item_entry[] add_invoice_items?;
@@ -22973,6 +23211,8 @@ public type subscriptions_subscription_exposed_id_body record {|
     trial_settings_config_1 trial_settings?;
 |};
 
+public type charge_refunds_bodyExpandItemsString string;
+
 public type outbound_transfers record {
     access_with_ach_details ach?;
     access us_domestic_wire?;
@@ -22980,23 +23220,6 @@ public type outbound_transfers record {
 
 @constraint:String {maxLength: 5000}
 public type GetReportingReportRunsQueriesExpandItemsString string;
-
-public type v1_ephemeral_keys_body record {|
-    # The ID of the Customer you'd like to modify using the resulting ephemeral key.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    # Specifies which fields in the response should be expanded.
-    v1_ephemeral_keys_bodyExpandItemsString[] expand?;
-    # The ID of the Issuing Card you'd like to access using the resulting ephemeral key.
-    @constraint:String {maxLength: 5000}
-    string issuing_card?;
-    # A single-use token, created by Stripe.js, used for creating ephemeral keys for Issuing Cards without exchanging sensitive information.
-    @constraint:String {maxLength: 5000}
-    string nonce?;
-    # The ID of the Identity VerificationSession you'd like to access using the resulting ephemeral key
-    @constraint:String {maxLength: 5000}
-    string verification_session?;
-|};
 
 @constraint:String {maxLength: 5000}
 public type GetTreasuryCreditReversalsQueriesExpandItemsString string;
@@ -23016,6 +23239,11 @@ public type controller_specs record {
     controller_dashboard_specs stripe_dashboard?;
 };
 
+public type period_1 record {
+    int end;
+    int 'start;
+};
+
 # Line items that make up the credit note
 public type CreditNoteLinesList_1 record {
     # Details about each object.
@@ -23027,11 +23255,6 @@ public type CreditNoteLinesList_1 record {
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000}
     string url;
-};
-
-public type period_1 record {
-    int end;
-    int 'start;
 };
 
 public type custom_field_text_param_1 record {
@@ -23069,6 +23292,8 @@ public type Checkout_us_bank_account_payment_method_options record {
     "automatic"|"instant" verification_method?;
 };
 
+public type invoiceitems_invoiceitem_bodyExpandItemsString string;
+
 # Result from a selfie check
 public type Gelato_selfie_report record {
     # ID of the [File](https://stripe.com/docs/api/files) holding the image of the identity document used in this check.
@@ -23080,8 +23305,6 @@ public type Gelato_selfie_report record {
     # Status of this `selfie` check.
     "unverified"|"verified" status;
 };
-
-public type invoiceitems_invoiceitem_bodyExpandItemsString string;
 
 public type billing_portal_configurations_body record {|
     business_profile_create_param business_profile;
@@ -23104,8 +23327,6 @@ public type customer_tax_ids_body record {|
     string value;
 |};
 
-public type cards_card_bodyExpandItemsString string;
-
 # 
 public type ClimateRemovalsOrdersList record {
     Climate\.order[] data;
@@ -23118,6 +23339,8 @@ public type ClimateRemovalsOrdersList record {
     string url;
 };
 
+public type cards_card_bodyExpandItemsString string;
+
 public type Financial_connections\.account_owner record {
     string? email?;
     string id;
@@ -23128,8 +23351,6 @@ public type Financial_connections\.account_owner record {
     string? raw_address?;
     int? refreshed_at?;
 };
-
-public type v1_payment_method_configurations_bodyExpandItemsString string;
 
 # Represents the Queries record for the operation: GetCustomersCustomerPaymentMethods
 public type GetCustomersCustomerPaymentMethodsQueries record {
@@ -23388,71 +23609,6 @@ public type Dispute_evidence_details record {
     int submission_count;
 };
 
-public type v1_invoices_body record {|
-    # The account tax IDs associated with the invoice. Only editable when the invoice is a draft.
-    AccounttaxidsItemsString[]|"" account_tax_ids?;
-    # A fee in cents (or local equivalent) that will be applied to the invoice and transferred to the application owner's Stripe account. The request must be made with an OAuth key or the Stripe-Account header in order to take an application fee. For more information, see the application fees [documentation](https://stripe.com/docs/billing/invoices/connect#collecting-fees).
-    int application_fee_amount?;
-    # Controls whether Stripe performs [automatic collection](https://stripe.com/docs/invoicing/integration/automatic-advancement-collection) of the invoice. If `false`, the invoice's state doesn't automatically advance without an explicit action.
-    boolean auto_advance?;
-    automatic_tax_param automatic_tax?;
-    # Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay this invoice using the default source attached to the customer. When sending an invoice, Stripe will email this invoice to the customer with payment instructions. Defaults to `charge_automatically`.
-    "charge_automatically"|"send_invoice" collection_method?;
-    # The currency to create this invoice in. Defaults to that of `customer` if not specified.
-    string currency?;
-    # A list of up to 4 custom fields to be displayed on the invoice.
-    record {string name; string value;}[]|"" custom_fields?;
-    # The ID of the customer who will be billed.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    # The number of days from when the invoice is created until it is due. Valid only for invoices where `collection_method=send_invoice`.
-    int days_until_due?;
-    # ID of the default payment method for the invoice. It must belong to the customer associated with the invoice. If not set, defaults to the subscription's default payment method, if any, or to the default payment method in the customer's invoice settings.
-    @constraint:String {maxLength: 5000}
-    string default_payment_method?;
-    # ID of the default payment source for the invoice. It must belong to the customer associated with the invoice and be in a chargeable state. If not set, defaults to the subscription's default source, if any, or to the customer's default source.
-    @constraint:String {maxLength: 5000}
-    string default_source?;
-    # The tax rates that will apply to any line item that does not have `tax_rates` set.
-    v1_invoices_bodyDefaulttaxratesItemsString[] default_tax_rates?;
-    # An arbitrary string attached to the object. Often useful for displaying to users. Referenced as 'memo' in the Dashboard.
-    @constraint:String {maxLength: 1500}
-    string description?;
-    # The coupons and promotion codes to redeem into discounts for the invoice. If not specified, inherits the discount from the invoice's customer. Pass an empty string to avoid inheriting any discounts.
-    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
-    # The date on which payment for this invoice is due. Valid only for invoices where `collection_method=send_invoice`.
-    int due_date?;
-    # The date when this invoice is in effect. Same as `finalized_at` unless overwritten. When defined, this value replaces the system-generated 'Date of issue' printed on the invoice PDF and receipt.
-    int effective_at?;
-    # Specifies which fields in the response should be expanded.
-    v1_invoices_bodyExpandItemsString[] expand?;
-    # Footer to be displayed on the invoice.
-    @constraint:String {maxLength: 5000}
-    string footer?;
-    from_invoice from_invoice?;
-    param_1 issuer?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # Set the number for this invoice. If no number is present then a number will be assigned automatically when the invoice is finalized. In many markets, regulations require invoices to be unique, sequential and / or gapless. You are responsible for ensuring this is true across all your different invoicing systems in the event that you edit the invoice number using our API. If you use only Stripe for your invoices and do not change invoice numbers, Stripe handles this aspect of compliance for you automatically.
-    @constraint:String {maxLength: 26}
-    string number?;
-    # The account (if any) for which the funds of the invoice payment are intended. If set, the invoice will be presented with the branding and support information of the specified account. See the [Invoices with Connect](https://stripe.com/docs/billing/invoices/connect) documentation for details.
-    string on_behalf_of?;
-    payment_settings_1 payment_settings?;
-    # How to handle pending invoice items on invoice creation. Defaults to `exclude` if the parameter is omitted.
-    "exclude"|"include" pending_invoice_items_behavior?;
-    rendering_param rendering?;
-    shipping_cost shipping_cost?;
-    recipient_shipping_with_optional_fields_address shipping_details?;
-    # Extra information about a charge for the customer's credit card statement. It must contain at least one letter. If not specified and this invoice is part of a subscription, the default `statement_descriptor` will be set to the first subscription item's product's `statement_descriptor`.
-    @constraint:String {maxLength: 22}
-    string statement_descriptor?;
-    # The ID of the subscription to invoice, if any. If set, the created invoice will only include pending invoice items for that subscription. The subscription's billing cycle and regular subscription events won't be affected.
-    @constraint:String {maxLength: 5000}
-    string subscription?;
-    transfer_data_specs_4 transfer_data?;
-|};
-
 @constraint:String {maxLength: 5000}
 public type GetFinancialConnectionsAccountsAccountOwnersQueriesExpandItemsString string;
 
@@ -23505,9 +23661,9 @@ public type Payment_intent_next_action_cashapp_qr_code record {
     string image_url_svg;
 };
 
-public type entitlements_features_bodyExpandItemsString string;
-
 public type Payment_source Account|Bank_account|Card|Source;
+
+public type entitlements_features_bodyExpandItemsString string;
 
 public type subscription_details_params_1 record {
     "now"|"unchanged"|int billing_cycle_anchor?;
@@ -23612,8 +23768,6 @@ public type Dispute_evidence record {
 
 public type Deleted_payment_source Deleted_bank_account|Deleted_card;
 
-public type v1_payment_intents_bodyPaymentmethodtypesItemsString string;
-
 # Represents the Queries record for the operation: GetSourcesSourceSourceTransactions
 public type GetSourcesSourceSourceTransactionsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -23675,6 +23829,16 @@ public type invoices_create_preview_body record {|
     @constraint:String {maxLength: 5000}
     string subscription?;
     subscription_details_params subscription_details?;
+|};
+
+public type tax_ids_body record {|
+    # Specifies which fields in the response should be expanded.
+    tax_ids_bodyExpandItemsString[] expand?;
+    owner_params_1 owner?;
+    # Type of the tax ID, one of `ad_nrt`, `ae_trn`, `ar_cuit`, `au_abn`, `au_arn`, `bg_uic`, `bh_vat`, `bo_tin`, `br_cnpj`, `br_cpf`, `ca_bn`, `ca_gst_hst`, `ca_pst_bc`, `ca_pst_mb`, `ca_pst_sk`, `ca_qst`, `ch_uid`, `ch_vat`, `cl_tin`, `cn_tin`, `co_nit`, `cr_tin`, `de_stn`, `do_rcn`, `ec_ruc`, `eg_tin`, `es_cif`, `eu_oss_vat`, `eu_vat`, `gb_vat`, `ge_vat`, `hk_br`, `hu_tin`, `id_npwp`, `il_vat`, `in_gst`, `is_vat`, `jp_cn`, `jp_rn`, `jp_trn`, `ke_pin`, `kr_brn`, `kz_bin`, `li_uid`, `mx_rfc`, `my_frp`, `my_itn`, `my_sst`, `ng_tin`, `no_vat`, `no_voec`, `nz_gst`, `om_vat`, `pe_ruc`, `ph_tin`, `ro_tin`, `rs_pib`, `ru_inn`, `ru_kpp`, `sa_vat`, `sg_gst`, `sg_uen`, `si_tin`, `sv_nit`, `th_vat`, `tr_tin`, `tw_vat`, `ua_vat`, `us_ein`, `uy_ruc`, `ve_rif`, `vn_tin`, or `za_vat`
+    "ad_nrt"|"ae_trn"|"ar_cuit"|"au_abn"|"au_arn"|"bg_uic"|"bh_vat"|"bo_tin"|"br_cnpj"|"br_cpf"|"ca_bn"|"ca_gst_hst"|"ca_pst_bc"|"ca_pst_mb"|"ca_pst_sk"|"ca_qst"|"ch_uid"|"ch_vat"|"cl_tin"|"cn_tin"|"co_nit"|"cr_tin"|"de_stn"|"do_rcn"|"ec_ruc"|"eg_tin"|"es_cif"|"eu_oss_vat"|"eu_vat"|"gb_vat"|"ge_vat"|"hk_br"|"hu_tin"|"id_npwp"|"il_vat"|"in_gst"|"is_vat"|"jp_cn"|"jp_rn"|"jp_trn"|"ke_pin"|"kr_brn"|"kz_bin"|"li_uid"|"mx_rfc"|"my_frp"|"my_itn"|"my_sst"|"ng_tin"|"no_vat"|"no_voec"|"nz_gst"|"om_vat"|"pe_ruc"|"ph_tin"|"ro_tin"|"rs_pib"|"ru_inn"|"ru_kpp"|"sa_vat"|"sg_gst"|"sg_uen"|"si_tin"|"sv_nit"|"th_vat"|"tr_tin"|"tw_vat"|"ua_vat"|"us_ein"|"uy_ruc"|"ve_rif"|"vn_tin"|"za_vat" 'type;
+    # Value of the tax ID.
+    string value;
 |};
 
 @constraint:String {maxLength: 5000}
@@ -23753,12 +23917,35 @@ public type Account_capability_future_requirements record {
     Account_capability_future_requirementsPendingverificationItemsString[] pending_verification;
 };
 
+public type ephemeral_keys_body record {|
+    # The ID of the Customer you'd like to modify using the resulting ephemeral key.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    # Specifies which fields in the response should be expanded.
+    ephemeral_keys_bodyExpandItemsString[] expand?;
+    # The ID of the Issuing Card you'd like to access using the resulting ephemeral key.
+    @constraint:String {maxLength: 5000}
+    string issuing_card?;
+    # A single-use token, created by Stripe.js, used for creating ephemeral keys for Issuing Cards without exchanging sensitive information.
+    @constraint:String {maxLength: 5000}
+    string nonce?;
+    # The ID of the Identity VerificationSession you'd like to access using the resulting ephemeral key
+    @constraint:String {maxLength: 5000}
+    string verification_session?;
+|};
+
 public type fleet_reported_breakdown_fuel_specs record {
     string gross_amount_decimal?;
 };
 
 @constraint:String {maxLength: 5000}
 public type GetSubscriptionsSearchQueriesExpandItemsString string;
+
+# 
+public type Payment_flows_installment_options record {
+    boolean enabled;
+    Payment_method_details_card_installments_plan plan?;
+};
 
 # A discount represents the actual application of a [coupon](https://stripe.com/docs/api#coupons) or [promotion code](https://stripe.com/docs/api#promotion_codes).
 # It contains information about when the discount began, when it will end, and what it is applied to.
@@ -23792,35 +23979,12 @@ public type Discount record {
 };
 
 # 
-public type Payment_flows_installment_options record {
-    boolean enabled;
-    Payment_method_details_card_installments_plan plan?;
-};
-
-# 
 public type Payment_links_resource_restrictions record {
     Payment_links_resource_completed_sessions completed_sessions;
 };
 
 @constraint:String {maxLength: 5000}
 public type GetCustomersCustomerBalanceTransactionsQueriesExpandItemsString string;
-
-# The account or customer the tax ID belongs to. Defaults to `owner[type]=self`.
-public type owner_params_1 record {
-    string account?;
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    "account"|"application"|"customer"|"self" 'type;
-};
-
-public type Deleted_radar\.value_list_item record {
-    true deleted;
-    string id;
-    "radar.value_list_item" 'object;
-};
-
-@constraint:String {maxLength: 5000}
-public type GetSourcesSourceMandateNotificationsMandateNotificationQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetTreasuryOutboundTransfers
 public type GetTreasuryOutboundTransfersQueries record {
@@ -23840,6 +24004,23 @@ public type GetTreasuryOutboundTransfersQueries record {
     "canceled"|"failed"|"posted"|"processing"|"returned" status?;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetSourcesSourceMandateNotificationsMandateNotificationQueriesExpandItemsString string;
+
+# The account or customer the tax ID belongs to. Defaults to `owner[type]=self`.
+public type owner_params_1 record {
+    string account?;
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    "account"|"application"|"customer"|"self" 'type;
+};
+
+public type Deleted_radar\.value_list_item record {
+    true deleted;
+    string id;
+    "radar.value_list_item" 'object;
+};
+
 # 
 public type Payment_method_details_p24 record {
     # The customer's bank. Can be one of `ing`, `citi_handlowy`, `tmobile_usbugi_bankowe`, `plus_bank`, `etransfer_pocztowy24`, `banki_spbdzielcze`, `bank_nowy_bfg_sa`, `getin_bank`, `velobank`, `blik`, `noble_pay`, `ideabank`, `envelobank`, `santander_przelew24`, `nest_przelew`, `mbank_mtransfer`, `inteligo`, `pbac_z_ipko`, `bnp_paribas`, `credit_agricole`, `toyota_bank`, `bank_pekao_sa`, `volkswagen_bank`, `bank_millennium`, `alior_bank`, or `boz`.
@@ -23851,6 +24032,35 @@ public type Payment_method_details_p24 record {
     # Przelewy24 rarely provides this information so the attribute is usually empty.
     string? verified_name?;
 };
+
+public type refunds_body record {|
+    int amount?;
+    # The identifier of the charge to refund.
+    @constraint:String {maxLength: 5000}
+    string charge?;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency?;
+    # Customer whose customer balance to refund from.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    # Specifies which fields in the response should be expanded.
+    refunds_bodyExpandItemsString[] expand?;
+    # For payment methods without native refund support (e.g., Konbini, PromptPay), use this email from the customer to receive refund instructions.
+    string instructions_email?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # Origin of the refund
+    "customer_balance" origin?;
+    # The identifier of the PaymentIntent to refund.
+    @constraint:String {maxLength: 5000}
+    string payment_intent?;
+    # String indicating the reason for the refund. If set, possible values are `duplicate`, `fraudulent`, and `requested_by_customer`. If you believe the charge to be fraudulent, specifying `fraudulent` as the reason will add the associated card and email to your [block lists](https://stripe.com/docs/radar/lists), and will also help us improve our fraud detection algorithms.
+    "duplicate"|"fraudulent"|"requested_by_customer" reason?;
+    # Boolean indicating whether the application fee should be refunded when refunding this charge. If a full charge refund is given, the full application fee will be refunded. Otherwise, the application fee will be refunded in an amount proportional to the amount of the charge refunded. An application fee can be refunded only by the application that created the charge.
+    boolean refund_application_fee?;
+    # Boolean indicating whether the transfer should be reversed when refunding this charge. The transfer will be reversed proportionally to the amount being refunded (either the entire or partial amount).<br><br>A transfer can be reversed only by the application that created the charge.
+    boolean reverse_transfer?;
+|};
 
 @constraint:String {maxLength: 5000}
 public type GetSetupAttemptsQueriesExpandItemsString string;
@@ -23896,14 +24106,70 @@ public type payment_method_reuse_agreement_params record {
     "auto"|"hidden" position;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetEntitlementsActiveEntitlementsQueriesExpandItemsString string;
+
 # Represents the Queries record for the operation: GetBillingMetersId
 public type GetBillingMetersIdQueries record {
     # Specifies which fields in the response should be expanded.
     GetBillingMetersIdQueriesExpandItemsString[] expand?;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetEntitlementsActiveEntitlementsQueriesExpandItemsString string;
+public type sources_body record {|
+    # Amount associated with the source. This is the amount for which the source will be chargeable once ready. Required for `single_use` sources. Not supported for `receiver` type sources, where charge amount may not be specified until funds land.
+    int amount?;
+    # Three-letter [ISO code for the currency](https://stripe.com/docs/currencies) associated with the source. This is the currency for which the source will be chargeable once ready.
+    string currency?;
+    # The `Customer` to whom the original source is attached to. Must be set when the original source is not a `Source` (e.g., `Card`).
+    @constraint:String {maxLength: 500}
+    string customer?;
+    # Specifies which fields in the response should be expanded.
+    sources_bodyExpandItemsString[] expand?;
+    # The authentication `flow` of the source to create. `flow` is one of `redirect`, `receiver`, `code_verification`, `none`. It is generally inferred unless a type supports multiple flows.
+    "code_verification"|"none"|"receiver"|"redirect" flow?;
+    mandate_params mandate?;
+    record {|string...;|} metadata?;
+    # The source to share.
+    @constraint:String {maxLength: 5000}
+    string original_source?;
+    owner_1 owner?;
+    receiver_params receiver?;
+    redirect_params redirect?;
+    shallow_order_specs source_order?;
+    # An arbitrary string to be displayed on your customer's statement. As an example, if your website is `RunClub` and the item you're charging for is a race ticket, you may want to specify a `statement_descriptor` of `RunClub 5K race ticket.` While many payment types will display this information, some may not display it at all.
+    @constraint:String {maxLength: 5000}
+    string statement_descriptor?;
+    # An optional token used to create the source. When passed, token properties will override source parameters.
+    @constraint:String {maxLength: 5000}
+    string token?;
+    # The `type` of the source to create. Required unless `customer` and `original_source` are specified (see the [Cloning card Sources](https://stripe.com/docs/sources/connect#cloning-card-sources) guide)
+    @constraint:String {maxLength: 5000}
+    string 'type?;
+    "reusable"|"single_use" usage?;
+|};
+
+public type promotion_codes_body record {|
+    # Whether the promotion code is currently active.
+    boolean active?;
+    # The customer-facing code. Regardless of case, this code must be unique across all active promotion codes for a specific customer. If left blank, we will generate one automatically.
+    @constraint:String {maxLength: 500}
+    string code?;
+    # The coupon for this promotion code.
+    @constraint:String {maxLength: 5000}
+    string coupon;
+    # The customer that this promotion code can be used by. If not set, the promotion code can be used by all customers.
+    @constraint:String {maxLength: 5000}
+    string customer?;
+    # Specifies which fields in the response should be expanded.
+    promotion_codes_bodyExpandItemsString[] expand?;
+    # The timestamp at which this promotion code will expire. If the coupon has specified a `redeems_by`, then this value cannot be after the coupon's `redeems_by`.
+    int expires_at?;
+    # A positive integer specifying the number of times the promotion code can be redeemed. If the coupon has specified a `max_redemptions`, then this value cannot be greater than the coupon's `max_redemptions`.
+    int max_redemptions?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    restrictions_params_1 restrictions?;
+|};
 
 # 
 public type Source_transaction_sepa_credit_transfer_data record {
@@ -23936,6 +24202,50 @@ public type Payment_flows_automatic_payment_methods_setup_intent record {
 @constraint:String {maxLength: 5000}
 public type GetIssuingCardholdersCardholderQueriesExpandItemsString string;
 
+public type charges_body record {|
+    # Amount intended to be collected by this payment. A positive integer representing how much to charge in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal) (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or [equivalent in charge currency](https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts). The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99).
+    int amount?;
+    int application_fee?;
+    # A fee in cents (or local equivalent) that will be applied to the charge and transferred to the application owner's Stripe account. The request must be made with an OAuth key or the `Stripe-Account` header in order to take an application fee. For more information, see the application fees [documentation](https://stripe.com/docs/connect/direct-charges#collect-fees).
+    int application_fee_amount?;
+    # Whether to immediately capture the charge. Defaults to `true`. When `false`, the charge issues an authorization (or pre-authorization), and will need to be [captured](https://stripe.com/docs/api#capture_charge) later. Uncaptured charges expire after a set number of days (7 by default). For more information, see the [authorizing charges and settling later](https://stripe.com/docs/charges/placing-a-hold) documentation.
+    boolean capture?;
+    # A token, like the ones returned by [Stripe.js](https://stripe.com/docs/js).
+    record {string address_city?; string address_country?; string address_line1?; string address_line2?; string address_state?; string address_zip?; string cvc?; int exp_month; int exp_year; record {|string...;|} metadata?; string name?; string number; "card" 'object?;}|string card?;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency?;
+    # The ID of an existing customer that will be charged in this request.
+    @constraint:String {maxLength: 500}
+    string customer?;
+    # An arbitrary string which you can attach to a `Charge` object. It is displayed when in the web interface alongside the charge. Note that if you use Stripe to send automatic email receipts to your customers, your receipt emails will include the `description` of the charge(s) that they are describing.
+    @constraint:String {maxLength: 40000}
+    string description?;
+    record {string account; int amount?;}|string destination?;
+    # Specifies which fields in the response should be expanded.
+    charges_bodyExpandItemsString[] expand?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # The Stripe account ID for which these funds are intended. Automatically set if you use the `destination` parameter. For details, see [Creating Separate Charges and Transfers](https://stripe.com/docs/connect/separate-charges-and-transfers#settlement-merchant).
+    @constraint:String {maxLength: 5000}
+    string on_behalf_of?;
+    radar_options_with_hidden_options radar_options?;
+    # The email address to which this charge's [receipt](https://stripe.com/docs/dashboard/receipts) will be sent. The receipt will not be sent until the charge is paid, and no receipts will be sent for test mode charges. If this charge is for a [Customer](https://stripe.com/docs/api/customers/object), the email address specified here will override the customer's email address. If `receipt_email` is specified for a charge in live mode, a receipt will be sent regardless of your [email settings](https://dashboard.stripe.com/account/emails).
+    string receipt_email?;
+    optional_fields_shipping shipping?;
+    # A payment source to be charged. This can be the ID of a [card](https://stripe.com/docs/api#cards) (i.e., credit or debit card), a [bank account](https://stripe.com/docs/api#bank_accounts), a [source](https://stripe.com/docs/api#sources), a [token](https://stripe.com/docs/api#tokens), or a [connected account](https://stripe.com/docs/connect/account-debits#charging-a-connected-account). For certain sources---namely, [cards](https://stripe.com/docs/api#cards), [bank accounts](https://stripe.com/docs/api#bank_accounts), and attached [sources](https://stripe.com/docs/api#sources)---you must also pass the ID of the associated customer.
+    @constraint:String {maxLength: 5000}
+    string 'source?;
+    # For card charges, use `statement_descriptor_suffix` instead. Otherwise, you can use this value as the complete description of a charge on your customers’ statements. Must contain at least one letter, maximum 22 characters.
+    @constraint:String {maxLength: 22}
+    string statement_descriptor?;
+    # Provides information about the charge that customers see on their statements. Concatenated with the prefix (shortened descriptor) or statement descriptor that’s set on the account to form the complete statement descriptor. Maximum 22 characters for the concatenated descriptor.
+    @constraint:String {maxLength: 22}
+    string statement_descriptor_suffix?;
+    transfer_data_specs transfer_data?;
+    # A string that identifies this transaction as part of a group. For details, see [Grouping transactions](https://stripe.com/docs/connect/separate-charges-and-transfers#transfer-options).
+    string transfer_group?;
+|};
+
 @constraint:String {maxLength: 5000}
 public type GetPlansPlanQueriesExpandItemsString string;
 
@@ -23960,11 +24270,6 @@ public type payment_method_param_16 record {
     display_preference_param display_preference?;
 };
 
-# Uses a customer’s [cash balance](https://stripe.com/docs/payments/customer-balance) for the payment. The cash balance can be funded via a bank transfer. Check this [page](https://stripe.com/docs/payments/bank-transfers) for more details.
-public type payment_method_param_17 record {
-    display_preference_param display_preference?;
-};
-
 public type custom_field_numeric_param record {
     @constraint:String {maxLength: 255}
     string default_value?;
@@ -23972,11 +24277,32 @@ public type custom_field_numeric_param record {
     int minimum_length?;
 };
 
+# Uses a customer’s [cash balance](https://stripe.com/docs/payments/customer-balance) for the payment. The cash balance can be funded via a bank transfer. Check this [page](https://stripe.com/docs/payments/bank-transfers) for more details.
+public type payment_method_param_17 record {
+    display_preference_param display_preference?;
+};
+
 # Represents the Queries record for the operation: GetChargesChargeDispute
 public type GetChargesChargeDisputeQueries record {
     # Specifies which fields in the response should be expanded.
     GetChargesChargeDisputeQueriesExpandItemsString[] expand?;
 };
+
+public type billing_meters_body record {|
+    customer_mapping_param customer_mapping?;
+    aggregation_settings_param default_aggregation;
+    # The meter's name.
+    @constraint:String {maxLength: 250}
+    string display_name;
+    # The name of the meter event to record usage for. Corresponds with the `event_name` field on meter events.
+    @constraint:String {maxLength: 100}
+    string event_name;
+    # The time window to pre-aggregate meter events for, if any.
+    "day"|"hour" event_time_window?;
+    # Specifies which fields in the response should be expanded.
+    billing_meters_bodyExpandItemsString[] expand?;
+    meter_value_settings_param value_settings?;
+|};
 
 # EPS is an Austria-based payment method that allows customers to complete transactions online using their bank credentials. EPS is supported by all Austrian banks and is accepted by over 80% of Austrian online retailers. Check this [page](https://stripe.com/docs/payments/eps) for more details.
 public type payment_method_param_18 record {
@@ -24003,22 +24329,6 @@ public type GetIssuingTokensQueries record {
     # Select Issuing tokens with the given status.
     "active"|"deleted"|"requested"|"suspended" status?;
 };
-
-public type billing_meters_body record {|
-    customer_mapping_param customer_mapping?;
-    aggregation_settings_param default_aggregation;
-    # The meter's name.
-    @constraint:String {maxLength: 250}
-    string display_name;
-    # The name of the meter event to record usage for. Corresponds with the `event_name` field on meter events.
-    @constraint:String {maxLength: 100}
-    string event_name;
-    # The time window to pre-aggregate meter events for, if any.
-    "day"|"hour" event_time_window?;
-    # Specifies which fields in the response should be expanded.
-    billing_meters_bodyExpandItemsString[] expand?;
-    meter_value_settings_param value_settings?;
-|};
 
 # Financial Process Exchange (FPX) is a Malaysia-based payment method that allows customers to complete transactions online using their bank credentials. Bank Negara Malaysia (BNM), the Central Bank of Malaysia, and eleven other major Malaysian financial institutions are members of the PayNet Group, which owns and operates FPX. It is one of the most popular online payment methods in Malaysia, with nearly 90 million transactions in 2018 according to BNM. Check this [page](https://stripe.com/docs/payments/fpx) for more details.
 public type payment_method_param_19 record {
@@ -24052,6 +24362,9 @@ public type Subscription_details_data record {
     #  *Note: This attribute is populated only for invoices created on or after June 29, 2023.*
     record {|string...;|}? metadata?;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetSubscriptionsQueriesExpandItemsString string;
 
 # Cards are a popular way for consumers and businesses to pay online or in person. Stripe supports global and local card networks.
 public type payment_method_param_14 record {
@@ -24087,9 +24400,6 @@ public type subscription_items_item_body_1 record {|
     # If set, the proration will be calculated as though the subscription was updated at the given time. This can be used to apply the same proration that was previewed with the [upcoming invoice](https://stripe.com/docs/api#retrieve_customer_invoice) endpoint.
     int proration_date?;
 |};
-
-@constraint:String {maxLength: 5000}
-public type GetSubscriptionsQueriesExpandItemsString string;
 
 # Cartes Bancaires is France's local card network. More than 95% of these cards are co-branded with either Visa or Mastercard, meaning you can process these cards over either Cartes Bancaires or the Visa or Mastercard networks. Check this [page](https://stripe.com/docs/payments/cartes-bancaires) for more details.
 public type payment_method_param_15 record {
@@ -24152,20 +24462,6 @@ public type payment_method_param_11 record {
 public type Setup_intent_payment_method_options_mandate_options_sepa_debit record {
 };
 
-public type configurations_configuration_body record {|
-    # Whether the configuration is active and can be used to create portal sessions.
-    boolean active?;
-    business_profile_update_param business_profile?;
-    # The default URL to redirect customers to when they click on the portal's link to return to your website. This can be [overriden](https://stripe.com/docs/api/customer_portal/sessions/create#create_portal_session-return_url) when creating the session.
-    string|"" default_return_url?;
-    # Specifies which fields in the response should be expanded.
-    configurations_configuration_bodyExpandItemsString[] expand?;
-    features_updating_param features?;
-    login_page_update_param login_page?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-|};
-
 # A subset of parameters to be passed to subscription creation for Checkout Sessions in `subscription` mode.
 public type subscription_data_params record {
     decimal application_fee_percent?;
@@ -24189,12 +24485,39 @@ public type GetTerminalConfigurationsConfigurationQueries record {
     GetTerminalConfigurationsConfigurationQueriesExpandItemsString[] expand?;
 };
 
+public type configurations_configuration_body record {|
+    # Whether the configuration is active and can be used to create portal sessions.
+    boolean active?;
+    business_profile_update_param business_profile?;
+    # The default URL to redirect customers to when they click on the portal's link to return to your website. This can be [overriden](https://stripe.com/docs/api/customer_portal/sessions/create#create_portal_session-return_url) when creating the session.
+    string|"" default_return_url?;
+    # Specifies which fields in the response should be expanded.
+    configurations_configuration_bodyExpandItemsString[] expand?;
+    features_updating_param features?;
+    login_page_update_param login_page?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+|};
+
 public type id_verify_body record {|
     # Two positive integers, in *cents*, equal to the values of the microdeposits sent to the bank account.
     int[] amounts?;
     # Specifies which fields in the response should be expanded.
     id_verify_bodyExpandItemsString[] expand?;
 |};
+
+# The individual line items that make up the invoice. `lines` is sorted as follows: (1) pending invoice items (including prorations) in reverse chronological order, (2) subscription items in reverse chronological order, and (3) invoice items added after invoice creation in chronological order.
+public type InvoiceLinesList_1 record {
+    # Details about each object.
+    Line_item[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000}
+    string url;
+};
 
 # [Tax codes](https://stripe.com/docs/tax/tax-categories) classify goods and services for tax purposes.
 public type Tax_code record {
@@ -24210,102 +24533,6 @@ public type Tax_code record {
     # String representing the object's type. Objects of the same type share the same value.
     "tax_code" 'object;
 };
-
-# The individual line items that make up the invoice. `lines` is sorted as follows: (1) pending invoice items (including prorations) in reverse chronological order, (2) subscription items in reverse chronological order, and (3) invoice items added after invoice creation in chronological order.
-public type InvoiceLinesList_1 record {
-    # Details about each object.
-    Line_item[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000}
-    string url;
-};
-
-public type v1_subscriptions_body record {|
-    # A list of prices and quantities that will generate invoice items appended to the next invoice for this subscription. You may pass up to 20 items.
-    add_invoice_item_entry[] add_invoice_items?;
-    # A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice total that will be transferred to the application owner's Stripe account. The request must be made by a platform account on a connected account in order to set an application fee percentage. For more information, see the application fees [documentation](https://stripe.com/docs/connect/subscriptions#collecting-fees-on-subscriptions).
-    decimal|"" application_fee_percent?;
-    automatic_tax_config_4 automatic_tax?;
-    # For new subscriptions, a past timestamp to backdate the subscription's start date to. If set, the first invoice will contain a proration for the timespan between the start date and the current time. Can be combined with trials and the billing cycle anchor.
-    int backdate_start_date?;
-    # A future timestamp in UTC format to anchor the subscription's [billing cycle](https://stripe.com/docs/subscriptions/billing-cycle). The anchor is the reference point that aligns future billing cycle dates. It sets the day of week for `week` intervals, the day of month for `month` and `year` intervals, and the month of year for `year` intervals.
-    int billing_cycle_anchor?;
-    billing_cycle_anchor_config_param billing_cycle_anchor_config?;
-    # Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period. Pass an empty string to remove previously-defined thresholds.
-    record {int amount_gte?; boolean reset_billing_cycle_anchor?;}|"" billing_thresholds?;
-    # A timestamp at which the subscription should cancel. If set to a date before the current period ends, this will cause a proration if prorations have been enabled using `proration_behavior`. If set during a future period, this will always cause a proration for that period.
-    int cancel_at?;
-    # Boolean indicating whether this subscription should cancel at the end of the current period.
-    boolean cancel_at_period_end?;
-    # Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay this subscription at the end of the cycle using the default source attached to the customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions and mark the subscription as `active`. Defaults to `charge_automatically`.
-    "charge_automatically"|"send_invoice" collection_method?;
-    # The ID of the coupon to apply to this subscription. A coupon applied to a subscription will only affect invoices created for that particular subscription. This field has been deprecated and will be removed in a future API version. Use `discounts` instead.
-    @constraint:String {maxLength: 5000}
-    string coupon?;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency?;
-    # The identifier of the customer to subscribe.
-    @constraint:String {maxLength: 5000}
-    string customer;
-    # Number of days a customer has to pay invoices generated by this subscription. Valid only for subscriptions where `collection_method` is set to `send_invoice`.
-    int days_until_due?;
-    # ID of the default payment method for the subscription. It must belong to the customer associated with the subscription. This takes precedence over `default_source`. If neither are set, invoices will use the customer's [invoice_settings.default_payment_method](https://stripe.com/docs/api/customers/object#customer_object-invoice_settings-default_payment_method) or [default_source](https://stripe.com/docs/api/customers/object#customer_object-default_source).
-    @constraint:String {maxLength: 5000}
-    string default_payment_method?;
-    # ID of the default payment source for the subscription. It must belong to the customer associated with the subscription and be in a chargeable state. If `default_payment_method` is also set, `default_payment_method` will take precedence. If neither are set, invoices will use the customer's [invoice_settings.default_payment_method](https://stripe.com/docs/api/customers/object#customer_object-invoice_settings-default_payment_method) or [default_source](https://stripe.com/docs/api/customers/object#customer_object-default_source).
-    @constraint:String {maxLength: 5000}
-    string default_source?;
-    # The tax rates that will apply to any subscription item that does not have `tax_rates` set. Invoices created will have their `default_tax_rates` populated from the subscription.
-    DefaulttaxratesItemsString[]|"" default_tax_rates?;
-    # The subscription's description, meant to be displayable to the customer. Use this field to optionally store an explanation of the subscription for rendering in Stripe surfaces and certain local payment methods UIs.
-    @constraint:String {maxLength: 500}
-    string description?;
-    # The coupons to redeem into discounts for the subscription. If not specified or empty, inherits the discount from the subscription's customer.
-    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
-    # Specifies which fields in the response should be expanded.
-    v1_subscriptions_bodyExpandItemsString[] expand?;
-    invoice_settings_param_1 invoice_settings?;
-    # A list of up to 20 subscription items, each with an attached price.
-    subscription_item_create_params[] items?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # Indicates if a customer is on or off-session while an invoice payment is attempted.
-    boolean off_session?;
-    # The account on behalf of which to charge, for each of the subscription's invoices.
-    string|"" on_behalf_of?;
-    # Only applies to subscriptions with `collection_method=charge_automatically`.
-    # 
-    # Use `allow_incomplete` to create Subscriptions with `status=incomplete` if the first invoice can't be paid. Creating Subscriptions with this status allows you to manage scenarios where additional customer actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.
-    # 
-    # Use `default_incomplete` to create Subscriptions with `status=incomplete` when the first invoice requires payment, otherwise start as active. Subscriptions transition to `status=active` when successfully confirming the PaymentIntent on the first invoice. This allows simpler management of scenarios where additional customer actions are needed to pay a subscription’s invoice, such as failed payments, [SCA regulation](https://stripe.com/docs/billing/migration/strong-customer-authentication), or collecting a mandate for a bank debit payment method. If the PaymentIntent is not confirmed within 23 hours Subscriptions transition to `status=incomplete_expired`, which is a terminal state.
-    # 
-    # Use `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's first invoice can't be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further customer action is needed, this parameter doesn't create a Subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.
-    # 
-    # `pending_if_incomplete` is only used with updates and cannot be passed when creating a Subscription.
-    # 
-    # Subscriptions with `collection_method=send_invoice` are automatically activated regardless of the first Invoice status.
-    "allow_incomplete"|"default_incomplete"|"error_if_incomplete"|"pending_if_incomplete" payment_behavior?;
-    payment_settings payment_settings?;
-    # Specifies an interval for how often to bill for any pending invoice items. It is analogous to calling [Create an invoice](https://stripe.com/docs/api#create_invoice) for the given subscription at the specified interval.
-    record {"day"|"month"|"week"|"year" interval; int interval_count?;}|"" pending_invoice_item_interval?;
-    # The ID of a promotion code to apply to this subscription. A promotion code applied to a subscription will only affect invoices created for that particular subscription. This field has been deprecated and will be removed in a future API version. Use `discounts` instead.
-    @constraint:String {maxLength: 5000}
-    string promotion_code?;
-    # Determines how to handle [prorations](https://stripe.com/docs/billing/subscriptions/prorations) resulting from the `billing_cycle_anchor`. If no value is passed, the default is `create_prorations`.
-    "always_invoice"|"create_prorations"|"none" proration_behavior?;
-    transfer_data_specs_3 transfer_data?;
-    # Unix timestamp representing the end of the trial period the customer will get before being charged for the first time. If set, trial_end will override the default trial period of the plan the customer is being subscribed to. The special value `now` can be provided to end the customer's trial immediately. Can be at most two years from `billing_cycle_anchor`. See [Using trial periods on subscriptions](https://stripe.com/docs/billing/subscriptions/trials) to learn more.
-    "now"|int trial_end?;
-    # Indicates if a plan's `trial_period_days` should be applied to the subscription. Setting `trial_end` per subscription is preferred, and this defaults to `false`. Setting this flag to `true` together with `trial_end` is not allowed. See [Using trial periods on subscriptions](https://stripe.com/docs/billing/subscriptions/trials) to learn more.
-    boolean trial_from_plan?;
-    # Integer representing the number of trial period days before the customer is charged for the first time. This will always overwrite any trials that might apply via a subscribed plan. See [Using trial periods on subscriptions](https://stripe.com/docs/billing/subscriptions/trials) to learn more.
-    int trial_period_days?;
-    trial_settings_config_1 trial_settings?;
-|};
 
 public type cards_id_body_1ExpandItemsString string;
 
@@ -24325,8 +24552,6 @@ public type financial_account_features_body record {|
 |};
 
 public type outbound_transfers_outbound_transfer_bodyExpandItemsString string;
-
-public type v1_subscription_schedules_bodyExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetRadarEarlyFraudWarningsEarlyFraudWarningQueriesExpandItemsString string;
@@ -24350,57 +24575,6 @@ public type payment_method_param_29 record {
 
 @constraint:String {maxLength: 5000}
 public type GetSubscriptionsSubscriptionExposedIdQueriesExpandItemsString string;
-
-public type v1_payment_method_configurations_body record {|
-    payment_method_param_2 acss_debit?;
-    payment_method_param_3 affirm?;
-    payment_method_param_4 afterpay_clearpay?;
-    payment_method_param_5 alipay?;
-    payment_method_param_6 amazon_pay?;
-    payment_method_param_7 apple_pay?;
-    payment_method_param_8 apple_pay_later?;
-    payment_method_param_9 au_becs_debit?;
-    payment_method_param_10 bacs_debit?;
-    payment_method_param_11 bancontact?;
-    payment_method_param_12 blik?;
-    payment_method_param_13 boleto?;
-    payment_method_param_14 card?;
-    payment_method_param_15 cartes_bancaires?;
-    payment_method_param_16 cashapp?;
-    payment_method_param_17 customer_balance?;
-    payment_method_param_18 eps?;
-    # Specifies which fields in the response should be expanded.
-    v1_payment_method_configurations_bodyExpandItemsString[] expand?;
-    payment_method_param_19 fpx?;
-    payment_method_param_20 giropay?;
-    payment_method_param_21 google_pay?;
-    payment_method_param_22 grabpay?;
-    payment_method_param_23 ideal?;
-    payment_method_param_24 jcb?;
-    payment_method_param_25 klarna?;
-    payment_method_param_26 konbini?;
-    payment_method_param_27 link?;
-    payment_method_param_28 mobilepay?;
-    payment_method_param_29 multibanco?;
-    # Configuration name.
-    @constraint:String {maxLength: 100}
-    string name?;
-    payment_method_param_30 oxxo?;
-    payment_method_param_31 p24?;
-    # Configuration's parent configuration. Specify to create a child configuration.
-    @constraint:String {maxLength: 100}
-    string parent?;
-    payment_method_param_32 paynow?;
-    payment_method_param_33 paypal?;
-    payment_method_param_34 promptpay?;
-    payment_method_param_35 revolut_pay?;
-    payment_method_param_36 sepa_debit?;
-    payment_method_param_37 sofort?;
-    payment_method_param_38 swish?;
-    payment_method_param_39 us_bank_account?;
-    payment_method_param_40 wechat_pay?;
-    payment_method_param_41 zip?;
-|};
 
 # iDEAL is a Netherlands-based payment method that allows customers to complete transactions online using their bank credentials. All major Dutch banks are members of Currence, the scheme that operates iDEAL, making it the most popular online payment method in the Netherlands with a share of online transactions close to 55%. Check this [page](https://stripe.com/docs/payments/ideal) for more details.
 public type payment_method_param_23 record {
@@ -24454,11 +24628,6 @@ public type phase_configuration_params_1 record {
     int|"now" trial_end?;
 };
 
-# Google Pay allows customers to make payments in your app or website using any credit or debit card saved to their Google Account, including those from Google Play, YouTube, Chrome, or an Android device. Use the Google Pay API to request any credit or debit card stored in your customer's Google account. Check this [page](https://stripe.com/docs/google-pay) for more details.
-public type payment_method_param_21 record {
-    display_preference_param display_preference?;
-};
-
 public type phase_configuration_params_2 record {
     add_invoice_item_entry[] add_invoice_items?;
     decimal application_fee_percent?;
@@ -24486,8 +24655,8 @@ public type phase_configuration_params_2 record {
     int|"now" trial_end?;
 };
 
-# GrabPay is a payment method developed by [Grab](https://www.grab.com/sg/consumer/finance/pay/). GrabPay is a digital wallet - customers maintain a balance in their wallets that they pay out with. Check this [page](https://stripe.com/docs/payments/grabpay) for more details.
-public type payment_method_param_22 record {
+# Google Pay allows customers to make payments in your app or website using any credit or debit card saved to their Google Account, including those from Google Play, YouTube, Chrome, or an Android device. Use the Google Pay API to request any credit or debit card stored in your customer's Google account. Check this [page](https://stripe.com/docs/google-pay) for more details.
+public type payment_method_param_21 record {
     display_preference_param display_preference?;
 };
 
@@ -24523,6 +24692,11 @@ public type phase_configuration_params_3 record {
     transfer_data_specs_2 transfer_data?;
     boolean trial?;
     int trial_end?;
+};
+
+# GrabPay is a payment method developed by [Grab](https://www.grab.com/sg/consumer/finance/pay/). GrabPay is a digital wallet - customers maintain a balance in their wallets that they pay out with. Check this [page](https://stripe.com/docs/payments/grabpay) for more details.
+public type payment_method_param_22 record {
+    display_preference_param display_preference?;
 };
 
 # 
@@ -24592,89 +24766,6 @@ public type issuing_authorizations_body record {|
     "apple_pay"|"google_pay"|"samsung_pay" wallet?;
 |};
 
-public type v1_payment_intents_body record {|
-    # Amount intended to be collected by this PaymentIntent. A positive integer representing how much to charge in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal) (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or [equivalent in charge currency](https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts). The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99).
-    int amount;
-    # The amount of the application fee (if any) that will be requested to be applied to the payment and transferred to the application owner's Stripe account. The amount of the application fee collected will be capped at the total payment amount. For more information, see the PaymentIntents [use case for connected accounts](https://stripe.com/docs/payments/connected-accounts).
-    int application_fee_amount?;
-    automatic_payment_methods_param automatic_payment_methods?;
-    # Controls when the funds will be captured from the customer's account.
-    "automatic"|"automatic_async"|"manual" capture_method?;
-    # Set to `true` to attempt to [confirm this PaymentIntent](https://stripe.com/docs/api/payment_intents/confirm) immediately. This parameter defaults to `false`. When creating and confirming a PaymentIntent at the same time, you can also provide the parameters available in the [Confirm API](https://stripe.com/docs/api/payment_intents/confirm).
-    boolean confirm?;
-    # Describes whether we can confirm this PaymentIntent automatically, or if it requires customer action to confirm the payment.
-    "automatic"|"manual" confirmation_method?;
-    # ID of the ConfirmationToken used to confirm this PaymentIntent.
-    # 
-    # If the provided ConfirmationToken contains properties that are also being provided in this request, such as `payment_method`, then the values in this request will take precedence.
-    @constraint:String {maxLength: 5000}
-    string confirmation_token?;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency;
-    # ID of the Customer this PaymentIntent belongs to, if one exists.
-    # 
-    # Payment methods attached to other Customers cannot be used with this PaymentIntent.
-    # 
-    # If present in combination with [setup_future_usage](https://stripe.com/docs/api#payment_intent_object-setup_future_usage), this PaymentIntent's payment method will be attached to the Customer after the PaymentIntent has been confirmed and any required actions from the user are complete.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    # An arbitrary string attached to the object. Often useful for displaying to users.
-    @constraint:String {maxLength: 1000}
-    string description?;
-    # Set to `true` to fail the payment attempt if the PaymentIntent transitions into `requires_action`. Use this parameter for simpler integrations that don't handle customer actions, such as [saving cards without authentication](https://stripe.com/docs/payments/save-card-without-authentication). This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
-    boolean error_on_requires_action?;
-    # Specifies which fields in the response should be expanded.
-    v1_payment_intents_bodyExpandItemsString[] expand?;
-    # ID of the mandate that's used for this payment. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
-    @constraint:String {maxLength: 5000}
-    string mandate?;
-    # This hash contains details about the Mandate to create. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
-    record {record {int accepted_at?; record {} offline?; record {string ip_address; string user_agent;} online?; "offline"|"online" 'type;} customer_acceptance;}|"" mandate_data?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # Set to `true` to indicate that the customer isn't in your checkout flow during this payment attempt and can't authenticate. Use this parameter in scenarios where you collect card details and [charge them later](https://stripe.com/docs/payments/cards/charging-saved-cards). This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
-    boolean|"one_off"|"recurring" off_session?;
-    # The Stripe account ID that these funds are intended for. Learn more about the [use case for connected accounts](https://stripe.com/docs/payments/connected-accounts).
-    string on_behalf_of?;
-    # ID of the payment method (a PaymentMethod, Card, or [compatible Source](https://stripe.com/docs/payments/payment-methods/transitioning#compatibility) object) to attach to this PaymentIntent.
-    # 
-    # If you omit this parameter with `confirm=true`, `customer.default_source` attaches as this PaymentIntent's payment instrument to improve migration for users of the Charges API. We recommend that you explicitly provide the `payment_method` moving forward.
-    @constraint:String {maxLength: 5000}
-    string payment_method?;
-    # The ID of the payment method configuration to use with this PaymentIntent.
-    @constraint:String {maxLength: 100}
-    string payment_method_configuration?;
-    payment_method_data_params payment_method_data?;
-    payment_method_options_param_14 payment_method_options?;
-    # The list of payment method types (for example, a card) that this PaymentIntent can use. If you don't provide this, it defaults to ["card"]. Use `automatic_payment_methods` to manage payment methods from the [Stripe Dashboard](https://dashboard.stripe.com/settings/payment_methods).
-    v1_payment_intents_bodyPaymentmethodtypesItemsString[] payment_method_types?;
-    radar_options_with_hidden_options_2 radar_options?;
-    # Email address to send the receipt to. If you specify `receipt_email` for a payment in live mode, you send a receipt regardless of your [email settings](https://dashboard.stripe.com/account/emails).
-    string receipt_email?;
-    # The URL to redirect your customer back to after they authenticate or cancel their payment on the payment method's app or site. If you'd prefer to redirect to a mobile application, you can alternatively supply an application URI scheme. This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
-    string return_url?;
-    # Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    # 
-    # Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete. If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.
-    # 
-    # When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    "off_session"|"on_session" setup_future_usage?;
-    optional_fields_shipping_1 shipping?;
-    # For card charges, use [statement_descriptor_suffix](https://stripe.com/docs/payments/account/statement-descriptors#dynamic). Otherwise, you can use this value as the complete description of a charge on your customers' statements. It must contain at least one letter and be 1–22 characters long.
-    @constraint:String {maxLength: 22}
-    string statement_descriptor?;
-    # Provides information about a card payment that customers see on their statements. Concatenated with the prefix (shortened descriptor) or statement descriptor that’s set on the account to form the complete statement descriptor. The concatenated descriptor must contain 1-22 characters.
-    @constraint:String {maxLength: 22}
-    string statement_descriptor_suffix?;
-    transfer_data_creation_params transfer_data?;
-    # A string that identifies the resulting payment as part of a group. Learn more about the [use case for connected accounts](https://stripe.com/docs/connect/separate-charges-and-transfers).
-    string transfer_group?;
-    # Set to `true` when confirming server-side and using Stripe.js, iOS, or Android client-side SDKs to handle the next actions.
-    boolean use_stripe_sdk?;
-|};
-
-public type v1_invoices_bodyDefaulttaxratesItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetTerminalLocationsQueriesExpandItemsString string;
 
@@ -24731,13 +24822,13 @@ public type address_specs_1 record {
     string state?;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetCustomersCustomerBalanceTransactionsTransactionQueriesExpandItemsString string;
+
 # Swish is a [real-time](https://stripe.com/docs/payments/real-time) payment method popular in Sweden. It allows customers to [authenticate and approve](https://stripe.com/docs/payments/payment-methods#customer-actions) payments using the Swish mobile app and the Swedish BankID mobile app. Check this [page](https://stripe.com/docs/payments/swish) for more details.
 public type payment_method_param_38 record {
     display_preference_param display_preference?;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetCustomersCustomerBalanceTransactionsTransactionQueriesExpandItemsString string;
 
 # 
 public type Payment_method_interac_present record {
@@ -24789,18 +24880,18 @@ public type payment_method_param_36 record {
     display_preference_param display_preference?;
 };
 
-# Stripe users in Europe and the United States can use the [Payment Intents API](https://stripe.com/docs/payments/payment-intents)—a single integration path for creating payments using any supported method—to accept [Sofort](https://www.sofort.com/) payments from customers. Check this [page](https://stripe.com/docs/payments/sofort) for more details.
-public type payment_method_param_37 record {
-    display_preference_param display_preference?;
-};
-
-@constraint:String {maxLength: 5000}
-public type GetClimateProductsQueriesExpandItemsString string;
-
 public type shipping_fail_body record {|
     # Specifies which fields in the response should be expanded.
     shipping_fail_bodyExpandItemsString[] expand?;
 |};
+
+@constraint:String {maxLength: 5000}
+public type GetClimateProductsQueriesExpandItemsString string;
+
+# Stripe users in Europe and the United States can use the [Payment Intents API](https://stripe.com/docs/payments/payment-intents)—a single integration path for creating payments using any supported method—to accept [Sofort](https://www.sofort.com/) payments from customers. Check this [page](https://stripe.com/docs/payments/sofort) for more details.
+public type payment_method_param_37 record {
+    display_preference_param display_preference?;
+};
 
 # OXXO is a Mexican chain of convenience stores with thousands of locations across Latin America and represents nearly 20% of online transactions in Mexico. OXXO allows customers to pay bills and online purchases in-store with cash. Check this [page](https://stripe.com/docs/payments/oxxo) for more details.
 public type payment_method_param_30 record {
@@ -24840,6 +24931,9 @@ public type Gelato_session_last_error record {
     string? reason?;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetInvoiceitemsQueriesExpandItemsString string;
+
 public type transactions_create_force_capture_body record {|
     # The total amount to attempt to capture. This amount is in the provided currency, or defaults to the cards currency, and in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal).
     int amount;
@@ -24853,9 +24947,6 @@ public type transactions_create_force_capture_body record {|
     merchant_data_specs merchant_data?;
     purchase_details_specs purchase_details?;
 |};
-
-@constraint:String {maxLength: 5000}
-public type GetInvoiceitemsQueriesExpandItemsString string;
 
 # 
 public type Cancellation_details record {
@@ -24915,13 +25006,13 @@ public type payment_method_data_params record {
     record {} zip?;
 };
 
+public type webhook_endpoints_webhook_endpoint_bodyExpandItemsString string;
+
 # This hash contains the card payment method options.
 public type Confirmation_tokens_resource_payment_method_options_resource_card record {
     # The `cvc_update` Token collected from the Payment Element.
     string? cvc_token?;
 };
-
-public type webhook_endpoints_webhook_endpoint_bodyExpandItemsString string;
 
 # 
 public type Payment_method_details_klarna record {
@@ -24980,16 +25071,6 @@ public type inline_response_200_4 Terminal\.location|Deleted_terminal\.location;
 @constraint:String {maxLength: 5000}
 public type External_account_requirementsPastdueItemsString string;
 
-public type v1_files_body record {|
-    # Specifies which fields in the response should be expanded.
-    v1_files_bodyExpandItemsString[] expand?;
-    # A file to upload. Make sure that the specifications follow RFC 2388, which defines file transfers for the `multipart/form-data` protocol.
-    record {byte[] fileContent; string fileName;} file;
-    file_link_creation_params file_link_data?;
-    # The [purpose](https://stripe.com/docs/file-upload#uploading-a-file) of the uploaded file.
-    "account_requirement"|"additional_verification"|"business_icon"|"business_logo"|"customer_signature"|"dispute_evidence"|"identity_document"|"pci_document"|"tax_document_user_upload"|"terminal_reader_splashscreen" purpose;
-|};
-
 # Represents the Queries record for the operation: GetDisputes
 public type GetDisputesQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -25021,13 +25102,6 @@ public type GetIssuingTokensTokenQueries record {
 };
 
 public type Subscriptions_resource_subscription_invoice_settingsAccounttaxidsItemsnull string|Tax_id|Deleted_tax_id;
-
-public type v1_promotion_codes_bodyExpandItemsString string;
-
-# Zip gives your customers a way to split purchases over a series of payments. Check this [page](https://stripe.com/docs/payments/zip) for more details like country availability.
-public type payment_method_param_41 record {
-    display_preference_param display_preference?;
-};
 
 # Information about the person represented by the account. This field is null unless `business_type` is set to `individual`. Once you create an [Account Link](/api/account_links) or [Account Session](/api/account_sessions), this property can only be updated for accounts where [controller.requirement_collection](/api/accounts/object#account_object-controller-requirement_collection) is `application`, which includes Custom accounts.
 public type individual_specs record {
@@ -25066,6 +25140,14 @@ public type individual_specs record {
     person_verification_specs verification?;
 };
 
+# Zip gives your customers a way to split purchases over a series of payments. Check this [page](https://stripe.com/docs/payments/zip) for more details like country availability.
+public type payment_method_param_41 record {
+    display_preference_param display_preference?;
+};
+
+@constraint:String {maxLength: 5000}
+public type GetLinkedAccountsAccountQueriesExpandItemsString string;
+
 # If this is an `acss_debit` PaymentMethod, this hash contains details about the ACSS Debit payment method.
 public type payment_method_param_42 record {
     @constraint:String {maxLength: 5000}
@@ -25075,9 +25157,6 @@ public type payment_method_param_42 record {
     @constraint:String {maxLength: 5000}
     string transit_number;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetLinkedAccountsAccountQueriesExpandItemsString string;
 
 # Sort Code Records contain U.K. bank account details per the sort code format.
 public type Funding_instructions_bank_transfer_sort_code_record record {
@@ -25192,6 +25271,9 @@ public type TreasuryReceivedCreditsResourceCreditReversalList record {
     string url;
 };
 
+@constraint:String {maxLength: 5000}
+public type Account_requirementsPastdueItemsString string;
+
 # 
 public type Payment_method_options_paynow record {
     # Indicates that you intend to make future payments with this PaymentIntent's payment method.
@@ -25201,9 +25283,6 @@ public type Payment_method_options_paynow record {
     # When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
     "none" setup_future_usage?;
 };
-
-@constraint:String {maxLength: 5000}
-public type Account_requirementsPastdueItemsString string;
 
 # 
 public type ApmsSourcesSourceTransactionList record {
@@ -25269,9 +25348,9 @@ public type Payment_method_fpx record {
     "affin_bank"|"agrobank"|"alliance_bank"|"ambank"|"bank_islam"|"bank_muamalat"|"bank_of_china"|"bank_rakyat"|"bsn"|"cimb"|"deutsche_bank"|"hong_leong_bank"|"hsbc"|"kfh"|"maybank2e"|"maybank2u"|"ocbc"|"pb_enterprise"|"public_bank"|"rhb"|"standard_chartered"|"uob" bank;
 };
 
-public type persons_person_bodyExpandItemsString string;
-
 public type intent_confirm_bodyExpandItemsString string;
+
+public type persons_person_bodyExpandItemsString string;
 
 # Apply a transformation to the reported usage or set quantity before computing the billed price. Cannot be combined with `tiers`.
 public type transform_usage_param record {
@@ -25417,6 +25496,20 @@ public type intent_increment_authorization_body record {|
 @constraint:String {maxLength: 5000}
 public type GetShippingRatesQueriesExpandItemsString string;
 
+public type account_bank_accounts_body record {|
+    # Either a token, like the ones returned by [Stripe.js](https://stripe.com/docs/js), or a dictionary containing a user's bank account details.
+    record {string account_holder_name?; "company"|"individual" account_holder_type?; string account_number; "checking"|"futsu"|"savings"|"toza" account_type?; string country; string currency?; record {record {bank_account_ownership_verificationFilesItemsString[] files?;} bank_account_ownership_verification?;} documents?; "bank_account" 'object?; string routing_number?;}|string bank_account?;
+    # When set to true, or if this is the first external account added in this currency, this account becomes the default external account for its currency.
+    boolean default_for_currency?;
+    # Specifies which fields in the response should be expanded.
+    account_bank_accounts_bodyExpandItemsString[] expand?;
+    # Please refer to full [documentation](https://stripe.com/docs/api) instead.
+    @constraint:String {maxLength: 5000}
+    string external_account?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+|};
+
 public type payment_links_payment_link_body record {|
     # Whether the payment link's `url` is active. If `false`, customers visiting the URL will be shown a page saying that the link has been deactivated.
     boolean active?;
@@ -25457,60 +25550,6 @@ public type payment_links_payment_link_body record {|
     tax_id_collection_params tax_id_collection?;
 |};
 
-public type account_bank_accounts_body record {|
-    # Either a token, like the ones returned by [Stripe.js](https://stripe.com/docs/js), or a dictionary containing a user's bank account details.
-    record {string account_holder_name?; "company"|"individual" account_holder_type?; string account_number; "checking"|"futsu"|"savings"|"toza" account_type?; string country; string currency?; record {record {bank_account_ownership_verificationFilesItemsString[] files?;} bank_account_ownership_verification?;} documents?; "bank_account" 'object?; string routing_number?;}|string bank_account?;
-    # When set to true, or if this is the first external account added in this currency, this account becomes the default external account for its currency.
-    boolean default_for_currency?;
-    # Specifies which fields in the response should be expanded.
-    account_bank_accounts_bodyExpandItemsString[] expand?;
-    # Please refer to full [documentation](https://stripe.com/docs/api) instead.
-    @constraint:String {maxLength: 5000}
-    string external_account?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-|};
-
-public type v1_products_body record {|
-    # Whether the product is currently available for purchase. Defaults to `true`.
-    boolean active?;
-    price_data_without_product default_price_data?;
-    # The product's description, meant to be displayable to the customer. Use this field to optionally store a long form explanation of the product being sold for your own rendering purposes.
-    @constraint:String {maxLength: 40000}
-    string description?;
-    # Specifies which fields in the response should be expanded.
-    v1_products_bodyExpandItemsString[] expand?;
-    # An identifier will be randomly generated by Stripe. You can optionally override this ID, but the ID must be unique across all products in your Stripe account.
-    @constraint:String {maxLength: 5000}
-    string id?;
-    # A list of up to 8 URLs of images for this product, meant to be displayable to the customer.
-    string[] images?;
-    # A list of up to 15 marketing features for this product. These are displayed in [pricing tables](https://stripe.com/docs/payments/checkout/pricing-table).
-    features[] marketing_features?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # The product's name, meant to be displayable to the customer.
-    @constraint:String {maxLength: 5000}
-    string name;
-    package_dimensions_specs package_dimensions?;
-    # Whether this product is shipped (i.e., physical goods).
-    boolean shippable?;
-    # An arbitrary string to be displayed on your customer's credit card or bank statement. While most banks display this information consistently, some may display it incorrectly or not at all.
-    # 
-    # This may be up to 22 characters. The statement description may not include `<`, `>`, `\`, `"`, `'` characters, and will appear on your customer's statement in capital letters. Non-ASCII characters are automatically stripped.
-    #  It must contain at least one letter. Only used for subscription payments.
-    @constraint:String {maxLength: 22}
-    string statement_descriptor?;
-    # A [tax code](https://stripe.com/docs/tax/tax-categories) ID.
-    string tax_code?;
-    # A label that represents units of this product. When set, this will be included in customers' receipts, invoices, Checkout, and the customer portal.
-    @constraint:String {maxLength: 12}
-    string unit_label?;
-    # A URL of a publicly-accessible webpage for this product.
-    @constraint:String {maxLength: 5000}
-    string url?;
-|};
-
 public type quote_finalize_body record {|
     # Specifies which fields in the response should be expanded.
     quote_finalize_bodyExpandItemsString[] expand?;
@@ -25530,8 +25569,6 @@ public type Deleted_webhook_endpoint record {
     # String representing the object's type. Objects of the same type share the same value.
     "webhook_endpoint" 'object;
 };
-
-public type v1_plans_bodyExpandItemsString string;
 
 # 
 public type Treasury_received_credits_resource_source_flows_details record {
@@ -25559,6 +25596,36 @@ public type meter_value_settings_param record {
 
 @constraint:String {maxLength: 5000}
 public type Person_requirementsCurrentlydueItemsString string;
+
+public type coupons_body record {|
+    # A positive integer representing the amount to subtract from an invoice total (required if `percent_off` is not passed).
+    int amount_off?;
+    applies_to_params applies_to?;
+    # Three-letter [ISO code for the currency](https://stripe.com/docs/currencies) of the `amount_off` parameter (required if `amount_off` is passed).
+    string currency?;
+    # Coupons defined in each available currency option (only supported if `amount_off` is passed). Each key must be a three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html) and a [supported currency](https://stripe.com/docs/currencies).
+    record {|currency_option_1...;|} currency_options?;
+    # Specifies how long the discount will be in effect if used on a subscription. Defaults to `once`.
+    "forever"|"once"|"repeating" duration?;
+    # Required only if `duration` is `repeating`, in which case it must be a positive integer that specifies the number of months the discount will be in effect.
+    int duration_in_months?;
+    # Specifies which fields in the response should be expanded.
+    coupons_bodyExpandItemsString[] expand?;
+    # Unique string of your choice that will be used to identify this coupon when applying it to a customer. If you don't want to specify a particular code, you can leave the ID blank and we'll generate a random code for you.
+    @constraint:String {maxLength: 5000}
+    string id?;
+    # A positive integer specifying the number of times the coupon can be redeemed before it's no longer valid. For example, you might have a 50% off coupon that the first 20 readers of your blog can use.
+    int max_redemptions?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # Name of the coupon displayed to customers on, for instance invoices, or receipts. By default the `id` is shown if `name` is not set.
+    @constraint:String {maxLength: 40}
+    string name?;
+    # A positive float larger than 0, and smaller or equal to 100, that represents the discount the coupon will apply (required if `amount_off` is not passed).
+    decimal percent_off?;
+    # Unix timestamp specifying the last time at which the coupon can be redeemed. After the redeem_by date, the coupon can no longer be applied to new customers.
+    int redeem_by?;
+|};
 
 @constraint:String {maxLength: 5000}
 public type Country_specSupportedpaymentcurrenciesItemsString string;
@@ -25636,14 +25703,14 @@ public type GetExchangeRatesQueries record {
     string starting_after?;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetEntitlementsFeaturesIdQueriesExpandItemsString string;
+
 # When shipping_cost contains the shipping_rate from the invoice, the shipping_cost is included in the credit note.
 public type credit_note_shipping_cost record {
     @constraint:String {maxLength: 5000}
     string shipping_rate?;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetEntitlementsFeaturesIdQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetCustomersCustomerBankAccounts
 public type GetCustomersCustomerBankAccountsQueries record {
@@ -25660,6 +25727,8 @@ public type GetCustomersCustomerBankAccountsQueries record {
 public type billing_portal_sessions_bodyExpandItemsString string;
 
 public type topup_cancel_bodyExpandItemsString string;
+
+public type tax_ids_bodyExpandItemsString string;
 
 # External accounts (bank accounts and debit cards) currently attached to this account. External accounts are only returned for requests where `controller[is_controller]` is true.
 public type ExternalAccountList_1 record {
@@ -25746,19 +25815,6 @@ public type Issuing_card_shipping record {
 public type GetBalanceQueriesExpandItemsString string;
 
 # 
-public type TaxIDsList record {
-    # Details about each object.
-    Tax_id[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000}
-    string url;
-};
-
-# 
 public type Tax_product_resource_jurisdiction record {
     # Two-letter country code ([ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)).
     @constraint:String {maxLength: 5000}
@@ -25770,6 +25826,19 @@ public type Tax_product_resource_jurisdiction record {
     "city"|"country"|"county"|"district"|"state" level;
     # [ISO 3166-2 subdivision code](https://en.wikipedia.org/wiki/ISO_3166-2:US), without country prefix. For example, "NY" for New York, United States.
     string? state?;
+};
+
+# 
+public type TaxIDsList record {
+    # Details about each object.
+    Tax_id[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000}
+    string url;
 };
 
 # Represents the Queries record for the operation: GetTreasuryTransactionEntriesId
@@ -25962,8 +26031,6 @@ public type Setup_attempt_payment_method_details_ideal record {
     string? verified_name?;
 };
 
-public type review_approve_bodyExpandItemsString string;
-
 # Represents the Queries record for the operation: GetTreasuryDebitReversals
 public type GetTreasuryDebitReversalsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -25986,6 +26053,8 @@ public type GetTreasuryDebitReversalsQueries record {
     # Only return DebitReversals for a given status.
     "canceled"|"completed"|"processing" status?;
 };
+
+public type review_approve_bodyExpandItemsString string;
 
 public type id_reversals_body record {|
     # A positive integer in cents (or local equivalent) representing how much of this transfer to reverse. Can only reverse up to the unreversed amount remaining of the transfer. Partial transfer reversals are only allowed for transfers to Stripe Accounts. Defaults to the entire transfer amount.
@@ -26067,9 +26136,6 @@ public type Invoices_resource_line_items_proration_details record {
     Invoices_resource_line_items_credited_items? credited_items?;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetCouponsCouponQueriesExpandItemsString string;
-
 # 
 public type SearchResult record {
     Charge[] data;
@@ -26082,6 +26148,9 @@ public type SearchResult record {
     @constraint:String {maxLength: 5000}
     string url;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetCouponsCouponQueriesExpandItemsString string;
 
 # Represents the Queries record for the operation: GetPaymentLinksPaymentLinkLineItems
 public type GetPaymentLinksPaymentLinkLineItemsQueries record {
@@ -26130,8 +26199,6 @@ public type Payment_intent_next_action_promptpay_display_qr_code record {
     @constraint:String {maxLength: 5000}
     string image_url_svg;
 };
-
-public type v1_link_account_sessions_bodyExpandItemsString string;
 
 public type Deleted_test_helpers\.test_clock record {
     true deleted;
@@ -26207,10 +26274,6 @@ public type Setup_intent_next_action_redirect_to_url record {
     # The URL you must redirect your customer to in order to authenticate.
     string? url?;
 };
-
-public type v1_topups_bodyExpandItemsString string;
-
-public type v1_prices_bodyExpandItemsString string;
 
 # Each customer has a [Balance](https://stripe.com/docs/api/customers/object#customer_object-balance) value,
 # which denotes a debit or credit that's automatically applied to their next invoice upon finalization.
@@ -26299,8 +26362,6 @@ public type Issuing_transaction_amount_details record {
     int? cashback_amount?;
 };
 
-public type Reporting\\\\\\\.report_typeDefaultcolumnsItemsString string;
-
 # Represents the Queries record for the operation: GetCharges
 public type GetChargesQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -26323,6 +26384,8 @@ public type GetChargesQueries record {
     @constraint:String {maxLength: 5000}
     string customer?;
 };
+
+public type Reporting\\\\\\\.report_typeDefaultcolumnsItemsString string;
 
 public type forwarding_requests_body record {|
     # Specifies which fields in the response should be expanded.
@@ -26390,14 +26453,17 @@ public type Paypal_seller_protection record {
     "eligible"|"not_eligible"|"partially_eligible" status;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetEntitlementsFeaturesQueriesExpandItemsString string;
-
 # 
 public type Payment_links_resource_phone_number_collection record {
     # If `true`, a phone number will be collected during checkout.
     boolean enabled;
 };
+
+@constraint:String {maxLength: 5000}
+public type GetEntitlementsFeaturesQueriesExpandItemsString string;
+
+@constraint:String {maxLength: 5000}
+public type GetApplicationFeesFeeRefundsIdQueriesExpandItemsString string;
 
 # The list of items the customer is purchasing.
 public type TaxProductResourceTaxCalculationLineItemList_1 record {
@@ -26411,9 +26477,6 @@ public type TaxProductResourceTaxCalculationLineItemList_1 record {
     @constraint:String {maxLength: 5000, pattern: re `^/v1/tax/calculations/[^/]+/line_items`}
     string url;
 };
-
-@constraint:String {maxLength: 5000}
-public type GetApplicationFeesFeeRefundsIdQueriesExpandItemsString string;
 
 # 
 public type Invoice_payment_method_options_us_bank_account_linked_account_options_filters record {
@@ -26531,9 +26594,6 @@ public type Issuing_dispute_evidence record {
     Issuing_dispute_service_not_as_described_evidence service_not_as_described?;
 };
 
-@constraint:String {maxLength: 5000}
-public type Account_capability_requirementsPendingverificationItemsString string;
-
 # Represents the Queries record for the operation: GetIdentityVerificationReports
 public type GetIdentityVerificationReportsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -26557,6 +26617,9 @@ public type GetIdentityVerificationReportsQueries record {
     # Only return VerificationReports of this type
     "document"|"id_number" 'type?;
 };
+
+@constraint:String {maxLength: 5000}
+public type Account_capability_requirementsPendingverificationItemsString string;
 
 # 
 public type Payment_intent_next_action_display_oxxo_details record {
@@ -26631,48 +26694,6 @@ public type SearchResult_4 record {
     string url;
 };
 
-public type v1_plans_body record {|
-    # Whether the plan is currently available for new subscriptions. Defaults to `true`.
-    boolean active?;
-    # Specifies a usage aggregation strategy for plans of `usage_type=metered`. Allowed values are `sum` for summing up all usage during a period, `last_during_period` for using the last usage record reported within a period, `last_ever` for using the last usage record ever (across period bounds) or `max` which uses the usage record with the maximum reported usage during a period. Defaults to `sum`.
-    "last_during_period"|"last_ever"|"max"|"sum" aggregate_usage?;
-    # A positive integer in cents (or local equivalent) (or 0 for a free plan) representing how much to charge on a recurring basis.
-    int amount?;
-    # Same as `amount`, but accepts a decimal value with at most 12 decimal places. Only one of `amount` and `amount_decimal` can be set.
-    string amount_decimal?;
-    # Describes how to compute the price per period. Either `per_unit` or `tiered`. `per_unit` indicates that the fixed amount (specified in `amount`) will be charged per unit in `quantity` (for plans with `usage_type=licensed`), or per unit of total usage (for plans with `usage_type=metered`). `tiered` indicates that the unit pricing will be computed using a tiering strategy as defined using the `tiers` and `tiers_mode` attributes.
-    "per_unit"|"tiered" billing_scheme?;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency;
-    # Specifies which fields in the response should be expanded.
-    v1_plans_bodyExpandItemsString[] expand?;
-    # An identifier randomly generated by Stripe. Used to identify this plan when subscribing a customer. You can optionally override this ID, but the ID must be unique across all plans in your Stripe account. You can, however, use the same plan ID in both live and test modes.
-    @constraint:String {maxLength: 5000}
-    string id?;
-    # Specifies billing frequency. Either `day`, `week`, `month` or `year`.
-    "day"|"month"|"week"|"year" interval;
-    # The number of intervals between subscription billings. For example, `interval=month` and `interval_count=3` bills every 3 months. Maximum of three years interval allowed (3 years, 36 months, or 156 weeks).
-    int interval_count?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # The meter tracking the usage of a metered price
-    @constraint:String {maxLength: 5000}
-    string meter?;
-    # A brief description of the plan, hidden from customers.
-    @constraint:String {maxLength: 5000}
-    string nickname?;
-    record {boolean active?; string id?; record {|string...;|} metadata?; string name; string statement_descriptor?; string tax_code?; string unit_label?;}|string product?;
-    # Each element represents a pricing tier. This parameter requires `billing_scheme` to be set to `tiered`. See also the documentation for `billing_scheme`.
-    tier[] tiers?;
-    # Defines if the tiering price should be `graduated` or `volume` based. In `volume`-based tiering, the maximum quantity within a period determines the per unit price, in `graduated` tiering pricing can successively change as the quantity grows.
-    "graduated"|"volume" tiers_mode?;
-    transform_usage_param transform_usage?;
-    # Default number of trial days when subscribing a customer to this plan using [`trial_from_plan=true`](https://stripe.com/docs/api#create_subscription-trial_from_plan).
-    int trial_period_days?;
-    # Configures how the quantity per period should be determined. Can be either `metered` or `licensed`. `licensed` automatically bills the `quantity` set when adding it to a subscription. `metered` aggregates the total usage based on usage records. Defaults to `licensed`.
-    "licensed"|"metered" usage_type?;
-|};
-
 # 
 public type SearchResult_3 record {
     Payment_intent[] data;
@@ -26687,24 +26708,6 @@ public type SearchResult_3 record {
 };
 
 # 
-public type APIMethodRefundList record {
-    Refund[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000, pattern: re `^/v1/refunds`}
-    string url;
-};
-
-# Represents the Queries record for the operation: GetCountrySpecsCountry
-public type GetCountrySpecsCountryQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetCountrySpecsCountryQueriesExpandItemsString[] expand?;
-};
-
-# 
 public type SearchResult_2 record {
     Invoice[] data;
     boolean has_more;
@@ -26716,6 +26719,26 @@ public type SearchResult_2 record {
     @constraint:String {maxLength: 5000}
     string url;
 };
+
+# Represents the Queries record for the operation: GetCountrySpecsCountry
+public type GetCountrySpecsCountryQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetCountrySpecsCountryQueriesExpandItemsString[] expand?;
+};
+
+# 
+public type APIMethodRefundList record {
+    Refund[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000, pattern: re `^/v1/refunds`}
+    string url;
+};
+
+public type credit_notes_bodyExpandItemsString string;
 
 # 
 public type SearchResult_6 record {
@@ -26820,18 +26843,18 @@ public type param_10 record {
     date_of_birth dob?;
 };
 
-# Represents the Queries record for the operation: GetSubscriptionItemsItem
-public type GetSubscriptionItemsItemQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetSubscriptionItemsItemQueriesExpandItemsString[] expand?;
-};
-
 # If this is a `bacs_debit` PaymentMethod, this hash contains details about the Bacs Direct Debit bank account.
 public type param_15 record {
     @constraint:String {maxLength: 5000}
     string account_number?;
     @constraint:String {maxLength: 5000}
     string sort_code?;
+};
+
+# Represents the Queries record for the operation: GetSubscriptionItemsItem
+public type GetSubscriptionItemsItemQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetSubscriptionItemsItemQueriesExpandItemsString[] expand?;
 };
 
 public type DiscountsItemsObject record {
@@ -26866,14 +26889,6 @@ public type param_13 record {
     "AT"|"BE"|"DE"|"ES"|"IT"|"NL" country;
 };
 
-# If this is an `au_becs_debit` PaymentMethod, this hash contains details about the bank account.
-public type param_14 record {
-    @constraint:String {maxLength: 5000}
-    string account_number;
-    @constraint:String {maxLength: 5000}
-    string bsb_number;
-};
-
 # Represents the Queries record for the operation: GetPayouts
 public type GetPayoutsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -26897,6 +26912,14 @@ public type GetPayoutsQueries record {
     string status?;
 };
 
+# If this is an `au_becs_debit` PaymentMethod, this hash contains details about the bank account.
+public type param_14 record {
+    @constraint:String {maxLength: 5000}
+    string account_number;
+    @constraint:String {maxLength: 5000}
+    string bsb_number;
+};
+
 # If this is an `ideal` PaymentMethod, this hash contains details about the iDEAL payment method.
 public type param_19 record {
     "abn_amro"|"asn_bank"|"bunq"|"handelsbanken"|"ing"|"knab"|"moneyou"|"n26"|"nn"|"rabobank"|"regiobank"|"revolut"|"sns_bank"|"triodos_bank"|"van_lanschot"|"yoursafe" bank?;
@@ -26910,20 +26933,20 @@ public type Transform_quantity record {
     "down"|"up" round;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetBillingPortalConfigurationsQueriesExpandItemsString string;
-
 # If this is an `eps` PaymentMethod, this hash contains details about the EPS payment method.
 public type param_17 record {
     "arzte_und_apotheker_bank"|"austrian_anadi_bank_ag"|"bank_austria"|"bankhaus_carl_spangler"|"bankhaus_schelhammer_und_schattera_ag"|"bawag_psk_ag"|"bks_bank_ag"|"brull_kallmus_bank_ag"|"btv_vier_lander_bank"|"capital_bank_grawe_gruppe_ag"|"deutsche_bank_ag"|"dolomitenbank"|"easybank_ag"|"erste_bank_und_sparkassen"|"hypo_alpeadriabank_international_ag"|"hypo_bank_burgenland_aktiengesellschaft"|"hypo_noe_lb_fur_niederosterreich_u_wien"|"hypo_oberosterreich_salzburg_steiermark"|"hypo_tirol_bank_ag"|"hypo_vorarlberg_bank_ag"|"marchfelder_bank"|"oberbank_ag"|"raiffeisen_bankengruppe_osterreich"|"schoellerbank_ag"|"sparda_bank_wien"|"volksbank_gruppe"|"volkskreditbank_ag"|"vr_bank_braunau" bank?;
 };
 
+@constraint:String {maxLength: 5000}
+public type GetBillingPortalConfigurationsQueriesExpandItemsString string;
+
+public type released_at record {int gt?; int gte?; int lt?; int lte?;}|int;
+
 # If this is an `fpx` PaymentMethod, this hash contains details about the FPX payment method.
 public type param_18 record {
     "affin_bank"|"agrobank"|"alliance_bank"|"ambank"|"bank_islam"|"bank_muamalat"|"bank_of_china"|"bank_rakyat"|"bsn"|"cimb"|"deutsche_bank"|"hong_leong_bank"|"hsbc"|"kfh"|"maybank2e"|"maybank2u"|"ocbc"|"pb_enterprise"|"public_bank"|"rhb"|"standard_chartered"|"uob" bank;
 };
-
-public type released_at record {int gt?; int gte?; int lt?; int lte?;}|int;
 
 public type Source_type_card record {
     string? address_line1_check?;
@@ -26945,8 +26968,6 @@ public type Source_type_card record {
 @constraint:String {maxLength: 5000}
 public type GetPaymentMethodDomainsQueriesExpandItemsString string;
 
-public type v1_coupons_bodyExpandItemsString string;
-
 public type setup_intent_payment_method_options_param_2 record {
     record {} mandate_options?;
 };
@@ -26961,18 +26982,8 @@ public type Payment_flows_automatic_payment_methods_payment_intent record {
     boolean enabled;
 };
 
-public type setup_intent_payment_method_options_param_1 record {
-    "A"|"C"|"I"|"N"|"R"|"U"|"Y" ares_trans_status?;
-    @constraint:String {maxLength: 5000}
-    string cryptogram?;
-    "01"|"02"|"05"|"06"|"07" electronic_commerce_indicator?;
-    network_options_param network_options?;
-    @constraint:String {maxLength: 2}
-    string requestor_challenge_indicator?;
-    @constraint:String {maxLength: 5000}
-    string transaction_id?;
-    "1.0.2"|"2.1.0"|"2.2.0" version?;
-};
+@constraint:String {maxLength: 5000}
+public type GetIssuingTokensTokenQueriesExpandItemsString string;
 
 # 
 public type PaymentFlowsPaymentIntentList record {
@@ -26986,8 +26997,18 @@ public type PaymentFlowsPaymentIntentList record {
     string url;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetIssuingTokensTokenQueriesExpandItemsString string;
+public type setup_intent_payment_method_options_param_1 record {
+    "A"|"C"|"I"|"N"|"R"|"U"|"Y" ares_trans_status?;
+    @constraint:String {maxLength: 5000}
+    string cryptogram?;
+    "01"|"02"|"05"|"06"|"07" electronic_commerce_indicator?;
+    network_options_param network_options?;
+    @constraint:String {maxLength: 2}
+    string requestor_challenge_indicator?;
+    @constraint:String {maxLength: 5000}
+    string transaction_id?;
+    "1.0.2"|"2.1.0"|"2.2.0" version?;
+};
 
 public type customer_details_params record {
     string email;
@@ -27084,12 +27105,12 @@ public type Legal_entity_company_verification record {
     Legal_entity_company_verification_document document;
 };
 
+public type charge_capture_bodyExpandItemsString string;
+
 # If this is a `klarna` PaymentMethod, this hash contains details about the Klarna payment method.
 public type param_20 record {
     date_of_birth dob?;
 };
-
-public type charge_capture_bodyExpandItemsString string;
 
 # The desired new PIN for this card.
 public type encrypted_pin_param_1 record {
@@ -27234,12 +27255,6 @@ public type spending_limits_param record {
     "all_time"|"daily"|"monthly"|"per_authorization"|"weekly"|"yearly" interval;
 };
 
-@constraint:String {maxLength: 5000}
-public type GetCustomersCustomerCashBalanceTransactionsTransactionQueriesExpandItemsString string;
-
-@constraint:String {maxLength: 5000}
-public type GetAccountQueriesExpandItemsString string;
-
 public type billing_meter_event_adjustments_body record {|
     event_adjustment_cancel_settings_param cancel?;
     # The name of the meter event. Corresponds with the `event_name` field on a meter.
@@ -27251,21 +27266,27 @@ public type billing_meter_event_adjustments_body record {|
     "cancel" 'type;
 |};
 
+@constraint:String {maxLength: 5000}
+public type GetAccountQueriesExpandItemsString string;
+
+@constraint:String {maxLength: 5000}
+public type GetCustomersCustomerCashBalanceTransactionsTransactionQueriesExpandItemsString string;
+
 public type credit_note_shipping_cost_2 record {
     @constraint:String {maxLength: 5000}
     string shipping_rate?;
-};
-
-# Details about the authorization, such as identifiers, set by the card network.
-public type network_data_specs record {
-    @constraint:String {maxLength: 5000}
-    string acquiring_institution_id?;
 };
 
 # Represents the Queries record for the operation: GetRadarEarlyFraudWarningsEarlyFraudWarning
 public type GetRadarEarlyFraudWarningsEarlyFraudWarningQueries record {
     # Specifies which fields in the response should be expanded.
     GetRadarEarlyFraudWarningsEarlyFraudWarningQueriesExpandItemsString[] expand?;
+};
+
+# Details about the authorization, such as identifiers, set by the card network.
+public type network_data_specs record {
+    @constraint:String {maxLength: 5000}
+    string acquiring_institution_id?;
 };
 
 # This is an object representing a Stripe account. You can retrieve it to see
@@ -27350,6 +27371,8 @@ public type Treasury_inbound_transfers_resource_inbound_transfer_resource_status
     # Timestamp describing when an InboundTransfer changed status to `succeeded`.
     int? succeeded_at?;
 };
+
+public type ephemeral_keys_bodyExpandItemsString string;
 
 # 
 public type Terminal_configuration_configuration_resource_currency_specific_config record {
@@ -27463,19 +27486,6 @@ public type GetPricesQueries record {
     "one_time"|"recurring" 'type?;
 };
 
-public type Radar\.value_list record {
-    string alias;
-    int created;
-    string created_by;
-    string id;
-    "card_bin"|"card_fingerprint"|"case_sensitive_string"|"country"|"customer_id"|"email"|"ip_address"|"sepa_debit_fingerprint"|"string"|"us_bank_account_fingerprint" item_type;
-    RadarListListItemList_1 list_items;
-    boolean livemode;
-    record {|string...;|} metadata;
-    string name;
-    "radar.value_list" 'object;
-};
-
 public type validated_country_address record {
     @constraint:String {maxLength: 5000}
     string city?;
@@ -27489,6 +27499,19 @@ public type validated_country_address record {
     string postal_code?;
     @constraint:String {maxLength: 5000}
     string state?;
+};
+
+public type Radar\.value_list record {
+    string alias;
+    int created;
+    string created_by;
+    string id;
+    "card_bin"|"card_fingerprint"|"case_sensitive_string"|"country"|"customer_id"|"email"|"ip_address"|"sepa_debit_fingerprint"|"string"|"us_bank_account_fingerprint" item_type;
+    RadarListListItemList_1 list_items;
+    boolean livemode;
+    record {|string...;|} metadata;
+    string name;
+    "radar.value_list" 'object;
 };
 
 public type test_helpers_test_clocks_bodyExpandItemsString string;
@@ -27537,11 +27560,6 @@ public type Gelato_report_document_options record {
     boolean require_matching_selfie?;
 };
 
-public type subscription_cancellation_reason_creation_param record {
-    boolean enabled;
-    ("customer_service"|"low_quality"|"missing_features"|"other"|"switched_service"|"too_complex"|"too_expensive"|"unused")[]|"" options;
-};
-
 # Data used to generate a new [Price](https://stripe.com/docs/api/prices) object inline. One of `price` or `price_data` is required.
 public type one_time_price_data_with_product_data_1 record {
     string currency;
@@ -27553,27 +27571,16 @@ public type one_time_price_data_with_product_data_1 record {
     string unit_amount_decimal?;
 };
 
+public type subscription_cancellation_reason_creation_param record {
+    boolean enabled;
+    ("customer_service"|"low_quality"|"missing_features"|"other"|"switched_service"|"too_complex"|"too_expensive"|"unused")[]|"" options;
+};
+
 public type treasury_debit_reversals_bodyExpandItemsString string;
 
 public type issuing_authorizations_bodyExpandItemsString string;
 
 public type Line_itemDiscountsItemsnull string|Discount;
-
-public type v1_link_account_sessions_body record {|
-    accountholder_params_1 account_holder;
-    # Specifies which fields in the response should be expanded.
-    v1_link_account_sessions_bodyExpandItemsString[] expand?;
-    filters_params filters?;
-    # List of data features that you would like to request access to.
-    # 
-    # Possible values are `balances`, `transactions`, `ownership`, and `payment_method`.
-    (v1_link_account_sessions_bodyPermissionsItemsString)[] permissions;
-    # List of data features that you would like to retrieve upon account creation.
-    ("balances"|"ownership"|"transactions")[] prefetch?;
-    # For webview integrations only. Upon completing OAuth login in the native browser, the user will be redirected to this URL to return to your app.
-    @constraint:String {maxLength: 5000}
-    string return_url?;
-|};
 
 public type dispute_close_body_1 record {|
     # Specifies which fields in the response should be expanded.
@@ -27730,28 +27737,6 @@ public type intent_confirm_body_1 record {|
     boolean use_stripe_sdk?;
 |};
 
-public type v1_topups_body record {|
-    # A positive integer representing how much to transfer.
-    int amount;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
-    string currency;
-    # An arbitrary string attached to the object. Often useful for displaying to users.
-    @constraint:String {maxLength: 5000}
-    string description?;
-    # Specifies which fields in the response should be expanded.
-    v1_topups_bodyExpandItemsString[] expand?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|}|"" metadata?;
-    # The ID of a source to transfer funds from. For most users, this should be left unspecified which will use the bank account that was set up in the dashboard for the specified currency. In test mode, this can be a test bank token (see [Testing Top-ups](https://stripe.com/docs/connect/testing#testing-top-ups)).
-    @constraint:String {maxLength: 5000}
-    string 'source?;
-    # Extra information about a top-up for the source's bank statement. Limited to 15 ASCII characters.
-    @constraint:String {maxLength: 15}
-    string statement_descriptor?;
-    # A string that identifies this top-up as part of a group.
-    string transfer_group?;
-|};
-
 public type linked_account_options_param_1 record {
     linked_account_options_filters_param filters?;
     (linked_account_options_param_1PermissionsItemsString)[] permissions?;
@@ -27798,22 +27783,10 @@ public type Payment_pages_checkout_session_payment_method_reuse_agreement record
 public type outbound_transfer_post_bodyExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
-public type GetInvoicesInvoiceLinesQueriesExpandItemsString string;
-
-@constraint:String {maxLength: 5000}
 public type GetInvoicesSearchQueriesExpandItemsString string;
 
-# 
-public type TaxRatesList record {
-    Tax_rate[] data;
-    # True if this list has another page of items after this one that can be fetched.
-    boolean has_more;
-    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
-    "list" 'object;
-    # The URL where this list can be accessed.
-    @constraint:String {maxLength: 5000, pattern: re `^/v1/tax_rates`}
-    string url;
-};
+@constraint:String {maxLength: 5000}
+public type GetInvoicesInvoiceLinesQueriesExpandItemsString string;
 
 # The Kanji variation of the person's address (Japan only).
 public type japan_address_kanji_specs_1 record {
@@ -27833,46 +27806,17 @@ public type japan_address_kanji_specs_1 record {
     string town?;
 };
 
-public type v1_quotes_body record {|
-    # The amount of the application fee (if any) that will be requested to be applied to the payment and transferred to the application owner's Stripe account. There cannot be any line items with recurring prices when using this field.
-    int|"" application_fee_amount?;
-    # A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice total that will be transferred to the application owner's Stripe account. There must be at least 1 line item with a recurring price to use this field.
-    decimal|"" application_fee_percent?;
-    automatic_tax_param_5 automatic_tax?;
-    # Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay invoices at the end of the subscription cycle or at invoice finalization using the default payment method attached to the subscription or customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions and mark the subscription as `active`. Defaults to `charge_automatically`.
-    "charge_automatically"|"send_invoice" collection_method?;
-    # The customer for which this quote belongs to. A customer is required before finalizing the quote. Once specified, it cannot be changed.
-    @constraint:String {maxLength: 5000}
-    string customer?;
-    # The tax rates that will apply to any line item that does not have `tax_rates` set.
-    DefaulttaxratesItemsString[]|"" default_tax_rates?;
-    # A description that will be displayed on the quote PDF. If no value is passed, the default description configured in your [quote template settings](https://dashboard.stripe.com/settings/billing/quote) will be used.
-    string|"" description?;
-    # The discounts applied to the quote. You can only set up to one discount.
-    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
-    # Specifies which fields in the response should be expanded.
-    v1_quotes_bodyExpandItemsString[] expand?;
-    # A future timestamp on which the quote will be canceled if in `open` or `draft` status. Measured in seconds since the Unix epoch. If no value is passed, the default expiration date configured in your [quote template settings](https://dashboard.stripe.com/settings/billing/quote) will be used.
-    int expires_at?;
-    # A footer that will be displayed on the quote PDF. If no value is passed, the default footer configured in your [quote template settings](https://dashboard.stripe.com/settings/billing/quote) will be used.
-    string|"" footer?;
-    from_quote_params from_quote?;
-    # A header that will be displayed on the quote PDF. If no value is passed, the default header configured in your [quote template settings](https://dashboard.stripe.com/settings/billing/quote) will be used.
-    string|"" header?;
-    quote_param invoice_settings?;
-    # A list of line items the customer is being quoted for. Each line item includes information about the product, the quantity, and the resulting cost.
-    line_item_create_params[] line_items?;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
-    record {|string...;|} metadata?;
-    # The account on behalf of which to charge.
-    string|"" on_behalf_of?;
-    subscription_data_create_params subscription_data?;
-    # ID of the test clock to attach to the quote.
-    @constraint:String {maxLength: 5000}
-    string test_clock?;
-    # The data with which to automatically create a Transfer for each of the invoices.
-    record {int amount?; decimal amount_percent?; string destination;}|"" transfer_data?;
-|};
+# 
+public type TaxRatesList record {
+    Tax_rate[] data;
+    # True if this list has another page of items after this one that can be fetched.
+    boolean has_more;
+    # String representing the object's type. Objects of the same type share the same value. Always has the value `list`.
+    "list" 'object;
+    # The URL where this list can be accessed.
+    @constraint:String {maxLength: 5000, pattern: re `^/v1/tax_rates`}
+    string url;
+};
 
 # 
 public type Invoice_setting_customer_setting record {
@@ -27888,6 +27832,11 @@ public type Invoice_setting_customer_setting record {
 
 @constraint:String {maxLength: 5000}
 public type GetTreasuryFinancialAccountsQueriesExpandItemsString string;
+
+public type authorization_expire_body record {|
+    # Specifies which fields in the response should be expanded.
+    authorization_expire_bodyExpandItemsString[] expand?;
+|};
 
 # Represents the Queries record for the operation: GetInvoicesUpcoming
 public type GetInvoicesUpcomingQueries record {
@@ -27948,11 +27897,6 @@ public type GetInvoicesUpcomingQueries record {
     @constraint:String {maxLength: 5000}
     string customer?;
 };
-
-public type authorization_expire_body record {|
-    # Specifies which fields in the response should be expanded.
-    authorization_expire_bodyExpandItemsString[] expand?;
-|};
 
 # 
 public type AccountList record {
@@ -28040,6 +27984,18 @@ public type tax_registrations_body record {|
 
 public type treasury_received_debits_bodyExpandItemsString string;
 
+# Represents the Queries record for the operation: GetTaxCodes
+public type GetTaxCodesQueries record {
+    # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
+    string ending_before?;
+    # Specifies which fields in the response should be expanded.
+    GetTaxCodesQueriesExpandItemsString[] expand?;
+    # A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    int 'limit?;
+    # A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.
+    string starting_after?;
+};
+
 public type treasury_outbound_payments_body record {|
     # Amount (in cents) to be transferred.
     int amount;
@@ -28076,18 +28032,6 @@ public type verification_data_specs record {
     "match"|"mismatch"|"not_provided" cvc_check?;
     "match"|"mismatch"|"not_provided" expiry_check?;
     three_d_secure_specs three_d_secure?;
-};
-
-# Represents the Queries record for the operation: GetTaxCodes
-public type GetTaxCodesQueries record {
-    # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
-    string ending_before?;
-    # Specifies which fields in the response should be expanded.
-    GetTaxCodesQueriesExpandItemsString[] expand?;
-    # A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
-    int 'limit?;
-    # A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.
-    string starting_after?;
 };
 
 # Represents the Queries record for the operation: GetAccountsAccountCapabilitiesCapability
@@ -28144,6 +28088,89 @@ public type GetPromotionCodesQueries record {
     @constraint:String {maxLength: 5000}
     string customer?;
 };
+
+public type subscriptions_body record {|
+    # A list of prices and quantities that will generate invoice items appended to the next invoice for this subscription. You may pass up to 20 items.
+    add_invoice_item_entry[] add_invoice_items?;
+    # A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice total that will be transferred to the application owner's Stripe account. The request must be made by a platform account on a connected account in order to set an application fee percentage. For more information, see the application fees [documentation](https://stripe.com/docs/connect/subscriptions#collecting-fees-on-subscriptions).
+    decimal|"" application_fee_percent?;
+    automatic_tax_config_4 automatic_tax?;
+    # For new subscriptions, a past timestamp to backdate the subscription's start date to. If set, the first invoice will contain a proration for the timespan between the start date and the current time. Can be combined with trials and the billing cycle anchor.
+    int backdate_start_date?;
+    # A future timestamp in UTC format to anchor the subscription's [billing cycle](https://stripe.com/docs/subscriptions/billing-cycle). The anchor is the reference point that aligns future billing cycle dates. It sets the day of week for `week` intervals, the day of month for `month` and `year` intervals, and the month of year for `year` intervals.
+    int billing_cycle_anchor?;
+    billing_cycle_anchor_config_param billing_cycle_anchor_config?;
+    # Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period. Pass an empty string to remove previously-defined thresholds.
+    record {int amount_gte?; boolean reset_billing_cycle_anchor?;}|"" billing_thresholds?;
+    # A timestamp at which the subscription should cancel. If set to a date before the current period ends, this will cause a proration if prorations have been enabled using `proration_behavior`. If set during a future period, this will always cause a proration for that period.
+    int cancel_at?;
+    # Boolean indicating whether this subscription should cancel at the end of the current period.
+    boolean cancel_at_period_end?;
+    # Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay this subscription at the end of the cycle using the default source attached to the customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions and mark the subscription as `active`. Defaults to `charge_automatically`.
+    "charge_automatically"|"send_invoice" collection_method?;
+    # The ID of the coupon to apply to this subscription. A coupon applied to a subscription will only affect invoices created for that particular subscription. This field has been deprecated and will be removed in a future API version. Use `discounts` instead.
+    @constraint:String {maxLength: 5000}
+    string coupon?;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency?;
+    # The identifier of the customer to subscribe.
+    @constraint:String {maxLength: 5000}
+    string customer;
+    # Number of days a customer has to pay invoices generated by this subscription. Valid only for subscriptions where `collection_method` is set to `send_invoice`.
+    int days_until_due?;
+    # ID of the default payment method for the subscription. It must belong to the customer associated with the subscription. This takes precedence over `default_source`. If neither are set, invoices will use the customer's [invoice_settings.default_payment_method](https://stripe.com/docs/api/customers/object#customer_object-invoice_settings-default_payment_method) or [default_source](https://stripe.com/docs/api/customers/object#customer_object-default_source).
+    @constraint:String {maxLength: 5000}
+    string default_payment_method?;
+    # ID of the default payment source for the subscription. It must belong to the customer associated with the subscription and be in a chargeable state. If `default_payment_method` is also set, `default_payment_method` will take precedence. If neither are set, invoices will use the customer's [invoice_settings.default_payment_method](https://stripe.com/docs/api/customers/object#customer_object-invoice_settings-default_payment_method) or [default_source](https://stripe.com/docs/api/customers/object#customer_object-default_source).
+    @constraint:String {maxLength: 5000}
+    string default_source?;
+    # The tax rates that will apply to any subscription item that does not have `tax_rates` set. Invoices created will have their `default_tax_rates` populated from the subscription.
+    DefaulttaxratesItemsString[]|"" default_tax_rates?;
+    # The subscription's description, meant to be displayable to the customer. Use this field to optionally store an explanation of the subscription for rendering in Stripe surfaces and certain local payment methods UIs.
+    @constraint:String {maxLength: 500}
+    string description?;
+    # The coupons to redeem into discounts for the subscription. If not specified or empty, inherits the discount from the subscription's customer.
+    record {string coupon?; string discount?; string promotion_code?;}[]|"" discounts?;
+    # Specifies which fields in the response should be expanded.
+    subscriptions_bodyExpandItemsString[] expand?;
+    invoice_settings_param_1 invoice_settings?;
+    # A list of up to 20 subscription items, each with an attached price.
+    subscription_item_create_params[] items?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|}|"" metadata?;
+    # Indicates if a customer is on or off-session while an invoice payment is attempted.
+    boolean off_session?;
+    # The account on behalf of which to charge, for each of the subscription's invoices.
+    string|"" on_behalf_of?;
+    # Only applies to subscriptions with `collection_method=charge_automatically`.
+    # 
+    # Use `allow_incomplete` to create Subscriptions with `status=incomplete` if the first invoice can't be paid. Creating Subscriptions with this status allows you to manage scenarios where additional customer actions are needed to pay a subscription's invoice. For example, SCA regulation may require 3DS authentication to complete payment. See the [SCA Migration Guide](https://stripe.com/docs/billing/migration/strong-customer-authentication) for Billing to learn more. This is the default behavior.
+    # 
+    # Use `default_incomplete` to create Subscriptions with `status=incomplete` when the first invoice requires payment, otherwise start as active. Subscriptions transition to `status=active` when successfully confirming the PaymentIntent on the first invoice. This allows simpler management of scenarios where additional customer actions are needed to pay a subscription’s invoice, such as failed payments, [SCA regulation](https://stripe.com/docs/billing/migration/strong-customer-authentication), or collecting a mandate for a bank debit payment method. If the PaymentIntent is not confirmed within 23 hours Subscriptions transition to `status=incomplete_expired`, which is a terminal state.
+    # 
+    # Use `error_if_incomplete` if you want Stripe to return an HTTP 402 status code if a subscription's first invoice can't be paid. For example, if a payment method requires 3DS authentication due to SCA regulation and further customer action is needed, this parameter doesn't create a Subscription and returns an error instead. This was the default behavior for API versions prior to 2019-03-14. See the [changelog](https://stripe.com/docs/upgrades#2019-03-14) to learn more.
+    # 
+    # `pending_if_incomplete` is only used with updates and cannot be passed when creating a Subscription.
+    # 
+    # Subscriptions with `collection_method=send_invoice` are automatically activated regardless of the first Invoice status.
+    "allow_incomplete"|"default_incomplete"|"error_if_incomplete"|"pending_if_incomplete" payment_behavior?;
+    payment_settings payment_settings?;
+    # Specifies an interval for how often to bill for any pending invoice items. It is analogous to calling [Create an invoice](https://stripe.com/docs/api#create_invoice) for the given subscription at the specified interval.
+    record {"day"|"month"|"week"|"year" interval; int interval_count?;}|"" pending_invoice_item_interval?;
+    # The ID of a promotion code to apply to this subscription. A promotion code applied to a subscription will only affect invoices created for that particular subscription. This field has been deprecated and will be removed in a future API version. Use `discounts` instead.
+    @constraint:String {maxLength: 5000}
+    string promotion_code?;
+    # Determines how to handle [prorations](https://stripe.com/docs/billing/subscriptions/prorations) resulting from the `billing_cycle_anchor`. If no value is passed, the default is `create_prorations`.
+    "always_invoice"|"create_prorations"|"none" proration_behavior?;
+    transfer_data_specs_3 transfer_data?;
+    # Unix timestamp representing the end of the trial period the customer will get before being charged for the first time. If set, trial_end will override the default trial period of the plan the customer is being subscribed to. The special value `now` can be provided to end the customer's trial immediately. Can be at most two years from `billing_cycle_anchor`. See [Using trial periods on subscriptions](https://stripe.com/docs/billing/subscriptions/trials) to learn more.
+    "now"|int trial_end?;
+    # Indicates if a plan's `trial_period_days` should be applied to the subscription. Setting `trial_end` per subscription is preferred, and this defaults to `false`. Setting this flag to `true` together with `trial_end` is not allowed. See [Using trial periods on subscriptions](https://stripe.com/docs/billing/subscriptions/trials) to learn more.
+    boolean trial_from_plan?;
+    # Integer representing the number of trial period days before the customer is charged for the first time. This will always overwrite any trials that might apply via a subscribed plan. See [Using trial periods on subscriptions](https://stripe.com/docs/billing/subscriptions/trials) to learn more.
+    int trial_period_days?;
+    trial_settings_config_1 trial_settings?;
+|};
 
 public type subscription_items_item_body record {|
     # Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period. When updating, pass an empty string to remove previously-defined thresholds.
@@ -28207,6 +28234,13 @@ public type Customer_balance_resource_cash_balance_transaction_resource_funded_t
     Customer_balance_resource_cash_balance_transaction_resource_funded_transaction_resource_bank_transfer_resource_us_bank_transfer us_bank_transfer?;
 };
 
+public type payout_settings_specs record {
+    boolean debit_negative_balances?;
+    transfer_schedule_specs schedule?;
+    @constraint:String {maxLength: 22}
+    string statement_descriptor?;
+};
+
 # This hash contains details about the customer acceptance of the Mandate.
 public type Confirmation_tokens_resource_mandate_data_resource_customer_acceptance record {
     # If this is a Mandate accepted online, this hash contains details about the online acceptance.
@@ -28214,13 +28248,6 @@ public type Confirmation_tokens_resource_mandate_data_resource_customer_acceptan
     # The type of customer acceptance information included with the Mandate.
     @constraint:String {maxLength: 5000}
     string 'type;
-};
-
-public type payout_settings_specs record {
-    boolean debit_negative_balances?;
-    transfer_schedule_specs schedule?;
-    @constraint:String {maxLength: 22}
-    string statement_descriptor?;
 };
 
 # 
@@ -28409,10 +28436,6 @@ public type personalization_design_deactivate_body record {|
     personalization_design_deactivate_bodyExpandItemsString[] expand?;
 |};
 
-public type mandate_options_param_1 record {
-    ""|"paper" collection_method?;
-};
-
 # Information about the company or business. This field is available for any `business_type`. Once you create an [Account Link](/api/account_links) or [Account Session](/api/account_sessions), this property can only be updated for accounts where [controller.requirement_collection](/api/accounts/object#account_object-controller-requirement_collection) is `application`, which includes Custom accounts.
 public type company_specs record {
     legal_entity_and_kyc_address_specs address?;
@@ -28444,6 +28467,10 @@ public type company_specs record {
     @constraint:String {maxLength: 5000}
     string vat_id?;
     verification_specs verification?;
+};
+
+public type mandate_options_param_1 record {
+    ""|"paper" collection_method?;
 };
 
 # 
@@ -28496,6 +28523,12 @@ public type Setup_attempt_payment_method_details_card_wallet record {
     "apple_pay"|"google_pay"|"link" 'type;
 };
 
+# Settings for automatic tax lookup for this invoice preview.
+public type automatic_tax_param_1 record {
+    boolean enabled;
+    param liability?;
+};
+
 # 
 public type Credit_note_tax_amount record {
     # The amount, in cents (or local equivalent), of the tax.
@@ -28508,12 +28541,6 @@ public type Credit_note_tax_amount record {
     "customer_exempt"|"not_collecting"|"not_subject_to_tax"|"not_supported"|"portion_product_exempt"|"portion_reduced_rated"|"portion_standard_rated"|"product_exempt"|"product_exempt_holiday"|"proportionally_rated"|"reduced_rated"|"reverse_charge"|"standard_rated"|"taxable_basis_reduced"|"zero_rated"? taxability_reason?;
     # The amount on which tax is calculated, in cents (or local equivalent).
     int? taxable_amount?;
-};
-
-# Settings for automatic tax lookup for this invoice preview.
-public type automatic_tax_param_1 record {
-    boolean enabled;
-    param liability?;
 };
 
 # 
@@ -28533,58 +28560,6 @@ public type automatic_tax_param_4 record {
     boolean enabled;
     param_3 liability?;
 };
-
-public type v1_payment_links_body record {|
-    after_completion_params after_completion?;
-    # Enables user redeemable promotion codes.
-    boolean allow_promotion_codes?;
-    # The amount of the application fee (if any) that will be requested to be applied to the payment and transferred to the application owner's Stripe account. Can only be applied when there are no line items with recurring prices.
-    int application_fee_amount?;
-    # A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice total that will be transferred to the application owner's Stripe account. There must be at least 1 line item with a recurring price to use this field.
-    decimal application_fee_percent?;
-    automatic_tax_params_1 automatic_tax?;
-    # Configuration for collecting the customer's billing address. Defaults to `auto`.
-    "auto"|"required" billing_address_collection?;
-    consent_collection_params_1 consent_collection?;
-    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies) and supported by each line item's price.
-    string currency?;
-    # Collect additional information from your customer using custom fields. Up to 3 fields are supported.
-    custom_field_param_1[] custom_fields?;
-    custom_text_param custom_text?;
-    # Configures whether [checkout sessions](https://stripe.com/docs/api/checkout/sessions) created by this payment link create a [Customer](https://stripe.com/docs/api/customers).
-    "always"|"if_required" customer_creation?;
-    # Specifies which fields in the response should be expanded.
-    v1_payment_links_bodyExpandItemsString[] expand?;
-    # The custom message to be displayed to a customer when a payment link is no longer active.
-    @constraint:String {maxLength: 500}
-    string inactive_message?;
-    invoice_creation_create_params invoice_creation?;
-    # The line items representing what is being sold. Each line item represents an item being sold. Up to 20 line items are supported.
-    line_items_create_params[] line_items;
-    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`. Metadata associated with this Payment Link will automatically be copied to [checkout sessions](https://stripe.com/docs/api/checkout/sessions) created by this payment link.
-    record {|string...;|} metadata?;
-    # The account on behalf of which to charge.
-    string on_behalf_of?;
-    payment_intent_data_params_1 payment_intent_data?;
-    # Specify whether Checkout should collect a payment method. When set to `if_required`, Checkout will not collect a payment method when the total due for the session is 0.This may occur if the Checkout Session includes a free trial or a discount.
-    # 
-    # Can only be set in `subscription` mode. Defaults to `always`.
-    # 
-    # If you'd like information on how to collect a payment method outside of Checkout, read the guide on [configuring subscriptions with a free trial](https://stripe.com/docs/payments/checkout/free-trials).
-    "always"|"if_required" payment_method_collection?;
-    # The list of payment method types that customers can use. If no value is passed, Stripe will dynamically show relevant payment methods from your [payment method settings](https://dashboard.stripe.com/settings/payment_methods) (20+ payment methods [supported](https://stripe.com/docs/payments/payment-methods/integration-options#payment-method-product-support)).
-    ("affirm"|"afterpay_clearpay"|"alipay"|"au_becs_debit"|"bacs_debit"|"bancontact"|"blik"|"boleto"|"card"|"cashapp"|"eps"|"fpx"|"giropay"|"grabpay"|"ideal"|"klarna"|"konbini"|"link"|"mobilepay"|"multibanco"|"oxxo"|"p24"|"paynow"|"paypal"|"pix"|"promptpay"|"sepa_debit"|"sofort"|"swish"|"twint"|"us_bank_account"|"wechat_pay"|"zip")[] payment_method_types?;
-    phone_number_collection_params_1 phone_number_collection?;
-    restrictions_params restrictions?;
-    shipping_address_collection_params_1 shipping_address_collection?;
-    # The shipping rate options to apply to [checkout sessions](https://stripe.com/docs/api/checkout/sessions) created by this payment link.
-    shipping_option_params_1[] shipping_options?;
-    # Describes the type of transaction being performed in order to customize relevant text on the page, such as the submit button. Changing this value will also affect the hostname in the [url](https://stripe.com/docs/api/payment_links/payment_links/object#url) property (example: `donate.stripe.com`).
-    "auto"|"book"|"donate"|"pay" submit_type?;
-    subscription_data_params_1 subscription_data?;
-    tax_id_collection_params tax_id_collection?;
-    transfer_data_params_1 transfer_data?;
-|};
 
 # 
 public type Payment_pages_checkout_session_saved_payment_method_options record {
@@ -28617,10 +28592,10 @@ public type automatic_tax_param_3 record {
     param_2 liability?;
 };
 
-public type apps_secrets_bodyExpandItemsString string;
-
 @constraint:String {maxLength: 5000}
 public type GetTerminalLocationsLocationQueriesExpandItemsString string;
+
+public type apps_secrets_bodyExpandItemsString string;
 
 # 
 public type Invoices_resource_invoice_tax_id record {
@@ -28650,8 +28625,6 @@ public type Treasury_outbound_payments_resource_returned_status record {
     string|Treasury\.transaction 'transaction;
 };
 
-public type v1_refunds_bodyExpandItemsString string;
-
 # Additional details on the FinancialAccount Features information.
 public type Treasury_financial_accounts_resource_toggles_setting_status_details record {
     # Represents the reason why the status is `pending` or `restricted`.
@@ -28664,8 +28637,6 @@ public type Treasury_financial_accounts_resource_toggles_setting_status_details 
 
 @constraint:String {maxLength: 5000}
 public type GetTreasuryOutboundPaymentsIdQueriesExpandItemsString string;
-
-public type v1_invoiceitems_bodyTaxratesItemsString string;
 
 # Represents the Queries record for the operation: GetPaymentIntents
 public type GetPaymentIntentsQueries record {
@@ -28757,7 +28728,28 @@ public type Setup_intent_type_specific_payment_method_options_client record {
     "automatic"|"instant"|"microdeposits" verification_method?;
 };
 
-public type v1_tax_rates_bodyExpandItemsString string;
+public type payouts_body record {|
+    # A positive integer in cents representing how much to payout.
+    int amount;
+    # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+    string currency;
+    # An arbitrary string attached to the object. Often useful for displaying to users.
+    @constraint:String {maxLength: 5000}
+    string description?;
+    # The ID of a bank account or a card to send the payout to. If you don't provide a destination, we use the default external account for the specified currency.
+    string destination?;
+    # Specifies which fields in the response should be expanded.
+    payouts_bodyExpandItemsString[] expand?;
+    # Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.
+    record {|string...;|} metadata?;
+    # The method used to send this payout, which is `standard` or `instant`. We support `instant` for payouts to debit cards and bank accounts in certain countries. Learn more about [bank support for Instant Payouts](https://stripe.com/docs/payouts/instant-payouts-banks).
+    "instant"|"standard" method?;
+    # The balance type of your Stripe balance to draw this payout from. Balances for different payment sources are kept separately. You can find the amounts with the Balances API. One of `bank_account`, `card`, or `fpx`.
+    "bank_account"|"card"|"fpx" source_type?;
+    # A string that displays on the recipient's bank or card statement (up to 22 characters). A `statement_descriptor` that's longer than 22 characters return an error. Most banks truncate this information and display it inconsistently. Some banks might not display it at all.
+    @constraint:String {maxLength: 22}
+    string statement_descriptor?;
+|};
 
 public type plans_plan_body record {|
     # Whether the plan is currently available for new subscriptions.
@@ -28786,6 +28778,11 @@ public type payouts_payout_body record {|
 public type secrets_delete_bodyExpandItemsString string;
 
 # 
+public type Account_treasury_settings record {
+    Account_terms_of_service tos_acceptance?;
+};
+
+# 
 public type Refund_destination_details_card record {
     # Value of the reference number assigned to the refund.
     @constraint:String {maxLength: 5000}
@@ -28798,11 +28795,6 @@ public type Refund_destination_details_card record {
     string reference_type?;
     # The type of refund. This can be `refund`, `reversal`, or `pending`.
     "pending"|"refund"|"reversal" 'type;
-};
-
-# 
-public type Account_treasury_settings record {
-    Account_terms_of_service tos_acceptance?;
 };
 
 # 
@@ -28876,8 +28868,12 @@ public type FileResourceFileLinkList record {
 public type Setup_attempt_payment_method_details_sepa_debit record {
 };
 
+public type invoices_bodyExpandItemsString string;
+
 @constraint:String {maxLength: 5000}
 public type GetSubscriptionItemsSubscriptionItemUsageRecordSummariesQueriesExpandItemsString string;
+
+public type payouts_bodyExpandItemsString string;
 
 @constraint:String {maxLength: 5000}
 public type GetQuotesQuotePdfQueriesExpandItemsString string;
@@ -28907,16 +28903,16 @@ public type Treasury_outbound_payments_resource_outbound_payment_resource_status
     int? returned_at?;
 };
 
-# Represents the Queries record for the operation: GetQuotesQuote
-public type GetQuotesQuoteQueries record {
-    # Specifies which fields in the response should be expanded.
-    GetQuotesQuoteQueriesExpandItemsString[] expand?;
-};
-
 # Represents the Queries record for the operation: GetCustomersCustomerDiscount
 public type GetCustomersCustomerDiscountQueries record {
     # Specifies which fields in the response should be expanded.
     GetCustomersCustomerDiscountQueriesExpandItemsString[] expand?;
+};
+
+# Represents the Queries record for the operation: GetQuotesQuote
+public type GetQuotesQuoteQueries record {
+    # Specifies which fields in the response should be expanded.
+    GetQuotesQuoteQueriesExpandItemsString[] expand?;
 };
 
 # 
@@ -28985,13 +28981,6 @@ public type Treasury_received_debits_resource_reversal_details record {
 };
 
 # 
-public type Connect_embedded_payouts_config_claim record {
-    # Whether the embedded component is enabled.
-    boolean enabled;
-    Connect_embedded_payouts_features features;
-};
-
-# 
 public type Climate_removals_location record {
     # The city where the supplier is located.
     string? city?;
@@ -29004,6 +28993,13 @@ public type Climate_removals_location record {
     decimal? longitude?;
     # The state/county/province/region where the supplier is located.
     string? region?;
+};
+
+# 
+public type Connect_embedded_payouts_config_claim record {
+    # Whether the embedded component is enabled.
+    boolean enabled;
+    Connect_embedded_payouts_features features;
 };
 
 public type owner_params record {
@@ -29200,7 +29196,16 @@ public type branding_settings_specs record {
     string secondary_color?;
 };
 
+public type account_sessions_bodyExpandItemsString string;
+
 public type source_verify_bodyValuesItemsString string;
+
+public type tax_settings_body record {|
+    defaults_param defaults?;
+    # Specifies which fields in the response should be expanded.
+    tax_settings_bodyExpandItemsString[] expand?;
+    head_office_param head_office?;
+|};
 
 public type Terminal\.location record {
     Address address;
@@ -29210,11 +29215,6 @@ public type Terminal\.location record {
     boolean livemode;
     record {|string...;|} metadata;
     "terminal.location" 'object;
-};
-
-# Stripe users can accept [Apple Pay](/payments/apple-pay) in iOS applications in iOS 9 and later, and on the web in Safari starting with iOS 10 or macOS Sierra. There are no additional fees to process Apple Pay payments, and the [pricing](/pricing) is the same as other card transactions. Check this [page](https://stripe.com/docs/apple-pay) for more details.
-public type payment_method_param_7 record {
-    display_preference_param display_preference?;
 };
 
 # The accounts that were collected as part of this Session.
@@ -29230,12 +29230,10 @@ public type BankConnectionsResourceLinkedAccountList_1 record {
     string url;
 };
 
-public type tax_settings_body record {|
-    defaults_param defaults?;
-    # Specifies which fields in the response should be expanded.
-    tax_settings_bodyExpandItemsString[] expand?;
-    head_office_param head_office?;
-|};
+# Stripe users can accept [Apple Pay](/payments/apple-pay) in iOS applications in iOS 9 and later, and on the web in Safari starting with iOS 10 or macOS Sierra. There are no additional fees to process Apple Pay payments, and the [pricing](/pricing) is the same as other card transactions. Check this [page](https://stripe.com/docs/apple-pay) for more details.
+public type payment_method_param_7 record {
+    display_preference_param display_preference?;
+};
 
 # Apple Pay Later, a payment method for customers to buy now and pay later, gives your customers a way to split purchases into four installments across six weeks.
 public type payment_method_param_8 record {
@@ -29337,6 +29335,17 @@ public type Issuing_network_token_mastercard record {
     string token_requestor_name?;
 };
 
+# Details about the request forwarded to the destination endpoint.
+public type Forwarded_request_details record {
+    # The body payload to send to the destination endpoint.
+    @constraint:String {maxLength: 5000}
+    string body;
+    # The headers to include in the forwarded request. Can be omitted if no additional headers (excluding Stripe-generated ones such as the Content-Type header) should be included.
+    Forwarded_request_header[] headers;
+    # The HTTP method used to call the destination endpoint.
+    "POST" http_method;
+};
+
 # 
 public type ListAccountCapability record {
     Capability[] data;
@@ -29347,17 +29356,6 @@ public type ListAccountCapability record {
     # The URL where this list can be accessed.
     @constraint:String {maxLength: 5000}
     string url;
-};
-
-# Details about the request forwarded to the destination endpoint.
-public type Forwarded_request_details record {
-    # The body payload to send to the destination endpoint.
-    @constraint:String {maxLength: 5000}
-    string body;
-    # The headers to include in the forwarded request. Can be omitted if no additional headers (excluding Stripe-generated ones such as the Content-Type header) should be included.
-    Forwarded_request_header[] headers;
-    # The HTTP method used to call the destination endpoint.
-    "POST" http_method;
 };
 
 # 
@@ -29377,8 +29375,6 @@ public type after_expiration_params record {
     recovery_params recovery?;
 };
 
-public type subscription_cancel_at int|"";
-
 # Represents the Queries record for the operation: GetWebhookEndpoints
 public type GetWebhookEndpointsQueries record {
     # A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.
@@ -29392,6 +29388,10 @@ public type GetWebhookEndpointsQueries record {
     @constraint:String {maxLength: 5000}
     string starting_after?;
 };
+
+public type subscription_cancel_at int|"";
+
+public type invoices_bodyDefaulttaxratesItemsString string;
 
 # 
 public type Invoice_payment_method_options_card record {
