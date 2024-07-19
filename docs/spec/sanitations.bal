@@ -73,9 +73,22 @@ public function main() returns error? {
 }
 
 function sanitize(Specification spec) returns string|error {
-    Specification updatedSpec = removeRequestBodyFromHttpGet(spec);
+    Specification updatedSpec = removeV1PrefixFromPath(spec);
+    updatedSpec = removeRequestBodyFromHttpGet(spec);
     string schemaString = sanitizeSchemaNames(updatedSpec);
     return schemaString;
+}
+
+function removeV1PrefixFromPath(Specification spec) returns Specification {
+    map<Path> paths = spec.paths;
+    map<Path> updatedPaths = {};
+    foreach var ['key, value] in paths.entries() {
+        string updatedKey = re `/v1`.replace('key, "");
+        updatedPaths[updatedKey] = value;
+    }
+
+    spec.paths = updatedPaths;
+    return spec;
 }
 
 // Improvement required for the OpenAPI tool side is captured in the following issue.

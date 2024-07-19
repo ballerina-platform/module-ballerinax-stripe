@@ -2,7 +2,7 @@
 
 _Author_: @ayeshLK \
 _Created_: 2024/07/18 \
-_Updated_: 2024/07/18 \
+_Updated_: 2024/07/19 \
 _Edition_: Swan Lake
 
 ## Sanitation for OpenAPI specification
@@ -10,10 +10,10 @@ _Edition_: Swan Lake
 This document records the sanitation done on top of the official OpenAPI specification from Stripe. The OpenAPI specification is obtained from the [Stripe GitHub repository](https://github.com/stripe/openapi/blob/master/openapi/spec3.json).
 These changes are done to improve the overall usability and to address some known language limitations.
 
-The following sanitations are done using `sanitations.bal` script under the `docs/spec` directory.
-
-1. Remove `requestBody` definitions from HTTP GET endpoints defined in the specification.
-2. Update the component schema names by capitalizing the first letter of the schema name.
+1. Update Stripe Base URL to `https://api.stripe.com/v1`.
+2. The following sanitations are done using `sanitations.bal` script under the `docs/spec` directory.
+    - Remove the `requestBody` definitions from HTTP GET endpoints defined in the specification.
+    - Update the component schema names by capitalizing the first letter of the schema name.
 
 ## OpenAPI CLI command
 
