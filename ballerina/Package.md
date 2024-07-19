@@ -74,7 +74,7 @@ stripe:v1_customers_body newCustomer = {
     }
 };
 
-stripe:Customer customerDetails = check stripe->/v1/customers.post();
+stripe:Customer customerDetails = check stripe->/v1/customers.post(newCustomer);
 ```
 
 #### List all customers
