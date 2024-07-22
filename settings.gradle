@@ -30,8 +30,10 @@ plugins {
 rootProject.name = 'module-ballerinax-stripe'
 
 include ':stripe-ballerina'
+include ':stripe-sanitation'
 
 project(':stripe-ballerina').projectDir = file("ballerina")
+project(':stripe-sanitation').projectDir = file("docs/spec")
 
 gradleEnterprise {
     buildScan {
