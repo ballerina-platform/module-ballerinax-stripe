@@ -80,13 +80,13 @@ stripe:v1_customers_body newCustomer = {
     }
 };
 
-stripe:Customer customerDetails = check stripe->/v1/customers.post(newCustomer);
+stripe:Customer customerDetails = check stripe->/customers.post(newCustomer);
 ```
 
 #### List all customers
 
 ```ballerina
-stripe:CustomerResourceCustomerList availableCustomers = check stripe->/v1/customers();
+stripe:CustomerResourceCustomerList availableCustomers = check stripe->/customers();
 ```
 
 ## Build from the source
