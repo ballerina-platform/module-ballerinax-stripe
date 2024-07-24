@@ -15,6 +15,21 @@
 // under the License.
 
 import ballerina/http;
+import ballerinax/stripe;
+
+final stripe:Client cl = check new({
+    auth: {
+        token: ""
+    }
+});
+
+
+function testStripe() returns error? {
+    stripe:Payment_intent s = check cl->/payment_intents.post({
+        amount: 10,
+        currency: "USD"
+    });
+}
 
 # A service representing a network-accessible API
 # bound to port `9090`.
