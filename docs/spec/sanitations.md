@@ -12,7 +12,9 @@ These changes are done to improve the overall usability and to address some know
 
 1. Update Stripe Base URL to `https://api.stripe.com/v1`.
 2. The following sanitations are done using `sanitations.bal` script under the `docs/spec` directory.
+    - Remove `v1` prefix from the paths.
     - Remove the `requestBody` definitions from HTTP GET endpoints defined in the specification.
+    - Remove the `requestBody` definition from HTTP DELETE endpoints which does not require a request payload.
     - Update the component schema names by capitalizing the first letter of the schema name.
 
 ## OpenAPI CLI command
