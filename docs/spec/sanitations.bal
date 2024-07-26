@@ -25,6 +25,7 @@ type Specification record {
 type Path record {
     Get get?;
     Post post?;
+    Delete delete?;
 };
 
 type Get record {
@@ -39,6 +40,14 @@ type Post record {
     string description?;
     string[] tags?;
     json requestBody?;
+    map<ResponseCode> responses?;
+};
+
+type Delete record {
+    string operationId?;
+    string summary?;
+    string description?;
+    string[] tags?;
     map<ResponseCode> responses?;
 };
 
@@ -63,6 +72,32 @@ type Components record {
 
 const SPEC_PATH = "openapi.json";
 const REQUEST_BODY = "requestBody";
+final readonly & string[] REQUEST_BODY_NON_REQUIRED_OPS = [
+    "DeleteAccountsAccount",
+    "DeleteAccountsAccountBankAccountsId",
+    "DeleteAccountsAccountPeoplePerson",
+    "DeleteAccountsAccountPersonsPerson",
+    "DeleteCouponsCoupon",
+    "DeleteCustomersCustomer",
+    "DeleteApplePayDomainsDomain",
+    "DeleteCustomersCustomerDiscount",
+    "DeleteCustomersCustomerSubscriptionsSubscriptionExposedIdDiscount",
+    "DeleteCustomersCustomerTaxIdsId",
+    "DeleteInvoiceitemsInvoiceitem",
+    "DeleteInvoicesInvoice",
+    "DeletePlansPlan",
+    "DeleteProductsId",
+    "DeleteProductsProductFeaturesId",
+    "DeleteRadarValueListItemsItem",
+    "DeleteRadarValueListsValueList",
+    "DeleteSubscriptionsSubscriptionExposedIdDiscount",
+    "DeleteTaxIdsId",
+    "DeleteTerminalConfigurationsConfiguration",
+    "DeleteTerminalLocationsLocation",
+    "DeleteTerminalReadersReader",
+    "DeleteTestHelpersTestClocksTestClock",
+    "DeleteWebhookEndpointsWebhookEndpoint"
+];
 
 public function main() returns error? {
     json openAPISpec = check io:fileReadJson(SPEC_PATH);
@@ -75,6 +110,7 @@ public function main() returns error? {
 function sanitize(Specification spec) returns string|error {
     Specification updatedSpec = removeV1PrefixFromPath(spec);
     updatedSpec = removeRequestBodyFromHttpGet(spec);
+    updatedSpec = removeReqBodyFromBodyNonRequiredOps(spec);
     string schemaString = sanitizeSchemaNames(updatedSpec);
     return schemaString;
 }
@@ -112,6 +148,30 @@ function removeRequestBodyFromHttpGet(Specification spec) returns Specification 
     return spec;
 }
 
+function removeReqBodyFromBodyNonRequiredOps(Specification spec) returns Specification {
+    map<Path> paths = spec.paths;
+    foreach var ['key, value] in paths.entries() {
+        Delete? delete = value.delete;
+        if delete is () {
+            continue;
+        }
+
+        string? operationId = delete.operationId;
+        if operationId is () {
+            continue;
+        }
+
+        if REQUEST_BODY_NON_REQUIRED_OPS.indexOf(operationId) is () {
+            continue;
+        }
+
+        _ = delete.removeIfHasKey(REQUEST_BODY);
+        value.delete = delete;
+        paths['key] = value;
+    }
+    return spec;
+}
+
 // Improvement required from the OpenAPI tool side is captured in the following issue.
 // https://github.com/ballerina-platform/ballerina-library/issues/6578
 function sanitizeSchemaNames(Specification spec) returns string {
@@ -123,7 +183,7 @@ function sanitizeSchemaNames(Specification spec) returns string {
             updatedSchemas[schemaName] = schema;
             continue;
         }
-        
+
         string firstLetter = schemaName.substring(0, 1).toUpperAscii();
         string newSchemaName = string `${firstLetter}${schemaName.substring(1)}`;
         updatedNames[schemaName] = newSchemaName;

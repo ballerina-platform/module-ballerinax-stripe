@@ -66,96 +66,72 @@ public isolated client class Client {
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete accounts/[string account](record {||} payload, map<string|string[]> headers = {}) returns Deleted_account|error {
+    resource isolated function delete accounts/[string account](map<string|string[]> headers = {}) returns Deleted_account|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Delete a specified external account for a given account.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete accounts/[string account]/bank_accounts/[string id](record {||} payload, map<string|string[]> headers = {}) returns Deleted_external_account|error {
+    resource isolated function delete accounts/[string account]/bank_accounts/[string id](map<string|string[]> headers = {}) returns Deleted_external_account|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/bank_accounts/${getEncodedUri(id)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Delete a specified external account for a given account.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete accounts/[string account]/external_accounts/[string id](record {||} payload, map<string|string[]> headers = {}) returns Deleted_external_account|error {
+    resource isolated function delete accounts/[string account]/external_accounts/[string id](map<string|string[]> headers = {}) returns Deleted_external_account|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts/${getEncodedUri(id)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes an existing person’s relationship to the account’s legal entity. Any person with a relationship for an account can be deleted through the API, except if the person is the <code>account_opener</code>. If your integration is using the <code>executive</code> parameter, you cannot delete the only verified <code>executive</code> on file.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete accounts/[string account]/people/[string person](record {||} payload, map<string|string[]> headers = {}) returns Deleted_person|error {
+    resource isolated function delete accounts/[string account]/people/[string person](map<string|string[]> headers = {}) returns Deleted_person|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/people/${getEncodedUri(person)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes an existing person’s relationship to the account’s legal entity. Any person with a relationship for an account can be deleted through the API, except if the person is the <code>account_opener</code>. If your integration is using the <code>executive</code> parameter, you cannot delete the only verified <code>executive</code> on file.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete accounts/[string account]/persons/[string person](record {||} payload, map<string|string[]> headers = {}) returns Deleted_person|error {
+    resource isolated function delete accounts/[string account]/persons/[string person](map<string|string[]> headers = {}) returns Deleted_person|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/persons/${getEncodedUri(person)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Delete an apple pay domain.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete apple_pay/domains/[string domain](record {||} payload, map<string|string[]> headers = {}) returns Deleted_apple_pay_domain|error {
+    resource isolated function delete apple_pay/domains/[string domain](map<string|string[]> headers = {}) returns Deleted_apple_pay_domain|error {
         string resourcePath = string `/apple_pay/domains/${getEncodedUri(domain)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>You can delete coupons via the <a href="https://dashboard.stripe.com/coupons">coupon management</a> page of the Stripe dashboard. However, deleting a coupon does not affect any customers who have already applied the coupon; it means that new customers can’t redeem the coupon. You can also delete coupons via the API.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete coupons/[string coupon](record {||} payload, map<string|string[]> headers = {}) returns Deleted_coupon|error {
+    resource isolated function delete coupons/[string coupon](map<string|string[]> headers = {}) returns Deleted_coupon|error {
         string resourcePath = string `/coupons/${getEncodedUri(coupon)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Permanently deletes a customer. It cannot be undone. Also immediately cancels any active subscriptions on the customer.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete customers/[string customer](record {||} payload, map<string|string[]> headers = {}) returns Deleted_customer|error {
+    resource isolated function delete customers/[string customer](map<string|string[]> headers = {}) returns Deleted_customer|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Delete a specified source for a given customer.</p>
@@ -188,12 +164,9 @@ public isolated client class Client {
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/discount(record {||} payload, map<string|string[]> headers = {}) returns Deleted_discount|error {
+    resource isolated function delete customers/[string customer]/discount(map<string|string[]> headers = {}) returns Deleted_discount|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/discount`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Delete a specified source for a given customer.</p>
@@ -230,24 +203,18 @@ public isolated client class Client {
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/subscriptions/[string subscription_exposed_id]/discount(record {||} payload, map<string|string[]> headers = {}) returns Deleted_discount|error {
+    resource isolated function delete customers/[string customer]/subscriptions/[string subscription_exposed_id]/discount(map<string|string[]> headers = {}) returns Deleted_discount|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscription_exposed_id)}/discount`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes an existing <code>tax_id</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/tax_ids/[string id](record {||} payload, map<string|string[]> headers = {}) returns Deleted_tax_id|error {
+    resource isolated function delete customers/[string customer]/tax_ids/[string id](map<string|string[]> headers = {}) returns Deleted_tax_id|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/tax_ids/${getEncodedUri(id)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Invalidates a short-lived API key for a given resource.</p>
@@ -267,84 +234,63 @@ public isolated client class Client {
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete invoiceitems/[string invoiceitem](record {||} payload, map<string|string[]> headers = {}) returns Deleted_invoiceitem|error {
+    resource isolated function delete invoiceitems/[string invoiceitem](map<string|string[]> headers = {}) returns Deleted_invoiceitem|error {
         string resourcePath = string `/invoiceitems/${getEncodedUri(invoiceitem)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Permanently deletes a one-off invoice draft. This cannot be undone. Attempts to delete invoices that are no longer in a draft state will fail; once an invoice has been finalized or if an invoice is for a subscription, it must be <a href="#void_invoice">voided</a>.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete invoices/[string invoice](record {||} payload, map<string|string[]> headers = {}) returns Deleted_invoice|error {
+    resource isolated function delete invoices/[string invoice](map<string|string[]> headers = {}) returns Deleted_invoice|error {
         string resourcePath = string `/invoices/${getEncodedUri(invoice)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deleting plans means new subscribers can’t be added. Existing subscribers aren’t affected.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete plans/[string plan](record {||} payload, map<string|string[]> headers = {}) returns Deleted_plan|error {
+    resource isolated function delete plans/[string plan](map<string|string[]> headers = {}) returns Deleted_plan|error {
         string resourcePath = string `/plans/${getEncodedUri(plan)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Delete a product. Deleting a product is only possible if it has no prices associated with it. Additionally, deleting a product with <code>type=good</code> is only possible if it has no SKUs associated with it.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete products/[string id](record {||} payload, map<string|string[]> headers = {}) returns Deleted_product|error {
+    resource isolated function delete products/[string id](map<string|string[]> headers = {}) returns Deleted_product|error {
         string resourcePath = string `/products/${getEncodedUri(id)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes the feature attachment to a product</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete products/[string product]/features/[string id](record {||} payload, map<string|string[]> headers = {}) returns Deleted_product_feature|error {
+    resource isolated function delete products/[string product]/features/[string id](map<string|string[]> headers = {}) returns Deleted_product_feature|error {
         string resourcePath = string `/products/${getEncodedUri(product)}/features/${getEncodedUri(id)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes a <code>ValueListItem</code> object, removing it from its parent value list.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete radar/value_list_items/[string item](record {||} payload, map<string|string[]> headers = {}) returns Deleted_radar\.value_list_item|error {
+    resource isolated function delete radar/value_list_items/[string item](map<string|string[]> headers = {}) returns Deleted_radar\.value_list_item|error {
         string resourcePath = string `/radar/value_list_items/${getEncodedUri(item)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes a <code>ValueList</code> object, also deleting any items contained within the value list. To be deleted, a value list must not be referenced in any rules.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete radar/value_lists/[string value_list](record {||} payload, map<string|string[]> headers = {}) returns Deleted_radar\.value_list|error {
+    resource isolated function delete radar/value_lists/[string value_list](map<string|string[]> headers = {}) returns Deleted_radar\.value_list|error {
         string resourcePath = string `/radar/value_lists/${getEncodedUri(value_list)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes an item from the subscription. Removing a subscription item from a subscription will not cancel the subscription.</p>
@@ -380,84 +326,63 @@ public isolated client class Client {
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete subscriptions/[string subscription_exposed_id]/discount(record {||} payload, map<string|string[]> headers = {}) returns Deleted_discount|error {
+    resource isolated function delete subscriptions/[string subscription_exposed_id]/discount(map<string|string[]> headers = {}) returns Deleted_discount|error {
         string resourcePath = string `/subscriptions/${getEncodedUri(subscription_exposed_id)}/discount`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes an existing account or customer <code>tax_id</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete tax_ids/[string id](record {||} payload, map<string|string[]> headers = {}) returns Deleted_tax_id|error {
+    resource isolated function delete tax_ids/[string id](map<string|string[]> headers = {}) returns Deleted_tax_id|error {
         string resourcePath = string `/tax_ids/${getEncodedUri(id)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes a <code>Configuration</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete terminal/configurations/[string configuration](record {||} payload, map<string|string[]> headers = {}) returns Deleted_terminal\.configuration|error {
+    resource isolated function delete terminal/configurations/[string configuration](map<string|string[]> headers = {}) returns Deleted_terminal\.configuration|error {
         string resourcePath = string `/terminal/configurations/${getEncodedUri(configuration)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes a <code>Location</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete terminal/locations/[string location](record {||} payload, map<string|string[]> headers = {}) returns Deleted_terminal\.location|error {
+    resource isolated function delete terminal/locations/[string location](map<string|string[]> headers = {}) returns Deleted_terminal\.location|error {
         string resourcePath = string `/terminal/locations/${getEncodedUri(location)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes a <code>Reader</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete terminal/readers/[string reader](record {||} payload, map<string|string[]> headers = {}) returns Deleted_terminal\.reader|error {
+    resource isolated function delete terminal/readers/[string reader](map<string|string[]> headers = {}) returns Deleted_terminal\.reader|error {
         string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Deletes a test clock.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete test_helpers/test_clocks/[string test_clock](record {||} payload, map<string|string[]> headers = {}) returns Deleted_test_helpers\.test_clock|error {
+    resource isolated function delete test_helpers/test_clocks/[string test_clock](map<string|string[]> headers = {}) returns Deleted_test_helpers\.test_clock|error {
         string resourcePath = string `/test_helpers/test_clocks/${getEncodedUri(test_clock)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>You can also delete webhook endpoints via the <a href="https://dashboard.stripe.com/account/webhooks">webhook endpoint management</a> page of the Stripe dashboard.</p>
     #
     # + headers - Headers to be sent with the request 
     # + return - Successful response. 
-    resource isolated function delete webhook_endpoints/[string webhook_endpoint](record {||} payload, map<string|string[]> headers = {}) returns Deleted_webhook_endpoint|error {
+    resource isolated function delete webhook_endpoints/[string webhook_endpoint](map<string|string[]> headers = {}) returns Deleted_webhook_endpoint|error {
         string resourcePath = string `/webhook_endpoints/${getEncodedUri(webhook_endpoint)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 
     # <p>Retrieves the details of an account.</p>
