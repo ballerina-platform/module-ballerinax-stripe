@@ -44,13 +44,13 @@ function refundTest() returns error? {
         payment_method: "pm_card_visa",
         return_url: "https://www.example.com"
     };
-    payment = check stripe->/payment_intents/[newPayment2.id]/confirm.post(paymentConfirmation);
+    payment = check stripe->/payment_intents/[payment.id]/confirm.post(paymentConfirmation);
 
-    stripe:refunds_body refundDetails = {
+    refunds_body refundDetails = {
         payment_intent: payment.id
     };
     Refund paymentRefund = check stripe->/refunds.post(refundDetails);
-    test:asserEquals(paymentRefund.amount, 100, "Invalid refund amount");
+    test:assertEquals(paymentRefund.amount, 100, "Invalid refund amount");
     setCommonRefundId(paymentRefund.id);
 }
 
@@ -63,7 +63,7 @@ function refundUpdateTest() returns error? {
     record {|string...;|} metadata = {
         "orderId": "1234"
     };
-    refunds_refund_body_1 refundUpate = { metaData };
+    refunds_refund_body_1 refundUpate = { metadata };
     Refund paymentRefund = check stripe->/refunds/[refundId].post(refundUpate);
-    test:assertEquals(paymentRefund.metadata, metadata, "Invalid meta-data found");     
+    test:assertEquals(paymentRefund?.metadata, metadata, "Invalid meta-data found");     
 }
