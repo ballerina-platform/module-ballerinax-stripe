@@ -38,4 +38,12 @@ public function main() returns error? {
     };
     payment = check stripe->/payment_intents/[payment.id]/confirm.post(confirmation);
     io:println("Payment confirmed successfully: ", payment.id);
+
+    // Refund a confirmed payment
+    stripe:refunds_body refundDetails = {
+        // Update the payment-id here
+        payment_intent: payment.id
+    };
+    stripe:Refund paymentRefund = check stripe->/refunds.post(refundDetails);
+    io:println("Payment refund successful: ", paymentRefund.id);
 }
