@@ -71,7 +71,7 @@ Now, utilize the available connector operations.
 #### Create a new customer
 
 ```ballerina
-stripe:v1_customers_body newCustomer = {
+stripe:customers_body newCustomer = {
     name: "John Doe",
     email: "john.doe@sample.com",
     address: {
@@ -86,7 +86,7 @@ stripe:Customer customerDetails = check stripe->/customers.post(newCustomer);
 #### List all customers
 
 ```ballerina
-stripe:CustomerResourceCustomerList availableCustomers = check stripe->/customers();
+stripe:CustomerResourceCustomerList availableCustomers = check stripe->/customers;
 ```
 
 ## Build from the source
