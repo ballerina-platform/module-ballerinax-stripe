@@ -1322,7 +1322,7 @@ service /v1 on new http:Listener(9090) {
             "invoice_prefix": "8C3819F2",
             "invoice_settings": {"custom_fields": null, "default_payment_method": null, "footer": null, "rendering_options": null},
             "livemode": false,
-            "metadata": {"orderId": "1234"},
+            "metadata": {"businessType": "Stock trading"},
             "name": "John Doe",
             "next_invoice_sequence": 1,
             "object": "customer",
