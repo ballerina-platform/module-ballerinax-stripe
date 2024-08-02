@@ -45,5 +45,5 @@ public function main() returns error? {
         payment_intent: payment.id
     };
     stripe:Refund paymentRefund = check stripe->/refunds.post(refundDetails);
-    io:println("Payment refund successful: ", paymentRefund.id);
+    io:println("Payment refund was successful. Refund ID: ", paymentRefund.id);
 }
