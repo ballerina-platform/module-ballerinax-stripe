@@ -4,7 +4,7 @@ The `ballerinax/stripe` connector provides practical examples illustrating usage
 
 1. [Manage stripe payments](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-payments) - Manage business payments with Stripe.
 
-2. [Manage one-time charges](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-one-time-charges) - Manage business one-time charges with Stripe.
+2. [Manage one-time charges](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-one-time-charges) - Manage one-time charges with Stripe.
 
 
 ## Prerequisites
