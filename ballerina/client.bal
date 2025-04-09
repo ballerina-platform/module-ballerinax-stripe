@@ -29,3394 +29,17 @@ public isolated client class Client {
     # + serviceUrl - URL of the target service 
     # + return - An error if connector initialization failed 
     public isolated function init(ConnectionConfig config, string serviceUrl = "https://api.stripe.com/v1") returns error? {
-        http:ClientConfiguration httpClientConfig = {auth: config.auth, httpVersion: config.httpVersion, timeout: config.timeout, forwarded: config.forwarded, poolConfig: config.poolConfig, compression: config.compression, circuitBreaker: config.circuitBreaker, retryConfig: config.retryConfig, validation: config.validation};
-        do {
-            if config.http1Settings is ClientHttp1Settings {
-                ClientHttp1Settings settings = check config.http1Settings.ensureType(ClientHttp1Settings);
-                httpClientConfig.http1Settings = {...settings};
-            }
-            if config.http2Settings is http:ClientHttp2Settings {
-                httpClientConfig.http2Settings = check config.http2Settings.ensureType(http:ClientHttp2Settings);
-            }
-            if config.cache is http:CacheConfig {
-                httpClientConfig.cache = check config.cache.ensureType(http:CacheConfig);
-            }
-            if config.responseLimits is http:ResponseLimitConfigs {
-                httpClientConfig.responseLimits = check config.responseLimits.ensureType(http:ResponseLimitConfigs);
-            }
-            if config.secureSocket is http:ClientSecureSocket {
-                httpClientConfig.secureSocket = check config.secureSocket.ensureType(http:ClientSecureSocket);
-            }
-            if config.proxy is http:ProxyConfig {
-                httpClientConfig.proxy = check config.proxy.ensureType(http:ProxyConfig);
-            }
-        }
-        http:Client httpEp = check new (serviceUrl, httpClientConfig);
-        self.clientEp = httpEp;
-        return;
-    }
-
-    # <p>With <a href="/connect">Connect</a>, you can delete accounts you manage.</p>
-    # 
-    # <p>Test-mode accounts can be deleted at any time.</p>
-    # 
-    # <p>Live-mode accounts where Stripe is responsible for negative account balances cannot be deleted, which includes Standard accounts. Live-mode accounts where your platform is liable for negative account balances, which includes Custom and Express accounts, can be deleted when all <a href="/api/balance/balanace_object">balances</a> are zero.</p>
-    # 
-    # <p>If you want to delete your own account, use the <a href="https://dashboard.stripe.com/settings/account">account information tab in your account settings</a> instead.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete accounts/[string account](map<string|string[]> headers = {}) returns Deleted_account|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Delete a specified external account for a given account.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete accounts/[string account]/bank_accounts/[string id](map<string|string[]> headers = {}) returns Deleted_external_account|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/bank_accounts/${getEncodedUri(id)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Delete a specified external account for a given account.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete accounts/[string account]/external_accounts/[string id](map<string|string[]> headers = {}) returns Deleted_external_account|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts/${getEncodedUri(id)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes an existing person’s relationship to the account’s legal entity. Any person with a relationship for an account can be deleted through the API, except if the person is the <code>account_opener</code>. If your integration is using the <code>executive</code> parameter, you cannot delete the only verified <code>executive</code> on file.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete accounts/[string account]/people/[string person](map<string|string[]> headers = {}) returns Deleted_person|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/people/${getEncodedUri(person)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes an existing person’s relationship to the account’s legal entity. Any person with a relationship for an account can be deleted through the API, except if the person is the <code>account_opener</code>. If your integration is using the <code>executive</code> parameter, you cannot delete the only verified <code>executive</code> on file.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete accounts/[string account]/persons/[string person](map<string|string[]> headers = {}) returns Deleted_person|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/persons/${getEncodedUri(person)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Delete an apple pay domain.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete apple_pay/domains/[string domain](map<string|string[]> headers = {}) returns Deleted_apple_pay_domain|error {
-        string resourcePath = string `/apple_pay/domains/${getEncodedUri(domain)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>You can delete coupons via the <a href="https://dashboard.stripe.com/coupons">coupon management</a> page of the Stripe dashboard. However, deleting a coupon does not affect any customers who have already applied the coupon; it means that new customers can’t redeem the coupon. You can also delete coupons via the API.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete coupons/[string coupon](map<string|string[]> headers = {}) returns Deleted_coupon|error {
-        string resourcePath = string `/coupons/${getEncodedUri(coupon)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Permanently deletes a customer. It cannot be undone. Also immediately cancels any active subscriptions on the customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete customers/[string customer](map<string|string[]> headers = {}) returns Deleted_customer|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Delete a specified source for a given customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/bank_accounts/[string id](bank_accounts_id_body_2 payload, map<string|string[]> headers = {}) returns inline_response_200_2|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts/${getEncodedUri(id)}`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
-    }
-
-    # <p>Delete a specified source for a given customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/cards/[string id](cards_id_body_1 payload, map<string|string[]> headers = {}) returns inline_response_200_2|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/cards/${getEncodedUri(id)}`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
-    }
-
-    # <p>Removes the currently applied discount on a customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/discount(map<string|string[]> headers = {}) returns Deleted_discount|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/discount`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Delete a specified source for a given customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/sources/[string id](sources_id_body_1 payload, map<string|string[]> headers = {}) returns inline_response_200_2|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/sources/${getEncodedUri(id)}`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
-    }
-
-    # <p>Cancels a customer’s subscription. If you set the <code>at_period_end</code> parameter to <code>true</code>, the subscription will remain active until the end of the period, at which point it will be canceled and not renewed. Otherwise, with the default <code>false</code> value, the subscription is terminated immediately. In either case, the customer will not be charged again for the subscription.</p>
-    # 
-    # <p>Note, however, that any pending invoice items that you’ve created will still be charged for at the end of the period, unless manually <a href="#delete_invoiceitem">deleted</a>. If you’ve set the subscription to cancel at the end of the period, any pending prorations will also be left in place and collected at the end of the period. But if the subscription is set to cancel immediately, pending prorations will be removed.</p>
-    # 
-    # <p>By default, upon subscription cancellation, Stripe will stop automatic collection of all finalized invoices for the customer. This is intended to prevent unexpected payment attempts after the customer has canceled a subscription. However, you can resume automatic collection of the invoices manually after subscription cancellation to have us proceed. Or, you could check for unpaid invoices before allowing the customer to cancel the subscription at all.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/subscriptions/[string subscription_exposed_id](subscriptions_subscription_exposed_id_body_1 payload, map<string|string[]> headers = {}) returns Subscription|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscription_exposed_id)}`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
-    }
-
-    # <p>Removes the currently applied discount on a customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/subscriptions/[string subscription_exposed_id]/discount(map<string|string[]> headers = {}) returns Deleted_discount|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscription_exposed_id)}/discount`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes an existing <code>tax_id</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete customers/[string customer]/tax_ids/[string id](map<string|string[]> headers = {}) returns Deleted_tax_id|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/tax_ids/${getEncodedUri(id)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Invalidates a short-lived API key for a given resource.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete ephemeral_keys/[string 'key](ephemeral_keys_key_body payload, map<string|string[]> headers = {}) returns Ephemeral_key|error {
-        string resourcePath = string `/ephemeral_keys/${getEncodedUri('key)}`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
-    }
-
-    # <p>Deletes an invoice item, removing it from an invoice. Deleting invoice items is only possible when they’re not attached to invoices, or if it’s attached to a draft invoice.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete invoiceitems/[string invoiceitem](map<string|string[]> headers = {}) returns Deleted_invoiceitem|error {
-        string resourcePath = string `/invoiceitems/${getEncodedUri(invoiceitem)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Permanently deletes a one-off invoice draft. This cannot be undone. Attempts to delete invoices that are no longer in a draft state will fail; once an invoice has been finalized or if an invoice is for a subscription, it must be <a href="#void_invoice">voided</a>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete invoices/[string invoice](map<string|string[]> headers = {}) returns Deleted_invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deleting plans means new subscribers can’t be added. Existing subscribers aren’t affected.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete plans/[string plan](map<string|string[]> headers = {}) returns Deleted_plan|error {
-        string resourcePath = string `/plans/${getEncodedUri(plan)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Delete a product. Deleting a product is only possible if it has no prices associated with it. Additionally, deleting a product with <code>type=good</code> is only possible if it has no SKUs associated with it.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete products/[string id](map<string|string[]> headers = {}) returns Deleted_product|error {
-        string resourcePath = string `/products/${getEncodedUri(id)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes the feature attachment to a product</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete products/[string product]/features/[string id](map<string|string[]> headers = {}) returns Deleted_product_feature|error {
-        string resourcePath = string `/products/${getEncodedUri(product)}/features/${getEncodedUri(id)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes a <code>ValueListItem</code> object, removing it from its parent value list.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete radar/value_list_items/[string item](map<string|string[]> headers = {}) returns Deleted_radar\.value_list_item|error {
-        string resourcePath = string `/radar/value_list_items/${getEncodedUri(item)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes a <code>ValueList</code> object, also deleting any items contained within the value list. To be deleted, a value list must not be referenced in any rules.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete radar/value_lists/[string value_list](map<string|string[]> headers = {}) returns Deleted_radar\.value_list|error {
-        string resourcePath = string `/radar/value_lists/${getEncodedUri(value_list)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes an item from the subscription. Removing a subscription item from a subscription will not cancel the subscription.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete subscription_items/[string item](subscription_items_item_body_1 payload, map<string|string[]> headers = {}) returns Deleted_subscription_item|error {
-        string resourcePath = string `/subscription_items/${getEncodedUri(item)}`;
-        http:Request request = new;
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
-    }
-
-    # <p>Cancels a customer’s subscription immediately. The customer will not be charged again for the subscription.</p>
-    # 
-    # <p>Note, however, that any pending invoice items that you’ve created will still be charged for at the end of the period, unless manually <a href="#delete_invoiceitem">deleted</a>. If you’ve set the subscription to cancel at the end of the period, any pending prorations will also be left in place and collected at the end of the period. But if the subscription is set to cancel immediately, pending prorations will be removed.</p>
-    # 
-    # <p>By default, upon subscription cancellation, Stripe will stop automatic collection of all finalized invoices for the customer. This is intended to prevent unexpected payment attempts after the customer has canceled a subscription. However, you can resume automatic collection of the invoices manually after subscription cancellation to have us proceed. Or, you could check for unpaid invoices before allowing the customer to cancel the subscription at all.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete subscriptions/[string subscription_exposed_id](subscriptions_subscription_exposed_id_body_3 payload, map<string|string[]> headers = {}) returns Subscription|error {
-        string resourcePath = string `/subscriptions/${getEncodedUri(subscription_exposed_id)}`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"cancellation_details": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->delete(resourcePath, request, headers);
-    }
-
-    # <p>Removes the currently applied discount on a subscription.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete subscriptions/[string subscription_exposed_id]/discount(map<string|string[]> headers = {}) returns Deleted_discount|error {
-        string resourcePath = string `/subscriptions/${getEncodedUri(subscription_exposed_id)}/discount`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes an existing account or customer <code>tax_id</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete tax_ids/[string id](map<string|string[]> headers = {}) returns Deleted_tax_id|error {
-        string resourcePath = string `/tax_ids/${getEncodedUri(id)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes a <code>Configuration</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete terminal/configurations/[string configuration](map<string|string[]> headers = {}) returns Deleted_terminal\.configuration|error {
-        string resourcePath = string `/terminal/configurations/${getEncodedUri(configuration)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes a <code>Location</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete terminal/locations/[string location](map<string|string[]> headers = {}) returns Deleted_terminal\.location|error {
-        string resourcePath = string `/terminal/locations/${getEncodedUri(location)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes a <code>Reader</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete terminal/readers/[string reader](map<string|string[]> headers = {}) returns Deleted_terminal\.reader|error {
-        string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>Deletes a test clock.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete test_helpers/test_clocks/[string test_clock](map<string|string[]> headers = {}) returns Deleted_test_helpers\.test_clock|error {
-        string resourcePath = string `/test_helpers/test_clocks/${getEncodedUri(test_clock)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
-    }
-
-    # <p>You can also delete webhook endpoints via the <a href="https://dashboard.stripe.com/account/webhooks">webhook endpoint management</a> page of the Stripe dashboard.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function delete webhook_endpoints/[string webhook_endpoint](map<string|string[]> headers = {}) returns Deleted_webhook_endpoint|error {
-        string resourcePath = string `/webhook_endpoints/${getEncodedUri(webhook_endpoint)}`;
-        return self.clientEp->delete(resourcePath, headers = headers);
+        http:ClientConfiguration httpClientConfig = {auth: config.auth, httpVersion: config.httpVersion, http1Settings: config.http1Settings, http2Settings: config.http2Settings, timeout: config.timeout, forwarded: config.forwarded, followRedirects: config.followRedirects, poolConfig: config.poolConfig, cache: config.cache, compression: config.compression, circuitBreaker: config.circuitBreaker, retryConfig: config.retryConfig, cookieConfig: config.cookieConfig, responseLimits: config.responseLimits, secureSocket: config.secureSocket, proxy: config.proxy, socketConfig: config.socketConfig, validation: config.validation, laxDataBinding: config.laxDataBinding};
+        self.clientEp = check new (serviceUrl, httpClientConfig);
     }
 
     # <p>Retrieves the details of an account.</p>
     #
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
+    # + return - Successful response 
     resource isolated function get account(map<string|string[]> headers = {}, *GetAccountQueries queries) returns Account|error {
         string resourcePath = string `/account`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of accounts connected to your platform via <a href="/docs/connect">Connect</a>. If you’re not a platform, the list is empty.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts(map<string|string[]> headers = {}, *GetAccountsQueries queries) returns AccountList|error {
-        string resourcePath = string `/accounts`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an account.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account](map<string|string[]> headers = {}, *GetAccountsAccountQueries queries) returns Account|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a specified external account for a given account.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/bank_accounts/[string id](map<string|string[]> headers = {}, *GetAccountsAccountBankAccountsIdQueries queries) returns External_account|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/bank_accounts/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of capabilities associated with the account. The capabilities are returned sorted by creation date, with the most recent capability appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/capabilities(map<string|string[]> headers = {}, *GetAccountsAccountCapabilitiesQueries queries) returns ListAccountCapability|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/capabilities`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves information about the specified Account Capability.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/capabilities/[string capability](map<string|string[]> headers = {}, *GetAccountsAccountCapabilitiesCapabilityQueries queries) returns Capability|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/capabilities/${getEncodedUri(capability)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>List external accounts for an account.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/external_accounts(map<string|string[]> headers = {}, *GetAccountsAccountExternalAccountsQueries queries) returns ExternalAccountList|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a specified external account for a given account.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/external_accounts/[string id](map<string|string[]> headers = {}, *GetAccountsAccountExternalAccountsIdQueries queries) returns External_account|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of people associated with the account’s legal entity. The people are returned sorted by creation date, with the most recent people appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/people(map<string|string[]> headers = {}, *GetAccountsAccountPeopleQueries queries) returns PersonList|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/people`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "relationship": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an existing person.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/people/[string person](map<string|string[]> headers = {}, *GetAccountsAccountPeoplePersonQueries queries) returns Person|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/people/${getEncodedUri(person)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of people associated with the account’s legal entity. The people are returned sorted by creation date, with the most recent people appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/persons(map<string|string[]> headers = {}, *GetAccountsAccountPersonsQueries queries) returns PersonList|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/persons`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "relationship": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an existing person.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get accounts/[string account]/persons/[string person](map<string|string[]> headers = {}, *GetAccountsAccountPersonsPersonQueries queries) returns Person|error {
-        string resourcePath = string `/accounts/${getEncodedUri(account)}/persons/${getEncodedUri(person)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>List apple pay domains.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get apple_pay/domains(map<string|string[]> headers = {}, *GetApplePayDomainsQueries queries) returns ApplePayDomainList|error {
-        string resourcePath = string `/apple_pay/domains`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve an apple pay domain.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get apple_pay/domains/[string domain](map<string|string[]> headers = {}, *GetApplePayDomainsDomainQueries queries) returns Apple_pay_domain|error {
-        string resourcePath = string `/apple_pay/domains/${getEncodedUri(domain)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of application fees you’ve previously collected. The application fees are returned in sorted order, with the most recent fees appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get application_fees(map<string|string[]> headers = {}, *GetApplicationFeesQueries queries) returns PlatformEarningList|error {
-        string resourcePath = string `/application_fees`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>By default, you can see the 10 most recent refunds stored directly on the application fee object, but you can also retrieve details about a specific refund stored on the application fee.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get application_fees/[string fee]/refunds/[string id](map<string|string[]> headers = {}, *GetApplicationFeesFeeRefundsIdQueries queries) returns Fee_refund|error {
-        string resourcePath = string `/application_fees/${getEncodedUri(fee)}/refunds/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an application fee that your account has collected. The same information is returned when refunding the application fee.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get application_fees/[string id](map<string|string[]> headers = {}, *GetApplicationFeesIdQueries queries) returns Application_fee|error {
-        string resourcePath = string `/application_fees/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>You can see a list of the refunds belonging to a specific application fee. Note that the 10 most recent refunds are always available by default on the application fee object. If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional refunds.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get application_fees/[string id]/refunds(map<string|string[]> headers = {}, *GetApplicationFeesIdRefundsQueries queries) returns FeeRefundList|error {
-        string resourcePath = string `/application_fees/${getEncodedUri(id)}/refunds`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>List all secrets stored on the given scope.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get apps/secrets(map<string|string[]> headers = {}, *GetAppsSecretsQueries queries) returns SecretServiceResourceSecretList|error {
-        string resourcePath = string `/apps/secrets`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "scope": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Finds a secret in the secret store by name and scope.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get apps/secrets/find(map<string|string[]> headers = {}, *GetAppsSecretsFindQueries queries) returns Apps\.secret|error {
-        string resourcePath = string `/apps/secrets/find`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "scope": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the current account balance, based on the authentication that was used to make the request.
-    #  For a sample request, see <a href="/docs/connect/account-balances#accounting-for-negative-balances">Accounting for negative balances</a>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get balance(map<string|string[]> headers = {}, *GetBalanceQueries queries) returns Balance|error {
-        string resourcePath = string `/balance`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of transactions that have contributed to the Stripe account balance (e.g., charges, transfers, and so forth). The transactions are returned in sorted order, with the most recent transactions appearing first.</p>
-    # 
-    # <p>Note that this endpoint was previously called “Balance history” and used the path <code>/v1/balance/history</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get balance/history(map<string|string[]> headers = {}, *GetBalanceHistoryQueries queries) returns BalanceTransactionsList|error {
-        string resourcePath = string `/balance/history`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the balance transaction with the given ID.</p>
-    # 
-    # <p>Note that this endpoint previously used the path <code>/v1/balance/history/:id</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get balance/history/[string id](map<string|string[]> headers = {}, *GetBalanceHistoryIdQueries queries) returns Balance_transaction|error {
-        string resourcePath = string `/balance/history/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of transactions that have contributed to the Stripe account balance (e.g., charges, transfers, and so forth). The transactions are returned in sorted order, with the most recent transactions appearing first.</p>
-    # 
-    # <p>Note that this endpoint was previously called “Balance history” and used the path <code>/v1/balance/history</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get balance_transactions(map<string|string[]> headers = {}, *GetBalanceTransactionsQueries queries) returns BalanceTransactionsList|error {
-        string resourcePath = string `/balance_transactions`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the balance transaction with the given ID.</p>
-    # 
-    # <p>Note that this endpoint previously used the path <code>/v1/balance/history/:id</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get balance_transactions/[string id](map<string|string[]> headers = {}, *GetBalanceTransactionsIdQueries queries) returns Balance_transaction|error {
-        string resourcePath = string `/balance_transactions/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a list of billing meters.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get billing/meters(map<string|string[]> headers = {}, *GetBillingMetersQueries queries) returns BillingMeterResourceBillingMeterList|error {
-        string resourcePath = string `/billing/meters`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a billing meter given an ID</p>
-    #
-    # + id - Unique identifier for the object.
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get billing/meters/[string id](map<string|string[]> headers = {}, *GetBillingMetersIdQueries queries) returns Billing\.meter|error {
-        string resourcePath = string `/billing/meters/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a list of billing meter event summaries.</p>
-    #
-    # + id - Unique identifier for the object.
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get billing/meters/[string id]/event_summaries(map<string|string[]> headers = {}, *GetBillingMetersIdEventSummariesQueries queries) returns BillingMeterResourceBillingMeterEventSummaryList|error {
-        string resourcePath = string `/billing/meters/${getEncodedUri(id)}/event_summaries`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of configurations that describe the functionality of the customer portal.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get billing_portal/configurations(map<string|string[]> headers = {}, *GetBillingPortalConfigurationsQueries queries) returns PortalPublicResourceConfigurationList|error {
-        string resourcePath = string `/billing_portal/configurations`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a configuration that describes the functionality of the customer portal.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get billing_portal/configurations/[string configuration](map<string|string[]> headers = {}, *GetBillingPortalConfigurationsConfigurationQueries queries) returns Billing_portal\.configuration|error {
-        string resourcePath = string `/billing_portal/configurations/${getEncodedUri(configuration)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of charges you’ve previously created. The charges are returned in sorted order, with the most recent charges appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get charges(map<string|string[]> headers = {}, *GetChargesQueries queries) returns ChargeList|error {
-        string resourcePath = string `/charges`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a charge that has previously been created. Supply the unique charge ID that was returned from your previous request, and Stripe will return the corresponding charge information. The same information is returned when creating or refunding the charge.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get charges/[string charge](map<string|string[]> headers = {}, *GetChargesChargeQueries queries) returns Charge|error {
-        string resourcePath = string `/charges/${getEncodedUri(charge)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a dispute for a specified charge.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get charges/[string charge]/dispute(map<string|string[]> headers = {}, *GetChargesChargeDisputeQueries queries) returns Dispute|error {
-        string resourcePath = string `/charges/${getEncodedUri(charge)}/dispute`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>You can see a list of the refunds belonging to a specific charge. Note that the 10 most recent refunds are always available by default on the charge object. If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional refunds.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get charges/[string charge]/refunds(map<string|string[]> headers = {}, *GetChargesChargeRefundsQueries queries) returns RefundList|error {
-        string resourcePath = string `/charges/${getEncodedUri(charge)}/refunds`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing refund.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get charges/[string charge]/refunds/[string refund](map<string|string[]> headers = {}, *GetChargesChargeRefundsRefundQueries queries) returns Refund|error {
-        string resourcePath = string `/charges/${getEncodedUri(charge)}/refunds/${getEncodedUri(refund)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Search for charges you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
-    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
-    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
-    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get charges/search(map<string|string[]> headers = {}, *GetChargesSearchQueries queries) returns SearchResult|error {
-        string resourcePath = string `/charges/search`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Checkout Sessions.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get checkout/sessions(map<string|string[]> headers = {}, *GetCheckoutSessionsQueries queries) returns PaymentPagesCheckoutSessionList|error {
-        string resourcePath = string `/checkout/sessions`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "customer_details": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a Session object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get checkout/sessions/[string session](map<string|string[]> headers = {}, *GetCheckoutSessionsSessionQueries queries) returns Checkout\.session|error {
-        string resourcePath = string `/checkout/sessions/${getEncodedUri(session)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>When retrieving a Checkout Session, there is an includable <strong>line_items</strong> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get checkout/sessions/[string session]/line_items(map<string|string[]> headers = {}, *GetCheckoutSessionsSessionLineItemsQueries queries) returns PaymentPagesCheckoutSessionListLineItems|error {
-        string resourcePath = string `/checkout/sessions/${getEncodedUri(session)}/line_items`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists all Climate order objects. The orders are returned sorted by creation date, with the
-    # most recently created orders appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get climate/orders(map<string|string[]> headers = {}, *GetClimateOrdersQueries queries) returns ClimateRemovalsOrdersList|error {
-        string resourcePath = string `/climate/orders`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a Climate order object with the given ID.</p>
-    #
-    # + 'order - Unique identifier of the order.
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get climate/orders/[string 'order](map<string|string[]> headers = {}, *GetClimateOrdersOrderQueries queries) returns Climate\.order|error {
-        string resourcePath = string `/climate/orders/${getEncodedUri('order)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists all available Climate product objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get climate/products(map<string|string[]> headers = {}, *GetClimateProductsQueries queries) returns ClimateRemovalsProductsList|error {
-        string resourcePath = string `/climate/products`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a Climate product with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get climate/products/[string product](map<string|string[]> headers = {}, *GetClimateProductsProductQueries queries) returns Climate\.product|error {
-        string resourcePath = string `/climate/products/${getEncodedUri(product)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists all available Climate supplier objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get climate/suppliers(map<string|string[]> headers = {}, *GetClimateSuppliersQueries queries) returns ClimateRemovalsSuppliersList|error {
-        string resourcePath = string `/climate/suppliers`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a Climate supplier object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get climate/suppliers/[string supplier](map<string|string[]> headers = {}, *GetClimateSuppliersSupplierQueries queries) returns Climate\.supplier|error {
-        string resourcePath = string `/climate/suppliers/${getEncodedUri(supplier)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an existing ConfirmationToken object</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get confirmation_tokens/[string confirmation_token](map<string|string[]> headers = {}, *GetConfirmationTokensConfirmationTokenQueries queries) returns Confirmation_token|error {
-        string resourcePath = string `/confirmation_tokens/${getEncodedUri(confirmation_token)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists all Country Spec objects available in the API.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get country_specs(map<string|string[]> headers = {}, *GetCountrySpecsQueries queries) returns CountrySpecList|error {
-        string resourcePath = string `/country_specs`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a Country Spec for a given Country code.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get country_specs/[string country](map<string|string[]> headers = {}, *GetCountrySpecsCountryQueries queries) returns Country_spec|error {
-        string resourcePath = string `/country_specs/${getEncodedUri(country)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your coupons.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get coupons(map<string|string[]> headers = {}, *GetCouponsQueries queries) returns CouponsResourceCouponList|error {
-        string resourcePath = string `/coupons`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the coupon with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get coupons/[string coupon](map<string|string[]> headers = {}, *GetCouponsCouponQueries queries) returns Coupon|error {
-        string resourcePath = string `/coupons/${getEncodedUri(coupon)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of credit notes.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get credit_notes(map<string|string[]> headers = {}, *GetCreditNotesQueries queries) returns CreditNotesList|error {
-        string resourcePath = string `/credit_notes`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>When retrieving a credit note, you’ll get a <strong>lines</strong> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get credit_notes/[string credit_note]/lines(map<string|string[]> headers = {}, *GetCreditNotesCreditNoteLinesQueries queries) returns CreditNoteLinesList|error {
-        string resourcePath = string `/credit_notes/${getEncodedUri(credit_note)}/lines`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the credit note object with the given identifier.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get credit_notes/[string id](map<string|string[]> headers = {}, *GetCreditNotesIdQueries queries) returns Credit_note|error {
-        string resourcePath = string `/credit_notes/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Get a preview of a credit note without creating it.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get credit_notes/preview(map<string|string[]> headers = {}, *GetCreditNotesPreviewQueries queries) returns Credit_note|error {
-        string resourcePath = string `/credit_notes/preview`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>When retrieving a credit note preview, you’ll get a <strong>lines</strong> property containing the first handful of those items. This URL you can retrieve the full (paginated) list of line items.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get credit_notes/preview/lines(map<string|string[]> headers = {}, *GetCreditNotesPreviewLinesQueries queries) returns CreditNoteLinesList|error {
-        string resourcePath = string `/credit_notes/preview/lines`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your customers. The customers are returned sorted by creation date, with the most recent customers appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers(map<string|string[]> headers = {}, *GetCustomersQueries queries) returns CustomerResourceCustomerList|error {
-        string resourcePath = string `/customers`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a Customer object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer](map<string|string[]> headers = {}, *GetCustomersCustomerQueries queries) returns inline_response_200|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of transactions that updated the customer’s <a href="/docs/billing/customer/balance">balances</a>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/balance_transactions(map<string|string[]> headers = {}, *GetCustomersCustomerBalanceTransactionsQueries queries) returns CustomerBalanceTransactionList|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/balance_transactions`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a specific customer balance transaction that updated the customer’s <a href="/docs/billing/customer/balance">balances</a>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/balance_transactions/[string 'transaction](map<string|string[]> headers = {}, *GetCustomersCustomerBalanceTransactionsTransactionQueries queries) returns Customer_balance_transaction|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/balance_transactions/${getEncodedUri('transaction)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>You can see a list of the bank accounts belonging to a Customer. Note that the 10 most recent sources are always available by default on the Customer. If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional bank accounts.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    # 
-    # # Deprecated
-    @deprecated
-    resource isolated function get customers/[string customer]/bank_accounts(map<string|string[]> headers = {}, *GetCustomersCustomerBankAccountsQueries queries) returns BankAccountList|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>By default, you can see the 10 most recent sources stored on a Customer directly on the object, but you can also retrieve details about a specific bank account stored on the Stripe account.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    # 
-    # # Deprecated
-    @deprecated
-    resource isolated function get customers/[string customer]/bank_accounts/[string id](map<string|string[]> headers = {}, *GetCustomersCustomerBankAccountsIdQueries queries) returns Bank_account|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>You can see a list of the cards belonging to a customer.
-    # Note that the 10 most recent sources are always available on the <code>Customer</code> object.
-    # If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional cards.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    # 
-    # # Deprecated
-    @deprecated
-    resource isolated function get customers/[string customer]/cards(map<string|string[]> headers = {}, *GetCustomersCustomerCardsQueries queries) returns CardList|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/cards`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>You can always see the 10 most recent cards directly on a customer; this method lets you retrieve details about a specific card stored on the customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    # 
-    # # Deprecated
-    @deprecated
-    resource isolated function get customers/[string customer]/cards/[string id](map<string|string[]> headers = {}, *GetCustomersCustomerCardsIdQueries queries) returns Card|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/cards/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a customer’s cash balance.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/cash_balance(map<string|string[]> headers = {}, *GetCustomersCustomerCashBalanceQueries queries) returns Cash_balance|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/cash_balance`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of transactions that modified the customer’s <a href="/docs/payments/customer-balance">cash balance</a>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/cash_balance_transactions(map<string|string[]> headers = {}, *GetCustomersCustomerCashBalanceTransactionsQueries queries) returns CustomerCashBalanceTransactionList|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/cash_balance_transactions`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a specific cash balance transaction, which updated the customer’s <a href="/docs/payments/customer-balance">cash balance</a>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/cash_balance_transactions/[string 'transaction](map<string|string[]> headers = {}, *GetCustomersCustomerCashBalanceTransactionsTransactionQueries queries) returns Customer_cash_balance_transaction|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/cash_balance_transactions/${getEncodedUri('transaction)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # 
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/discount(map<string|string[]> headers = {}, *GetCustomersCustomerDiscountQueries queries) returns Discount|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/discount`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of PaymentMethods for a given Customer</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/payment_methods(map<string|string[]> headers = {}, *GetCustomersCustomerPaymentMethodsQueries queries) returns CustomerPaymentMethodResourceList|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/payment_methods`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a PaymentMethod object for a given Customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/payment_methods/[string payment_method](map<string|string[]> headers = {}, *GetCustomersCustomerPaymentMethodsPaymentMethodQueries queries) returns Payment_method|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/payment_methods/${getEncodedUri(payment_method)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>List sources for a specified customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/sources(map<string|string[]> headers = {}, *GetCustomersCustomerSourcesQueries queries) returns ApmsSourcesSourceList|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/sources`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a specified source for a given customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/sources/[string id](map<string|string[]> headers = {}, *GetCustomersCustomerSourcesIdQueries queries) returns Payment_source|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/sources/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>You can see a list of the customer’s active subscriptions. Note that the 10 most recent active subscriptions are always available by default on the customer object. If you need more than those 10, you can use the limit and starting_after parameters to page through additional subscriptions.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/subscriptions(map<string|string[]> headers = {}, *GetCustomersCustomerSubscriptionsQueries queries) returns SubscriptionList|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the subscription with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/subscriptions/[string subscription_exposed_id](map<string|string[]> headers = {}, *GetCustomersCustomerSubscriptionsSubscriptionExposedIdQueries queries) returns Subscription|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscription_exposed_id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # 
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/subscriptions/[string subscription_exposed_id]/discount(map<string|string[]> headers = {}, *GetCustomersCustomerSubscriptionsSubscriptionExposedIdDiscountQueries queries) returns Discount|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscription_exposed_id)}/discount`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of tax IDs for a customer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/tax_ids(map<string|string[]> headers = {}, *GetCustomersCustomerTaxIdsQueries queries) returns TaxIDsList|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/tax_ids`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the <code>tax_id</code> object with the given identifier.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/[string customer]/tax_ids/[string id](map<string|string[]> headers = {}, *GetCustomersCustomerTaxIdsIdQueries queries) returns Tax_id|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/tax_ids/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Search for customers you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
-    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
-    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
-    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get customers/search(map<string|string[]> headers = {}, *GetCustomersSearchQueries queries) returns SearchResult_1|error {
-        string resourcePath = string `/customers/search`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your disputes.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get disputes(map<string|string[]> headers = {}, *GetDisputesQueries queries) returns DisputeList|error {
-        string resourcePath = string `/disputes`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the dispute with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get disputes/[string dispute](map<string|string[]> headers = {}, *GetDisputesDisputeQueries queries) returns Dispute|error {
-        string resourcePath = string `/disputes/${getEncodedUri(dispute)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a list of active entitlements for a customer</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get entitlements/active_entitlements(map<string|string[]> headers = {}, *GetEntitlementsActiveEntitlementsQueries queries) returns EntitlementsResourceCustomerEntitlementList|error {
-        string resourcePath = string `/entitlements/active_entitlements`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve an active entitlement</p>
-    #
-    # + id - The ID of the entitlement.
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get entitlements/active_entitlements/[string id](map<string|string[]> headers = {}, *GetEntitlementsActiveEntitlementsIdQueries queries) returns Entitlements\.active_entitlement|error {
-        string resourcePath = string `/entitlements/active_entitlements/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a list of features</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get entitlements/features(map<string|string[]> headers = {}, *GetEntitlementsFeaturesQueries queries) returns EntitlementsResourceFeatureList|error {
-        string resourcePath = string `/entitlements/features`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a feature</p>
-    #
-    # + id - The ID of the feature.
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get entitlements/features/[string id](map<string|string[]> headers = {}, *GetEntitlementsFeaturesIdQueries queries) returns Entitlements\.feature|error {
-        string resourcePath = string `/entitlements/features/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>List events, going back up to 30 days. Each event data is rendered according to Stripe API version at its creation time, specified in <a href="https://docs.stripe.com/api/events/object">event object</a> <code>api_version</code> attribute (not according to your current Stripe API version or <code>Stripe-Version</code> header).</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get events(map<string|string[]> headers = {}, *GetEventsQueries queries) returns NotificationEventList|error {
-        string resourcePath = string `/events`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "types": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an event. Supply the unique identifier of the event, which you might have received in a webhook.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get events/[string id](map<string|string[]> headers = {}, *GetEventsIdQueries queries) returns Event|error {
-        string resourcePath = string `/events/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of objects that contain the rates at which foreign currencies are converted to one another. Only shows the currencies for which Stripe supports.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get exchange_rates(map<string|string[]> headers = {}, *GetExchangeRatesQueries queries) returns ExchangeRateList|error {
-        string resourcePath = string `/exchange_rates`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the exchange rates from the given currency to every supported currency.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get exchange_rates/[string rate_id](map<string|string[]> headers = {}, *GetExchangeRatesRateIdQueries queries) returns Exchange_rate|error {
-        string resourcePath = string `/exchange_rates/${getEncodedUri(rate_id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of file links.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get file_links(map<string|string[]> headers = {}, *GetFileLinksQueries queries) returns FileResourceFileLinkList|error {
-        string resourcePath = string `/file_links`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the file link with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get file_links/[string link](map<string|string[]> headers = {}, *GetFileLinksLinkQueries queries) returns File_link|error {
-        string resourcePath = string `/file_links/${getEncodedUri(link)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of the files that your account has access to. Stripe sorts and returns the files by their creation dates, placing the most recently created files at the top.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get files(map<string|string[]> headers = {}, *GetFilesQueries queries) returns FileResourceFileList|error {
-        string resourcePath = string `/files`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing file object. After you supply a unique file ID, Stripe returns the corresponding file object. Learn how to <a href="/docs/file-upload#download-file-contents">access file contents</a>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get files/[string file](map<string|string[]> headers = {}, *GetFilesFileQueries queries) returns File|error {
-        string resourcePath = string `/files/${getEncodedUri(file)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Financial Connections <code>Account</code> objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get financial_connections/accounts(map<string|string[]> headers = {}, *GetFinancialConnectionsAccountsQueries queries) returns BankConnectionsResourceLinkedAccountList|error {
-        string resourcePath = string `/financial_connections/accounts`;
-        map<Encoding> queryParamEncoding = {"account_holder": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an Financial Connections <code>Account</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get financial_connections/accounts/[string account](map<string|string[]> headers = {}, *GetFinancialConnectionsAccountsAccountQueries queries) returns Financial_connections\.account|error {
-        string resourcePath = string `/financial_connections/accounts/${getEncodedUri(account)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists all owners for a given <code>Account</code></p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get financial_connections/accounts/[string account]/owners(map<string|string[]> headers = {}, *GetFinancialConnectionsAccountsAccountOwnersQueries queries) returns BankConnectionsResourceOwnerList|error {
-        string resourcePath = string `/financial_connections/accounts/${getEncodedUri(account)}/owners`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a Financial Connections <code>Session</code></p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get financial_connections/sessions/[string session](map<string|string[]> headers = {}, *GetFinancialConnectionsSessionsSessionQueries queries) returns Financial_connections\.session|error {
-        string resourcePath = string `/financial_connections/sessions/${getEncodedUri(session)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Financial Connections <code>Transaction</code> objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get financial_connections/transactions(map<string|string[]> headers = {}, *GetFinancialConnectionsTransactionsQueries queries) returns BankConnectionsResourceTransactionList|error {
-        string resourcePath = string `/financial_connections/transactions`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "transacted_at": {style: DEEPOBJECT, explode: true}, "transaction_refresh": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a Financial Connections <code>Transaction</code></p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get financial_connections/transactions/[string 'transaction](map<string|string[]> headers = {}, *GetFinancialConnectionsTransactionsTransactionQueries queries) returns Financial_connections\.transaction|error {
-        string resourcePath = string `/financial_connections/transactions/${getEncodedUri('transaction)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists all ForwardingRequest objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get forwarding/requests(map<string|string[]> headers = {}, *GetForwardingRequestsQueries queries) returns ForwardingRequestList|error {
-        string resourcePath = string `/forwarding/requests`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a ForwardingRequest object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get forwarding/requests/[string id](map<string|string[]> headers = {}, *GetForwardingRequestsIdQueries queries) returns Forwarding\.request|error {
-        string resourcePath = string `/forwarding/requests/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>List all verification reports.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get identity/verification_reports(map<string|string[]> headers = {}, *GetIdentityVerificationReportsQueries queries) returns GelatoVerificationReportList|error {
-        string resourcePath = string `/identity/verification_reports`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an existing VerificationReport</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get identity/verification_reports/[string report](map<string|string[]> headers = {}, *GetIdentityVerificationReportsReportQueries queries) returns Identity\.verification_report|error {
-        string resourcePath = string `/identity/verification_reports/${getEncodedUri(report)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of VerificationSessions</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get identity/verification_sessions(map<string|string[]> headers = {}, *GetIdentityVerificationSessionsQueries queries) returns GelatoVerificationSessionList|error {
-        string resourcePath = string `/identity/verification_sessions`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a VerificationSession that was previously created.</p>
-    # 
-    # <p>When the session status is <code>requires_input</code>, you can use this method to retrieve a valid
-    # <code>client_secret</code> or <code>url</code> to allow re-submission.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get identity/verification_sessions/[string session](map<string|string[]> headers = {}, *GetIdentityVerificationSessionsSessionQueries queries) returns Identity\.verification_session|error {
-        string resourcePath = string `/identity/verification_sessions/${getEncodedUri(session)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your invoice items. Invoice items are returned sorted by creation date, with the most recently created invoice items appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get invoiceitems(map<string|string[]> headers = {}, *GetInvoiceitemsQueries queries) returns InvoicesItemsList|error {
-        string resourcePath = string `/invoiceitems`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the invoice item with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get invoiceitems/[string invoiceitem](map<string|string[]> headers = {}, *GetInvoiceitemsInvoiceitemQueries queries) returns Invoiceitem|error {
-        string resourcePath = string `/invoiceitems/${getEncodedUri(invoiceitem)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>You can list all invoices, or list the invoices for a specific customer. The invoices are returned sorted by creation date, with the most recently created invoices appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get invoices(map<string|string[]> headers = {}, *GetInvoicesQueries queries) returns InvoicesResourceList|error {
-        string resourcePath = string `/invoices`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "due_date": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the invoice with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get invoices/[string invoice](map<string|string[]> headers = {}, *GetInvoicesInvoiceQueries queries) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>When retrieving an invoice, you’ll get a <strong>lines</strong> property containing the total count of line items and the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get invoices/[string invoice]/lines(map<string|string[]> headers = {}, *GetInvoicesInvoiceLinesQueries queries) returns InvoiceLinesList|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/lines`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Search for invoices you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
-    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
-    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
-    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get invoices/search(map<string|string[]> headers = {}, *GetInvoicesSearchQueries queries) returns SearchResult_2|error {
-        string resourcePath = string `/invoices/search`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>At any time, you can preview the upcoming invoice for a customer. This will show you all the charges that are pending, including subscription renewal charges, invoice item charges, etc. It will also show you any discounts that are applicable to the invoice.</p>
-    # 
-    # <p>Note that when you are viewing an upcoming invoice, you are simply viewing a preview – the invoice has not yet been created. As such, the upcoming invoice will not show up in invoice listing calls, and you cannot use the API to pay or edit the invoice. If you want to change the amount that your customer will be billed, you can add, remove, or update pending invoice items, or update the customer’s discount.</p>
-    # 
-    # <p>You can preview the effects of updating a subscription, including a preview of what proration will take place. To ensure that the actual proration is calculated exactly the same as the previewed proration, you should pass the <code>subscription_details.proration_date</code> parameter when doing the actual subscription update. The recommended way to get only the prorations being previewed is to consider only proration line items where <code>period[start]</code> is equal to the <code>subscription_details.proration_date</code> value passed in the request.</p>
-    # 
-    # <p>Note: Currency conversion calculations use the latest exchange rates. Exchange rates may vary between the time of the preview and the time of the actual invoice creation. <a href="https://docs.stripe.com/currencies/conversions">Learn more</a></p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get invoices/upcoming(map<string|string[]> headers = {}, *GetInvoicesUpcomingQueries queries) returns Invoice|error {
-        string resourcePath = string `/invoices/upcoming`;
-        map<Encoding> queryParamEncoding = {"automatic_tax": {style: DEEPOBJECT, explode: true}, "customer_details": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_items": {style: DEEPOBJECT, explode: true}, "issuer": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "schedule_details": {style: DEEPOBJECT, explode: true}, "subscription_billing_cycle_anchor": {style: DEEPOBJECT, explode: true}, "subscription_cancel_at": {style: DEEPOBJECT, explode: true}, "subscription_default_tax_rates": {style: DEEPOBJECT, explode: true}, "subscription_details": {style: DEEPOBJECT, explode: true}, "subscription_items": {style: DEEPOBJECT, explode: true}, "subscription_trial_end": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>When retrieving an upcoming invoice, you’ll get a <strong>lines</strong> property containing the total count of line items and the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get invoices/upcoming/lines(map<string|string[]> headers = {}, *GetInvoicesUpcomingLinesQueries queries) returns InvoiceLinesList|error {
-        string resourcePath = string `/invoices/upcoming/lines`;
-        map<Encoding> queryParamEncoding = {"automatic_tax": {style: DEEPOBJECT, explode: true}, "customer_details": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_items": {style: DEEPOBJECT, explode: true}, "issuer": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "schedule_details": {style: DEEPOBJECT, explode: true}, "subscription_billing_cycle_anchor": {style: DEEPOBJECT, explode: true}, "subscription_cancel_at": {style: DEEPOBJECT, explode: true}, "subscription_default_tax_rates": {style: DEEPOBJECT, explode: true}, "subscription_details": {style: DEEPOBJECT, explode: true}, "subscription_items": {style: DEEPOBJECT, explode: true}, "subscription_trial_end": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Issuing <code>Authorization</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/authorizations(map<string|string[]> headers = {}, *GetIssuingAuthorizationsQueries queries) returns IssuingAuthorizationList|error {
-        string resourcePath = string `/issuing/authorizations`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an Issuing <code>Authorization</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/authorizations/[string authorization](map<string|string[]> headers = {}, *GetIssuingAuthorizationsAuthorizationQueries queries) returns Issuing\.authorization|error {
-        string resourcePath = string `/issuing/authorizations/${getEncodedUri(authorization)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Issuing <code>Cardholder</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/cardholders(map<string|string[]> headers = {}, *GetIssuingCardholdersQueries queries) returns IssuingCardholderList|error {
-        string resourcePath = string `/issuing/cardholders`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an Issuing <code>Cardholder</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/cardholders/[string cardholder](map<string|string[]> headers = {}, *GetIssuingCardholdersCardholderQueries queries) returns Issuing\.cardholder|error {
-        string resourcePath = string `/issuing/cardholders/${getEncodedUri(cardholder)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Issuing <code>Card</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/cards(map<string|string[]> headers = {}, *GetIssuingCardsQueries queries) returns IssuingCardList|error {
-        string resourcePath = string `/issuing/cards`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an Issuing <code>Card</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/cards/[string card](map<string|string[]> headers = {}, *GetIssuingCardsCardQueries queries) returns Issuing\.card|error {
-        string resourcePath = string `/issuing/cards/${getEncodedUri(card)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Issuing <code>Dispute</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/disputes(map<string|string[]> headers = {}, *GetIssuingDisputesQueries queries) returns IssuingDisputeList|error {
-        string resourcePath = string `/issuing/disputes`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an Issuing <code>Dispute</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/disputes/[string dispute](map<string|string[]> headers = {}, *GetIssuingDisputesDisputeQueries queries) returns Issuing\.dispute|error {
-        string resourcePath = string `/issuing/disputes/${getEncodedUri(dispute)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of personalization design objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/personalization_designs(map<string|string[]> headers = {}, *GetIssuingPersonalizationDesignsQueries queries) returns IssuingPersonalizationDesignList|error {
-        string resourcePath = string `/issuing/personalization_designs`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "lookup_keys": {style: DEEPOBJECT, explode: true}, "preferences": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a personalization design object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/personalization_designs/[string personalization_design](map<string|string[]> headers = {}, *GetIssuingPersonalizationDesignsPersonalizationDesignQueries queries) returns Issuing\.personalization_design|error {
-        string resourcePath = string `/issuing/personalization_designs/${getEncodedUri(personalization_design)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of physical bundle objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/physical_bundles(map<string|string[]> headers = {}, *GetIssuingPhysicalBundlesQueries queries) returns IssuingPhysicalBundleList|error {
-        string resourcePath = string `/issuing/physical_bundles`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a physical bundle object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/physical_bundles/[string physical_bundle](map<string|string[]> headers = {}, *GetIssuingPhysicalBundlesPhysicalBundleQueries queries) returns Issuing\.physical_bundle|error {
-        string resourcePath = string `/issuing/physical_bundles/${getEncodedUri(physical_bundle)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an Issuing <code>Settlement</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/settlements/[string settlement](map<string|string[]> headers = {}, *GetIssuingSettlementsSettlementQueries queries) returns Issuing\.settlement|error {
-        string resourcePath = string `/issuing/settlements/${getEncodedUri(settlement)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists all Issuing <code>Token</code> objects for a given card.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/tokens(map<string|string[]> headers = {}, *GetIssuingTokensQueries queries) returns IssuingNetworkTokenList|error {
-        string resourcePath = string `/issuing/tokens`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an Issuing <code>Token</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/tokens/[string token](map<string|string[]> headers = {}, *GetIssuingTokensTokenQueries queries) returns Issuing\.token|error {
-        string resourcePath = string `/issuing/tokens/${getEncodedUri(token)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Issuing <code>Transaction</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/transactions(map<string|string[]> headers = {}, *GetIssuingTransactionsQueries queries) returns IssuingTransactionList|error {
-        string resourcePath = string `/issuing/transactions`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an Issuing <code>Transaction</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get issuing/transactions/[string 'transaction](map<string|string[]> headers = {}, *GetIssuingTransactionsTransactionQueries queries) returns Issuing\.transaction|error {
-        string resourcePath = string `/issuing/transactions/${getEncodedUri('transaction)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a Financial Connections <code>Session</code></p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get link_account_sessions/[string session](map<string|string[]> headers = {}, *GetLinkAccountSessionsSessionQueries queries) returns Financial_connections\.session|error {
-        string resourcePath = string `/link_account_sessions/${getEncodedUri(session)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Financial Connections <code>Account</code> objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get linked_accounts(map<string|string[]> headers = {}, *GetLinkedAccountsQueries queries) returns BankConnectionsResourceLinkedAccountList|error {
-        string resourcePath = string `/linked_accounts`;
-        map<Encoding> queryParamEncoding = {"account_holder": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an Financial Connections <code>Account</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get linked_accounts/[string account](map<string|string[]> headers = {}, *GetLinkedAccountsAccountQueries queries) returns Financial_connections\.account|error {
-        string resourcePath = string `/linked_accounts/${getEncodedUri(account)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists all owners for a given <code>Account</code></p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get linked_accounts/[string account]/owners(map<string|string[]> headers = {}, *GetLinkedAccountsAccountOwnersQueries queries) returns BankConnectionsResourceOwnerList|error {
-        string resourcePath = string `/linked_accounts/${getEncodedUri(account)}/owners`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a Mandate object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get mandates/[string mandate](map<string|string[]> headers = {}, *GetMandatesMandateQueries queries) returns Mandate|error {
-        string resourcePath = string `/mandates/${getEncodedUri(mandate)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of PaymentIntents.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_intents(map<string|string[]> headers = {}, *GetPaymentIntentsQueries queries) returns PaymentFlowsPaymentIntentList|error {
-        string resourcePath = string `/payment_intents`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a PaymentIntent that has previously been created. </p>
-    # 
-    # <p>You can retrieve a PaymentIntent client-side using a publishable key when the <code>client_secret</code> is in the query string. </p>
-    # 
-    # <p>If you retrieve a PaymentIntent with a publishable key, it only returns a subset of properties. Refer to the <a href="#payment_intent_object">payment intent</a> object reference for more details.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_intents/[string intent](map<string|string[]> headers = {}, *GetPaymentIntentsIntentQueries queries) returns Payment_intent|error {
-        string resourcePath = string `/payment_intents/${getEncodedUri(intent)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Search for PaymentIntents you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
-    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
-    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
-    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_intents/search(map<string|string[]> headers = {}, *GetPaymentIntentsSearchQueries queries) returns SearchResult_3|error {
-        string resourcePath = string `/payment_intents/search`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your payment links.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_links(map<string|string[]> headers = {}, *GetPaymentLinksQueries queries) returns PaymentLinksResourcePaymentLinkList|error {
-        string resourcePath = string `/payment_links`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a payment link.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_links/[string payment_link](map<string|string[]> headers = {}, *GetPaymentLinksPaymentLinkQueries queries) returns Payment_link|error {
-        string resourcePath = string `/payment_links/${getEncodedUri(payment_link)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>When retrieving a payment link, there is an includable <strong>line_items</strong> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_links/[string payment_link]/line_items(map<string|string[]> headers = {}, *GetPaymentLinksPaymentLinkLineItemsQueries queries) returns PaymentLinksResourceListLineItems|error {
-        string resourcePath = string `/payment_links/${getEncodedUri(payment_link)}/line_items`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>List payment method configurations</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_method_configurations(map<string|string[]> headers = {}, *GetPaymentMethodConfigurationsQueries queries) returns PaymentMethodConfigResourcePaymentMethodConfigurationsList|error {
-        string resourcePath = string `/payment_method_configurations`;
-        map<Encoding> queryParamEncoding = {"application": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve payment method configuration</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_method_configurations/[string configuration](map<string|string[]> headers = {}, *GetPaymentMethodConfigurationsConfigurationQueries queries) returns Payment_method_configuration|error {
-        string resourcePath = string `/payment_method_configurations/${getEncodedUri(configuration)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Lists the details of existing payment method domains.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_method_domains(map<string|string[]> headers = {}, *GetPaymentMethodDomainsQueries queries) returns PaymentMethodDomainResourcePaymentMethodDomainList|error {
-        string resourcePath = string `/payment_method_domains`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing payment method domain.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_method_domains/[string payment_method_domain](map<string|string[]> headers = {}, *GetPaymentMethodDomainsPaymentMethodDomainQueries queries) returns Payment_method_domain|error {
-        string resourcePath = string `/payment_method_domains/${getEncodedUri(payment_method_domain)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of PaymentMethods for Treasury flows. If you want to list the PaymentMethods attached to a Customer for payments, you should use the <a href="/docs/api/payment_methods/customer_list">List a Customer’s PaymentMethods</a> API instead.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_methods(map<string|string[]> headers = {}, *GetPaymentMethodsQueries queries) returns PaymentFlowsPaymentMethodList|error {
-        string resourcePath = string `/payment_methods`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a PaymentMethod object attached to the StripeAccount. To retrieve a payment method attached to a Customer, you should use <a href="/docs/api/payment_methods/customer">Retrieve a Customer’s PaymentMethods</a></p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payment_methods/[string payment_method](map<string|string[]> headers = {}, *GetPaymentMethodsPaymentMethodQueries queries) returns Payment_method|error {
-        string resourcePath = string `/payment_methods/${getEncodedUri(payment_method)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of existing payouts sent to third-party bank accounts or payouts that Stripe sent to you. The payouts return in sorted order, with the most recently created payouts appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payouts(map<string|string[]> headers = {}, *GetPayoutsQueries queries) returns PayoutList|error {
-        string resourcePath = string `/payouts`;
-        map<Encoding> queryParamEncoding = {"arrival_date": {style: DEEPOBJECT, explode: true}, "created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing payout. Supply the unique payout ID from either a payout creation request or the payout list. Stripe returns the corresponding payout information.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get payouts/[string payout](map<string|string[]> headers = {}, *GetPayoutsPayoutQueries queries) returns Payout|error {
-        string resourcePath = string `/payouts/${getEncodedUri(payout)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your plans.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get plans(map<string|string[]> headers = {}, *GetPlansQueries queries) returns PlanList|error {
-        string resourcePath = string `/plans`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the plan with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get plans/[string plan](map<string|string[]> headers = {}, *GetPlansPlanQueries queries) returns Plan|error {
-        string resourcePath = string `/plans/${getEncodedUri(plan)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your active prices, excluding <a href="/docs/products-prices/pricing-models#inline-pricing">inline prices</a>. For the list of inactive prices, set <code>active</code> to false.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get prices(map<string|string[]> headers = {}, *GetPricesQueries queries) returns PriceList|error {
-        string resourcePath = string `/prices`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "lookup_keys": {style: DEEPOBJECT, explode: true}, "recurring": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the price with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get prices/[string price](map<string|string[]> headers = {}, *GetPricesPriceQueries queries) returns Price|error {
-        string resourcePath = string `/prices/${getEncodedUri(price)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Search for prices you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
-    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
-    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
-    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get prices/search(map<string|string[]> headers = {}, *GetPricesSearchQueries queries) returns SearchResult_4|error {
-        string resourcePath = string `/prices/search`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your products. The products are returned sorted by creation date, with the most recently created products appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get products(map<string|string[]> headers = {}, *GetProductsQueries queries) returns ProductList|error {
-        string resourcePath = string `/products`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "ids": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing product. Supply the unique product ID from either a product creation request or the product list, and Stripe will return the corresponding product information.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get products/[string id](map<string|string[]> headers = {}, *GetProductsIdQueries queries) returns Product|error {
-        string resourcePath = string `/products/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve a list of features for a product</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get products/[string product]/features(map<string|string[]> headers = {}, *GetProductsProductFeaturesQueries queries) returns EntitlementsResourceProductFeatureList|error {
-        string resourcePath = string `/products/${getEncodedUri(product)}/features`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a product_feature, which represents a feature attachment to a product</p>
-    #
-    # + id - The ID of the product_feature.
-    # + product - The ID of the product.
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get products/[string product]/features/[string id](map<string|string[]> headers = {}, *GetProductsProductFeaturesIdQueries queries) returns Product_feature|error {
-        string resourcePath = string `/products/${getEncodedUri(product)}/features/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Search for products you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
-    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
-    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
-    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get products/search(map<string|string[]> headers = {}, *GetProductsSearchQueries queries) returns SearchResult_5|error {
-        string resourcePath = string `/products/search`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your promotion codes.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get promotion_codes(map<string|string[]> headers = {}, *GetPromotionCodesQueries queries) returns PromotionCodesResourcePromotionCodeList|error {
-        string resourcePath = string `/promotion_codes`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the promotion code with the given ID. In order to retrieve a promotion code by the customer-facing <code>code</code> use <a href="/docs/api/promotion_codes/list">list</a> with the desired <code>code</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get promotion_codes/[string promotion_code](map<string|string[]> headers = {}, *GetPromotionCodesPromotionCodeQueries queries) returns Promotion_code|error {
-        string resourcePath = string `/promotion_codes/${getEncodedUri(promotion_code)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your quotes.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get quotes(map<string|string[]> headers = {}, *GetQuotesQueries queries) returns QuotesResourceQuoteList|error {
-        string resourcePath = string `/quotes`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the quote with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get quotes/[string quote](map<string|string[]> headers = {}, *GetQuotesQuoteQueries queries) returns Quote|error {
-        string resourcePath = string `/quotes/${getEncodedUri(quote)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>When retrieving a quote, there is an includable <a href="https://stripe.com/docs/api/quotes/object#quote_object-computed-upfront-line_items"><strong>computed.upfront.line_items</strong></a> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of upfront line items.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get quotes/[string quote]/computed_upfront_line_items(map<string|string[]> headers = {}, *GetQuotesQuoteComputedUpfrontLineItemsQueries queries) returns QuotesResourceListLineItems|error {
-        string resourcePath = string `/quotes/${getEncodedUri(quote)}/computed_upfront_line_items`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>When retrieving a quote, there is an includable <strong>line_items</strong> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get quotes/[string quote]/line_items(map<string|string[]> headers = {}, *GetQuotesQuoteLineItemsQueries queries) returns QuotesResourceListLineItems|error {
-        string resourcePath = string `/quotes/${getEncodedUri(quote)}/line_items`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Download the PDF for a finalized quote. Explanation for special handling can be found <a href="https://docs.corp.stripe.com/quotes/overview#quote_pdf">here</a></p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get quotes/[string quote]/pdf(map<string|string[]> headers = {}, *GetQuotesQuotePdfQueries queries) returns http:Response|error {
-        string resourcePath = string `/quotes/${getEncodedUri(quote)}/pdf`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of early fraud warnings.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get radar/early_fraud_warnings(map<string|string[]> headers = {}, *GetRadarEarlyFraudWarningsQueries queries) returns RadarEarlyFraudWarningList|error {
-        string resourcePath = string `/radar/early_fraud_warnings`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an early fraud warning that has previously been created. </p>
-    # 
-    # <p>Please refer to the <a href="#early_fraud_warning_object">early fraud warning</a> object reference for more details.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get radar/early_fraud_warnings/[string early_fraud_warning](map<string|string[]> headers = {}, *GetRadarEarlyFraudWarningsEarlyFraudWarningQueries queries) returns Radar\.early_fraud_warning|error {
-        string resourcePath = string `/radar/early_fraud_warnings/${getEncodedUri(early_fraud_warning)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of <code>ValueListItem</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get radar/value_list_items(map<string|string[]> headers = {}, *GetRadarValueListItemsQueries queries) returns RadarListListItemList|error {
-        string resourcePath = string `/radar/value_list_items`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a <code>ValueListItem</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get radar/value_list_items/[string item](map<string|string[]> headers = {}, *GetRadarValueListItemsItemQueries queries) returns Radar\.value_list_item|error {
-        string resourcePath = string `/radar/value_list_items/${getEncodedUri(item)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of <code>ValueList</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get radar/value_lists(map<string|string[]> headers = {}, *GetRadarValueListsQueries queries) returns RadarListListList|error {
-        string resourcePath = string `/radar/value_lists`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a <code>ValueList</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get radar/value_lists/[string value_list](map<string|string[]> headers = {}, *GetRadarValueListsValueListQueries queries) returns Radar\.value_list|error {
-        string resourcePath = string `/radar/value_lists/${getEncodedUri(value_list)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of all refunds you created. We return the refunds in sorted order, with the most recent refunds appearing first The 10 most recent refunds are always available by default on the Charge object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get refunds(map<string|string[]> headers = {}, *GetRefundsQueries queries) returns APIMethodRefundList|error {
-        string resourcePath = string `/refunds`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing refund.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get refunds/[string refund](map<string|string[]> headers = {}, *GetRefundsRefundQueries queries) returns Refund|error {
-        string resourcePath = string `/refunds/${getEncodedUri(refund)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Report Runs, with the most recent appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get reporting/report_runs(map<string|string[]> headers = {}, *GetReportingReportRunsQueries queries) returns FinancialReportingFinanceReportRunList|error {
-        string resourcePath = string `/reporting/report_runs`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing Report Run.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get reporting/report_runs/[string report_run](map<string|string[]> headers = {}, *GetReportingReportRunsReportRunQueries queries) returns Reporting\.report_run|error {
-        string resourcePath = string `/reporting/report_runs/${getEncodedUri(report_run)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a full list of Report Types.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get reporting/report_types(map<string|string[]> headers = {}, *GetReportingReportTypesQueries queries) returns FinancialReportingFinanceReportTypeList|error {
-        string resourcePath = string `/reporting/report_types`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a Report Type. (Certain report types require a <a href="https://stripe.com/docs/keys#test-live-modes">live-mode API key</a>.)</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get reporting/report_types/[string report_type](map<string|string[]> headers = {}, *GetReportingReportTypesReportTypeQueries queries) returns Reporting\.report_type|error {
-        string resourcePath = string `/reporting/report_types/${getEncodedUri(report_type)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of <code>Review</code> objects that have <code>open</code> set to <code>true</code>. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get reviews(map<string|string[]> headers = {}, *GetReviewsQueries queries) returns RadarReviewList|error {
-        string resourcePath = string `/reviews`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a <code>Review</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get reviews/[string review](map<string|string[]> headers = {}, *GetReviewsReviewQueries queries) returns Review|error {
-        string resourcePath = string `/reviews/${getEncodedUri(review)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of SetupAttempts that associate with a provided SetupIntent.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get setup_attempts(map<string|string[]> headers = {}, *GetSetupAttemptsQueries queries) returns PaymentFlowsSetupIntentSetupAttemptList|error {
-        string resourcePath = string `/setup_attempts`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of SetupIntents.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get setup_intents(map<string|string[]> headers = {}, *GetSetupIntentsQueries queries) returns PaymentFlowsSetupIntentList|error {
-        string resourcePath = string `/setup_intents`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a SetupIntent that has previously been created. </p>
-    # 
-    # <p>Client-side retrieval using a publishable key is allowed when the <code>client_secret</code> is provided in the query string. </p>
-    # 
-    # <p>When retrieved with a publishable key, only a subset of properties will be returned. Please refer to the <a href="#setup_intent_object">SetupIntent</a> object reference for more details.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get setup_intents/[string intent](map<string|string[]> headers = {}, *GetSetupIntentsIntentQueries queries) returns Setup_intent|error {
-        string resourcePath = string `/setup_intents/${getEncodedUri(intent)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your shipping rates.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get shipping_rates(map<string|string[]> headers = {}, *GetShippingRatesQueries queries) returns ShippingResourcesShippingRateList|error {
-        string resourcePath = string `/shipping_rates`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns the shipping rate object with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get shipping_rates/[string shipping_rate_token](map<string|string[]> headers = {}, *GetShippingRatesShippingRateTokenQueries queries) returns Shipping_rate|error {
-        string resourcePath = string `/shipping_rates/${getEncodedUri(shipping_rate_token)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of scheduled query runs.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get sigma/scheduled_query_runs(map<string|string[]> headers = {}, *GetSigmaScheduledQueryRunsQueries queries) returns SigmaScheduledQueryRunList|error {
-        string resourcePath = string `/sigma/scheduled_query_runs`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an scheduled query run.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get sigma/scheduled_query_runs/[string scheduled_query_run](map<string|string[]> headers = {}, *GetSigmaScheduledQueryRunsScheduledQueryRunQueries queries) returns Scheduled_query_run|error {
-        string resourcePath = string `/sigma/scheduled_query_runs/${getEncodedUri(scheduled_query_run)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an existing source object. Supply the unique source ID from a source creation request and Stripe will return the corresponding up-to-date source object information.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get sources/[string 'source](map<string|string[]> headers = {}, *GetSourcesSourceQueries queries) returns Source|error {
-        string resourcePath = string `/sources/${getEncodedUri('source)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a new Source MandateNotification.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get sources/[string 'source]/mandate_notifications/[string mandate_notification](map<string|string[]> headers = {}, *GetSourcesSourceMandateNotificationsMandateNotificationQueries queries) returns Source_mandate_notification|error {
-        string resourcePath = string `/sources/${getEncodedUri('source)}/mandate_notifications/${getEncodedUri(mandate_notification)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>List source transactions for a given source.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get sources/[string 'source]/source_transactions(map<string|string[]> headers = {}, *GetSourcesSourceSourceTransactionsQueries queries) returns ApmsSourcesSourceTransactionList|error {
-        string resourcePath = string `/sources/${getEncodedUri('source)}/source_transactions`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieve an existing source transaction object. Supply the unique source ID from a source creation request and the source transaction ID and Stripe will return the corresponding up-to-date source object information.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get sources/[string 'source]/source_transactions/[string source_transaction](map<string|string[]> headers = {}, *GetSourcesSourceSourceTransactionsSourceTransactionQueries queries) returns Source_transaction|error {
-        string resourcePath = string `/sources/${getEncodedUri('source)}/source_transactions/${getEncodedUri(source_transaction)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your subscription items for a given subscription.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get subscription_items(map<string|string[]> headers = {}, *GetSubscriptionItemsQueries queries) returns SubscriptionsItemsSubscriptionItemList|error {
-        string resourcePath = string `/subscription_items`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the subscription item with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get subscription_items/[string item](map<string|string[]> headers = {}, *GetSubscriptionItemsItemQueries queries) returns Subscription_item|error {
-        string resourcePath = string `/subscription_items/${getEncodedUri(item)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>For the specified subscription item, returns a list of summary objects. Each object in the list provides usage information that’s been summarized from multiple usage records and over a subscription billing period (e.g., 15 usage records in the month of September).</p>
-    # 
-    # <p>The list is sorted in reverse-chronological order (newest first). The first list item represents the most current usage period that hasn’t ended yet. Since new usage records can still be added, the returned summary information for the subscription item’s ID should be seen as unstable until the subscription billing period ends.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get subscription_items/[string subscription_item]/usage_record_summaries(map<string|string[]> headers = {}, *GetSubscriptionItemsSubscriptionItemUsageRecordSummariesQueries queries) returns UsageEventsResourceUsageRecordSummaryList|error {
-        string resourcePath = string `/subscription_items/${getEncodedUri(subscription_item)}/usage_record_summaries`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the list of your subscription schedules.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get subscription_schedules(map<string|string[]> headers = {}, *GetSubscriptionSchedulesQueries queries) returns SubscriptionSchedulesResourceScheduleList|error {
-        string resourcePath = string `/subscription_schedules`;
-        map<Encoding> queryParamEncoding = {"canceled_at": {style: DEEPOBJECT, explode: true}, "completed_at": {style: DEEPOBJECT, explode: true}, "created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "released_at": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing subscription schedule. You only need to supply the unique subscription schedule identifier that was returned upon subscription schedule creation.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get subscription_schedules/[string schedule](map<string|string[]> headers = {}, *GetSubscriptionSchedulesScheduleQueries queries) returns Subscription_schedule|error {
-        string resourcePath = string `/subscription_schedules/${getEncodedUri(schedule)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>By default, returns a list of subscriptions that have not been canceled. In order to list canceled subscriptions, specify <code>status=canceled</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get subscriptions(map<string|string[]> headers = {}, *GetSubscriptionsQueries queries) returns SubscriptionsSubscriptionList|error {
-        string resourcePath = string `/subscriptions`;
-        map<Encoding> queryParamEncoding = {"automatic_tax": {style: DEEPOBJECT, explode: true}, "created": {style: DEEPOBJECT, explode: true}, "current_period_end": {style: DEEPOBJECT, explode: true}, "current_period_start": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the subscription with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get subscriptions/[string subscription_exposed_id](map<string|string[]> headers = {}, *GetSubscriptionsSubscriptionExposedIdQueries queries) returns Subscription|error {
-        string resourcePath = string `/subscriptions/${getEncodedUri(subscription_exposed_id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Search for subscriptions you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
-    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
-    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
-    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get subscriptions/search(map<string|string[]> headers = {}, *GetSubscriptionsSearchQueries queries) returns SearchResult_6|error {
-        string resourcePath = string `/subscriptions/search`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the line items of a tax calculation as a collection, if the calculation hasn’t expired.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax/calculations/[string calculation]/line_items(map<string|string[]> headers = {}, *GetTaxCalculationsCalculationLineItemsQueries queries) returns TaxProductResourceTaxCalculationLineItemList|error {
-        string resourcePath = string `/tax/calculations/${getEncodedUri(calculation)}/line_items`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of Tax <code>Registration</code> objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax/registrations(map<string|string[]> headers = {}, *GetTaxRegistrationsQueries queries) returns TaxProductRegistrationsResourceTaxRegistrationList|error {
-        string resourcePath = string `/tax/registrations`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a Tax <code>Registration</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax/registrations/[string id](map<string|string[]> headers = {}, *GetTaxRegistrationsIdQueries queries) returns Tax\.registration|error {
-        string resourcePath = string `/tax/registrations/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves Tax <code>Settings</code> for a merchant.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax/settings(map<string|string[]> headers = {}, *GetTaxSettingsQueries queries) returns Tax\.settings|error {
-        string resourcePath = string `/tax/settings`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a Tax <code>Transaction</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax/transactions/[string 'transaction](map<string|string[]> headers = {}, *GetTaxTransactionsTransactionQueries queries) returns Tax\.transaction|error {
-        string resourcePath = string `/tax/transactions/${getEncodedUri('transaction)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the line items of a committed standalone transaction as a collection.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax/transactions/[string 'transaction]/line_items(map<string|string[]> headers = {}, *GetTaxTransactionsTransactionLineItemsQueries queries) returns TaxProductResourceTaxTransactionLineItemList|error {
-        string resourcePath = string `/tax/transactions/${getEncodedUri('transaction)}/line_items`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>A list of <a href="https://stripe.com/docs/tax/tax-categories">all tax codes available</a> to add to Products in order to allow specific tax calculations.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax_codes(map<string|string[]> headers = {}, *GetTaxCodesQueries queries) returns TaxProductResourceTaxCodeList|error {
-        string resourcePath = string `/tax_codes`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing tax code. Supply the unique tax code ID and Stripe will return the corresponding tax code information.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax_codes/[string id](map<string|string[]> headers = {}, *GetTaxCodesIdQueries queries) returns Tax_code|error {
-        string resourcePath = string `/tax_codes/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of tax IDs.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax_ids(map<string|string[]> headers = {}, *GetTaxIdsQueries queries) returns TaxIDsList|error {
-        string resourcePath = string `/tax_ids`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "owner": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves an account or customer <code>tax_id</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax_ids/[string id](map<string|string[]> headers = {}, *GetTaxIdsIdQueries queries) returns Tax_id|error {
-        string resourcePath = string `/tax_ids/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your tax rates. Tax rates are returned sorted by creation date, with the most recently created tax rates appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax_rates(map<string|string[]> headers = {}, *GetTaxRatesQueries queries) returns TaxRatesList|error {
-        string resourcePath = string `/tax_rates`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a tax rate with the given ID</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tax_rates/[string tax_rate](map<string|string[]> headers = {}, *GetTaxRatesTaxRateQueries queries) returns Tax_rate|error {
-        string resourcePath = string `/tax_rates/${getEncodedUri(tax_rate)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of <code>Configuration</code> objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get terminal/configurations(map<string|string[]> headers = {}, *GetTerminalConfigurationsQueries queries) returns TerminalConfigurationConfigurationList|error {
-        string resourcePath = string `/terminal/configurations`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a <code>Configuration</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get terminal/configurations/[string configuration](map<string|string[]> headers = {}, *GetTerminalConfigurationsConfigurationQueries queries) returns inline_response_200_3|error {
-        string resourcePath = string `/terminal/configurations/${getEncodedUri(configuration)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of <code>Location</code> objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get terminal/locations(map<string|string[]> headers = {}, *GetTerminalLocationsQueries queries) returns TerminalLocationLocationList|error {
-        string resourcePath = string `/terminal/locations`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a <code>Location</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get terminal/locations/[string location](map<string|string[]> headers = {}, *GetTerminalLocationsLocationQueries queries) returns inline_response_200_4|error {
-        string resourcePath = string `/terminal/locations/${getEncodedUri(location)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of <code>Reader</code> objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get terminal/readers(map<string|string[]> headers = {}, *GetTerminalReadersQueries queries) returns TerminalReaderRetrieveReader|error {
-        string resourcePath = string `/terminal/readers`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a <code>Reader</code> object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get terminal/readers/[string reader](map<string|string[]> headers = {}, *GetTerminalReadersReaderQueries queries) returns inline_response_200_5|error {
-        string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your test clocks.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get test_helpers/test_clocks(map<string|string[]> headers = {}, *GetTestHelpersTestClocksQueries queries) returns BillingClocksResourceBillingClockList|error {
-        string resourcePath = string `/test_helpers/test_clocks`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a test clock.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get test_helpers/test_clocks/[string test_clock](map<string|string[]> headers = {}, *GetTestHelpersTestClocksTestClockQueries queries) returns Test_helpers\.test_clock|error {
-        string resourcePath = string `/test_helpers/test_clocks/${getEncodedUri(test_clock)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the token with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get tokens/[string token](map<string|string[]> headers = {}, *GetTokensTokenQueries queries) returns Token|error {
-        string resourcePath = string `/tokens/${getEncodedUri(token)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of top-ups.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get topups(map<string|string[]> headers = {}, *GetTopupsQueries queries) returns TopupList|error {
-        string resourcePath = string `/topups`;
-        map<Encoding> queryParamEncoding = {"amount": {style: DEEPOBJECT, explode: true}, "created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a top-up that has previously been created. Supply the unique top-up ID that was returned from your previous request, and Stripe will return the corresponding top-up information.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get topups/[string topup](map<string|string[]> headers = {}, *GetTopupsTopupQueries queries) returns Topup|error {
-        string resourcePath = string `/topups/${getEncodedUri(topup)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of existing transfers sent to connected accounts. The transfers are returned in sorted order, with the most recently created transfers appearing first.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get transfers(map<string|string[]> headers = {}, *GetTransfersQueries queries) returns TransferList|error {
-        string resourcePath = string `/transfers`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>You can see a list of the reversals belonging to a specific transfer. Note that the 10 most recent reversals are always available by default on the transfer object. If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional reversals.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get transfers/[string id]/reversals(map<string|string[]> headers = {}, *GetTransfersIdReversalsQueries queries) returns TransferReversalList|error {
-        string resourcePath = string `/transfers/${getEncodedUri(id)}/reversals`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing transfer. Supply the unique transfer ID from either a transfer creation request or the transfer list, and Stripe will return the corresponding transfer information.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get transfers/[string transfer](map<string|string[]> headers = {}, *GetTransfersTransferQueries queries) returns Transfer|error {
-        string resourcePath = string `/transfers/${getEncodedUri(transfer)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>By default, you can see the 10 most recent reversals stored directly on the transfer object, but you can also retrieve details about a specific reversal stored on the transfer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get transfers/[string transfer]/reversals/[string id](map<string|string[]> headers = {}, *GetTransfersTransferReversalsIdQueries queries) returns Transfer_reversal|error {
-        string resourcePath = string `/transfers/${getEncodedUri(transfer)}/reversals/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of CreditReversals.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/credit_reversals(map<string|string[]> headers = {}, *GetTreasuryCreditReversalsQueries queries) returns TreasuryReceivedCreditsResourceCreditReversalList|error {
-        string resourcePath = string `/treasury/credit_reversals`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing CreditReversal by passing the unique CreditReversal ID from either the CreditReversal creation request or CreditReversal list</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/credit_reversals/[string credit_reversal](map<string|string[]> headers = {}, *GetTreasuryCreditReversalsCreditReversalQueries queries) returns Treasury\.credit_reversal|error {
-        string resourcePath = string `/treasury/credit_reversals/${getEncodedUri(credit_reversal)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of DebitReversals.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/debit_reversals(map<string|string[]> headers = {}, *GetTreasuryDebitReversalsQueries queries) returns TreasuryReceivedDebitsResourceDebitReversalList|error {
-        string resourcePath = string `/treasury/debit_reversals`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a DebitReversal object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/debit_reversals/[string debit_reversal](map<string|string[]> headers = {}, *GetTreasuryDebitReversalsDebitReversalQueries queries) returns Treasury\.debit_reversal|error {
-        string resourcePath = string `/treasury/debit_reversals/${getEncodedUri(debit_reversal)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of FinancialAccounts.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/financial_accounts(map<string|string[]> headers = {}, *GetTreasuryFinancialAccountsQueries queries) returns TreasuryFinancialAccountsResourceFinancialAccountList|error {
-        string resourcePath = string `/treasury/financial_accounts`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of a FinancialAccount.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/financial_accounts/[string financial_account](map<string|string[]> headers = {}, *GetTreasuryFinancialAccountsFinancialAccountQueries queries) returns Treasury\.financial_account|error {
-        string resourcePath = string `/treasury/financial_accounts/${getEncodedUri(financial_account)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves Features information associated with the FinancialAccount.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/financial_accounts/[string financial_account]/features(map<string|string[]> headers = {}, *GetTreasuryFinancialAccountsFinancialAccountFeaturesQueries queries) returns Treasury\.financial_account_features|error {
-        string resourcePath = string `/treasury/financial_accounts/${getEncodedUri(financial_account)}/features`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of InboundTransfers sent from the specified FinancialAccount.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/inbound_transfers(map<string|string[]> headers = {}, *GetTreasuryInboundTransfersQueries queries) returns TreasuryInboundTransfersResourceInboundTransferList|error {
-        string resourcePath = string `/treasury/inbound_transfers`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing InboundTransfer.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/inbound_transfers/[string id](map<string|string[]> headers = {}, *GetTreasuryInboundTransfersIdQueries queries) returns Treasury\.inbound_transfer|error {
-        string resourcePath = string `/treasury/inbound_transfers/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of OutboundPayments sent from the specified FinancialAccount.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/outbound_payments(map<string|string[]> headers = {}, *GetTreasuryOutboundPaymentsQueries queries) returns TreasuryOutboundPaymentsResourceOutboundPaymentList|error {
-        string resourcePath = string `/treasury/outbound_payments`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing OutboundPayment by passing the unique OutboundPayment ID from either the OutboundPayment creation request or OutboundPayment list.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/outbound_payments/[string id](map<string|string[]> headers = {}, *GetTreasuryOutboundPaymentsIdQueries queries) returns Treasury\.outbound_payment|error {
-        string resourcePath = string `/treasury/outbound_payments/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of OutboundTransfers sent from the specified FinancialAccount.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/outbound_transfers(map<string|string[]> headers = {}, *GetTreasuryOutboundTransfersQueries queries) returns TreasuryOutboundTransfersResourceOutboundTransferList|error {
-        string resourcePath = string `/treasury/outbound_transfers`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing OutboundTransfer by passing the unique OutboundTransfer ID from either the OutboundTransfer creation request or OutboundTransfer list.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/outbound_transfers/[string outbound_transfer](map<string|string[]> headers = {}, *GetTreasuryOutboundTransfersOutboundTransferQueries queries) returns Treasury\.outbound_transfer|error {
-        string resourcePath = string `/treasury/outbound_transfers/${getEncodedUri(outbound_transfer)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of ReceivedCredits.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/received_credits(map<string|string[]> headers = {}, *GetTreasuryReceivedCreditsQueries queries) returns TreasuryReceivedCreditsResourceReceivedCreditList|error {
-        string resourcePath = string `/treasury/received_credits`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "linked_flows": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing ReceivedCredit by passing the unique ReceivedCredit ID from the ReceivedCredit list.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/received_credits/[string id](map<string|string[]> headers = {}, *GetTreasuryReceivedCreditsIdQueries queries) returns Treasury\.received_credit|error {
-        string resourcePath = string `/treasury/received_credits/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of ReceivedDebits.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/received_debits(map<string|string[]> headers = {}, *GetTreasuryReceivedDebitsQueries queries) returns TreasuryReceivedDebitsResourceReceivedDebitList|error {
-        string resourcePath = string `/treasury/received_debits`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing ReceivedDebit by passing the unique ReceivedDebit ID from the ReceivedDebit list</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/received_debits/[string id](map<string|string[]> headers = {}, *GetTreasuryReceivedDebitsIdQueries queries) returns Treasury\.received_debit|error {
-        string resourcePath = string `/treasury/received_debits/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a list of TransactionEntry objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/transaction_entries(map<string|string[]> headers = {}, *GetTreasuryTransactionEntriesQueries queries) returns TreasuryTransactionsResourceTransactionEntryList|error {
-        string resourcePath = string `/treasury/transaction_entries`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "effective_at": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a TransactionEntry object.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/transaction_entries/[string id](map<string|string[]> headers = {}, *GetTreasuryTransactionEntriesIdQueries queries) returns Treasury\.transaction_entry|error {
-        string resourcePath = string `/treasury/transaction_entries/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves a list of Transaction objects.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/transactions(map<string|string[]> headers = {}, *GetTreasuryTransactionsQueries queries) returns TreasuryTransactionsResourceTransactionList|error {
-        string resourcePath = string `/treasury/transactions`;
-        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "status_transitions": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the details of an existing Transaction.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get treasury/transactions/[string id](map<string|string[]> headers = {}, *GetTreasuryTransactionsIdQueries queries) returns Treasury\.transaction|error {
-        string resourcePath = string `/treasury/transactions/${getEncodedUri(id)}`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Returns a list of your webhook endpoints.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get webhook_endpoints(map<string|string[]> headers = {}, *GetWebhookEndpointsQueries queries) returns NotificationWebhookEndpointList|error {
-        string resourcePath = string `/webhook_endpoints`;
-        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
-        return self.clientEp->get(resourcePath, headers);
-    }
-
-    # <p>Retrieves the webhook endpoint with the given ID.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + queries - Queries to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function get webhook_endpoints/[string webhook_endpoint](map<string|string[]> headers = {}, *GetWebhookEndpointsWebhookEndpointQueries queries) returns Webhook_endpoint|error {
-        string resourcePath = string `/webhook_endpoints/${getEncodedUri(webhook_endpoint)}`;
         map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
         return self.clientEp->get(resourcePath, headers);
@@ -3425,8 +48,8 @@ public isolated client class Client {
     # <p>Creates an AccountLink object that includes a single-use Stripe URL that the platform can redirect their user to in order to take them through the Connect Onboarding flow.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post account_links(account_links_body payload, map<string|string[]> headers = {}) returns Account_link|error {
+    # + return - Successful response 
+    resource isolated function post account_links(AccountLinksBody payload, map<string|string[]> headers = {}) returns AccountLink|error {
         string resourcePath = string `/account_links`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"collection_options": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -3438,14 +61,26 @@ public isolated client class Client {
     # <p>Creates a AccountSession object that includes a single-use token that the platform can use on their front-end to grant client-side API access.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post account_sessions(account_sessions_body payload, map<string|string[]> headers = {}) returns Account_session|error {
+    # + return - Successful response 
+    resource isolated function post account_sessions(AccountSessionsBody payload, map<string|string[]> headers = {}) returns AccountSession|error {
         string resourcePath = string `/account_sessions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"components": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Returns a list of accounts connected to your platform via <a href="/docs/connect">Connect</a>. If you’re not a platform, the list is empty.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts(map<string|string[]> headers = {}, *GetAccountsQueries queries) returns AccountList|error {
+        string resourcePath = string `/accounts`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>With <a href="/docs/connect">Connect</a>, you can create Stripe accounts for your users.
@@ -3456,14 +91,26 @@ public isolated client class Client {
     # You can prefill any information on the account.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts(accounts_body payload, map<string|string[]> headers = {}) returns Account|error {
+    # + return - Successful response 
+    resource isolated function post accounts(AccountsBody payload, map<string|string[]> headers = {}) returns Account|error {
         string resourcePath = string `/accounts`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bank_account": {style: DEEPOBJECT, explode: true}, "business_profile": {style: DEEPOBJECT, explode: true}, "capabilities": {style: DEEPOBJECT, explode: true}, "company": {style: DEEPOBJECT, explode: true}, "controller": {style: DEEPOBJECT, explode: true}, "documents": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "individual": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "settings": {style: DEEPOBJECT, explode: true}, "tos_acceptance": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Retrieves the details of an account.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account](map<string|string[]> headers = {}, *GetAccountsAccountQueries queries) returns Account|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Updates a <a href="/connect/accounts">connected account</a> by setting the values of the parameters passed. Any parameters not provided are
@@ -3481,8 +128,8 @@ public isolated client class Client {
     # <a href="/docs/connect/updating-accounts">Connect</a> documentation to learn more about updating accounts.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account](accounts_account_body payload, map<string|string[]> headers = {}) returns Account|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account](AccountsaccountBody payload, map<string|string[]> headers = {}) returns Account|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"business_profile": {style: DEEPOBJECT, explode: true}, "capabilities": {style: DEEPOBJECT, explode: true}, "company": {style: DEEPOBJECT, explode: true}, "documents": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "individual": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "settings": {style: DEEPOBJECT, explode: true}, "tos_acceptance": {style: DEEPOBJECT, explode: true}};
@@ -3491,11 +138,26 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>With <a href="/connect">Connect</a>, you can delete accounts you manage.</p>
+    # 
+    # <p>Test-mode accounts can be deleted at any time.</p>
+    # 
+    # <p>Live-mode accounts where Stripe is responsible for negative account balances cannot be deleted, which includes Standard accounts. Live-mode accounts where your platform is liable for negative account balances, which includes Custom and Express accounts, can be deleted when all <a href="/api/balance/balanace_object">balances</a> are zero.</p>
+    # 
+    # <p>If you want to delete your own account, use the <a href="https://dashboard.stripe.com/settings/account">account information tab in your account settings</a> instead.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete accounts/[string account](map<string|string[]> headers = {}) returns DeletedAccount|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
     # <p>Create an external account for a given account.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/bank_accounts(account_bank_accounts_body payload, map<string|string[]> headers = {}) returns External_account|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/bank_accounts(AccountBankAccountsBody payload, map<string|string[]> headers = {}) returns ExternalAccount|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/bank_accounts`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bank_account": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3504,6 +166,18 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve a specified external account for a given account.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/bank_accounts/[string id](map<string|string[]> headers = {}, *GetAccountsAccountBankAccountsIdQueries queries) returns ExternalAccount|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/bank_accounts/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the metadata, account holder name, account holder type of a bank account belonging to
     # a connected account and optionally sets it as the default for its currency. Other bank account
     # details are not editable by design.</p>
@@ -3514,8 +188,8 @@ public isolated client class Client {
     # arguments or changes.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/bank_accounts/[string id](bank_accounts_id_body payload, map<string|string[]> headers = {}) returns External_account|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/bank_accounts/[string id](BankAccountsidBody payload, map<string|string[]> headers = {}) returns ExternalAccount|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/bank_accounts/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"documents": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3524,11 +198,44 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Delete a specified external account for a given account.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete accounts/[string account]/bank_accounts/[string id](map<string|string[]> headers = {}) returns DeletedExternalAccount|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/bank_accounts/${getEncodedUri(id)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of capabilities associated with the account. The capabilities are returned sorted by creation date, with the most recent capability appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/capabilities(map<string|string[]> headers = {}, *GetAccountsAccountCapabilitiesQueries queries) returns ListAccountCapability|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/capabilities`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves information about the specified Account Capability.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/capabilities/[string capability](map<string|string[]> headers = {}, *GetAccountsAccountCapabilitiesCapabilityQueries queries) returns Capability|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/capabilities/${getEncodedUri(capability)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing Account Capability. Request or remove a capability by updating its <code>requested</code> parameter.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/capabilities/[string capability](capabilities_capability_body payload, map<string|string[]> headers = {}) returns Capability|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/capabilities/[string capability](CapabilitiescapabilityBody payload, map<string|string[]> headers = {}) returns Capability|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/capabilities/${getEncodedUri(capability)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -3537,17 +244,41 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>List external accounts for an account.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/external_accounts(map<string|string[]> headers = {}, *GetAccountsAccountExternalAccountsQueries queries) returns ExternalAccountList|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Create an external account for a given account.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/external_accounts(account_external_accounts_body payload, map<string|string[]> headers = {}) returns External_account|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/external_accounts(AccountExternalAccountsBody payload, map<string|string[]> headers = {}) returns ExternalAccount|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bank_account": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Retrieve a specified external account for a given account.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/external_accounts/[string id](map<string|string[]> headers = {}, *GetAccountsAccountExternalAccountsIdQueries queries) returns ExternalAccount|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Updates the metadata, account holder name, account holder type of a bank account belonging to
@@ -3560,8 +291,8 @@ public isolated client class Client {
     # arguments or changes.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/external_accounts/[string id](external_accounts_id_body payload, map<string|string[]> headers = {}) returns External_account|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/external_accounts/[string id](ExternalAccountsidBody payload, map<string|string[]> headers = {}) returns ExternalAccount|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"documents": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3570,13 +301,22 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Delete a specified external account for a given account.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete accounts/[string account]/external_accounts/[string id](map<string|string[]> headers = {}) returns DeletedExternalAccount|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/external_accounts/${getEncodedUri(id)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
     # <p>Creates a single-use login link for a connected account to access the Express Dashboard.</p>
     # 
     # <p><strong>You can only create login links for accounts that use the <a href="/connect/express-dashboard">Express Dashboard</a> and are connected to your platform</strong>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/login_links(account_login_links_body payload, map<string|string[]> headers = {}) returns Login_link|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/login_links(AccountLoginLinksBody payload, map<string|string[]> headers = {}) returns LoginLink|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/login_links`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -3585,11 +325,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of people associated with the account’s legal entity. The people are returned sorted by creation date, with the most recent people appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/people(map<string|string[]> headers = {}, *GetAccountsAccountPeopleQueries queries) returns PersonList|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/people`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "relationship": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new person.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/people(account_people_body payload, map<string|string[]> headers = {}) returns Person|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/people(AccountPeopleBody payload, map<string|string[]> headers = {}) returns Person|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/people`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"additional_tos_acceptances": {style: DEEPOBJECT, explode: true}, "address": {style: DEEPOBJECT, explode: true}, "address_kana": {style: DEEPOBJECT, explode: true}, "address_kanji": {style: DEEPOBJECT, explode: true}, "dob": {style: DEEPOBJECT, explode: true}, "documents": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "full_name_aliases": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "registered_address": {style: DEEPOBJECT, explode: true}, "relationship": {style: DEEPOBJECT, explode: true}, "verification": {style: DEEPOBJECT, explode: true}};
@@ -3598,11 +350,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves an existing person.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/people/[string person](map<string|string[]> headers = {}, *GetAccountsAccountPeoplePersonQueries queries) returns Person|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/people/${getEncodedUri(person)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing person.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/people/[string person](people_person_body payload, map<string|string[]> headers = {}) returns Person|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/people/[string person](PeoplepersonBody payload, map<string|string[]> headers = {}) returns Person|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/people/${getEncodedUri(person)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"additional_tos_acceptances": {style: DEEPOBJECT, explode: true}, "address": {style: DEEPOBJECT, explode: true}, "address_kana": {style: DEEPOBJECT, explode: true}, "address_kanji": {style: DEEPOBJECT, explode: true}, "dob": {style: DEEPOBJECT, explode: true}, "documents": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "full_name_aliases": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "registered_address": {style: DEEPOBJECT, explode: true}, "relationship": {style: DEEPOBJECT, explode: true}, "verification": {style: DEEPOBJECT, explode: true}};
@@ -3611,11 +375,32 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Deletes an existing person’s relationship to the account’s legal entity. Any person with a relationship for an account can be deleted through the API, except if the person is the <code>account_opener</code>. If your integration is using the <code>executive</code> parameter, you cannot delete the only verified <code>executive</code> on file.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete accounts/[string account]/people/[string person](map<string|string[]> headers = {}) returns DeletedPerson|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/people/${getEncodedUri(person)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of people associated with the account’s legal entity. The people are returned sorted by creation date, with the most recent people appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/persons(map<string|string[]> headers = {}, *GetAccountsAccountPersonsQueries queries) returns PersonList1|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/persons`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "relationship": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new person.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/persons(account_persons_body payload, map<string|string[]> headers = {}) returns Person|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/persons(AccountPersonsBody payload, map<string|string[]> headers = {}) returns Person|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/persons`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"additional_tos_acceptances": {style: DEEPOBJECT, explode: true}, "address": {style: DEEPOBJECT, explode: true}, "address_kana": {style: DEEPOBJECT, explode: true}, "address_kanji": {style: DEEPOBJECT, explode: true}, "dob": {style: DEEPOBJECT, explode: true}, "documents": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "full_name_aliases": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "registered_address": {style: DEEPOBJECT, explode: true}, "relationship": {style: DEEPOBJECT, explode: true}, "verification": {style: DEEPOBJECT, explode: true}};
@@ -3624,11 +409,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves an existing person.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get accounts/[string account]/persons/[string person](map<string|string[]> headers = {}, *GetAccountsAccountPersonsPersonQueries queries) returns Person|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/persons/${getEncodedUri(person)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing person.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/persons/[string person](persons_person_body payload, map<string|string[]> headers = {}) returns Person|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/persons/[string person](PersonspersonBody payload, map<string|string[]> headers = {}) returns Person|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/persons/${getEncodedUri(person)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"additional_tos_acceptances": {style: DEEPOBJECT, explode: true}, "address": {style: DEEPOBJECT, explode: true}, "address_kana": {style: DEEPOBJECT, explode: true}, "address_kanji": {style: DEEPOBJECT, explode: true}, "dob": {style: DEEPOBJECT, explode: true}, "documents": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "full_name_aliases": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "registered_address": {style: DEEPOBJECT, explode: true}, "relationship": {style: DEEPOBJECT, explode: true}, "verification": {style: DEEPOBJECT, explode: true}};
@@ -3637,13 +434,22 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Deletes an existing person’s relationship to the account’s legal entity. Any person with a relationship for an account can be deleted through the API, except if the person is the <code>account_opener</code>. If your integration is using the <code>executive</code> parameter, you cannot delete the only verified <code>executive</code> on file.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete accounts/[string account]/persons/[string person](map<string|string[]> headers = {}) returns DeletedPerson|error {
+        string resourcePath = string `/accounts/${getEncodedUri(account)}/persons/${getEncodedUri(person)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
     # <p>With <a href="/connect">Connect</a>, you can reject accounts that you have flagged as suspicious.</p>
     # 
     # <p>Only accounts where your platform is liable for negative account balances, which includes Custom and Express accounts, can be rejected. Test-mode accounts can be rejected at any time. Live-mode accounts can only be rejected after all balances are zero.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post accounts/[string account]/reject(account_reject_body payload, map<string|string[]> headers = {}) returns Account|error {
+    # + return - Successful response 
+    resource isolated function post accounts/[string account]/reject(AccountRejectBody payload, map<string|string[]> headers = {}) returns Account|error {
         string resourcePath = string `/accounts/${getEncodedUri(account)}/reject`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -3652,11 +458,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>List apple pay domains.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get apple_pay/domains(map<string|string[]> headers = {}, *GetApplePayDomainsQueries queries) returns ApplePayDomainList|error {
+        string resourcePath = string `/apple_pay/domains`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Create an apple pay domain.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post apple_pay/domains(apple_pay_domains_body payload, map<string|string[]> headers = {}) returns Apple_pay_domain|error {
+    # + return - Successful response 
+    resource isolated function post apple_pay/domains(ApplePayDomainsBody payload, map<string|string[]> headers = {}) returns ApplePayDomain|error {
         string resourcePath = string `/apple_pay/domains`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -3665,13 +483,58 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve an apple pay domain.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get apple_pay/domains/[string domain](map<string|string[]> headers = {}, *GetApplePayDomainsDomainQueries queries) returns ApplePayDomain|error {
+        string resourcePath = string `/apple_pay/domains/${getEncodedUri(domain)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Delete an apple pay domain.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete apple_pay/domains/[string domain](map<string|string[]> headers = {}) returns DeletedApplePayDomain|error {
+        string resourcePath = string `/apple_pay/domains/${getEncodedUri(domain)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of application fees you’ve previously collected. The application fees are returned in sorted order, with the most recent fees appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get application_fees(map<string|string[]> headers = {}, *GetApplicationFeesQueries queries) returns PlatformEarningList|error {
+        string resourcePath = string `/application_fees`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>By default, you can see the 10 most recent refunds stored directly on the application fee object, but you can also retrieve details about a specific refund stored on the application fee.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get application_fees/[string fee]/refunds/[string id](map<string|string[]> headers = {}, *GetApplicationFeesFeeRefundsIdQueries queries) returns FeeRefund|error {
+        string resourcePath = string `/application_fees/${getEncodedUri(fee)}/refunds/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified application fee refund by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     # 
     # <p>This request only accepts metadata as an argument.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post application_fees/[string fee]/refunds/[string id](refunds_id_body payload, map<string|string[]> headers = {}) returns Fee_refund|error {
+    # + return - Successful response 
+    resource isolated function post application_fees/[string fee]/refunds/[string id](RefundsidBody payload, map<string|string[]> headers = {}) returns FeeRefund|error {
         string resourcePath = string `/application_fees/${getEncodedUri(fee)}/refunds/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3680,17 +543,41 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an application fee that your account has collected. The same information is returned when refunding the application fee.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get application_fees/[string id](map<string|string[]> headers = {}, *GetApplicationFeesIdQueries queries) returns ApplicationFee|error {
+        string resourcePath = string `/application_fees/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # 
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post application_fees/[string id]/refund(id_refund_body payload, map<string|string[]> headers = {}) returns Application_fee|error {
+    # + return - Successful response 
+    resource isolated function post application_fees/[string id]/refund(IdRefundBody payload, map<string|string[]> headers = {}) returns ApplicationFee|error {
         string resourcePath = string `/application_fees/${getEncodedUri(id)}/refund`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>You can see a list of the refunds belonging to a specific application fee. Note that the 10 most recent refunds are always available by default on the application fee object. If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional refunds.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get application_fees/[string id]/refunds(map<string|string[]> headers = {}, *GetApplicationFeesIdRefundsQueries queries) returns FeeRefundList|error {
+        string resourcePath = string `/application_fees/${getEncodedUri(id)}/refunds`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Refunds an application fee that has previously been collected but not yet refunded.
@@ -3704,8 +591,8 @@ public isolated client class Client {
     # or when trying to refund more money than is left on an application fee.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post application_fees/[string id]/refunds(id_refunds_body payload, map<string|string[]> headers = {}) returns Fee_refund|error {
+    # + return - Successful response 
+    resource isolated function post application_fees/[string id]/refunds(IdRefundsBody payload, map<string|string[]> headers = {}) returns FeeRefund|error {
         string resourcePath = string `/application_fees/${getEncodedUri(id)}/refunds`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3714,11 +601,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>List all secrets stored on the given scope.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get apps/secrets(map<string|string[]> headers = {}, *GetAppsSecretsQueries queries) returns SecretServiceResourceSecretList|error {
+        string resourcePath = string `/apps/secrets`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "scope": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Create or replace a secret in the secret store.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post apps/secrets(apps_secrets_body payload, map<string|string[]> headers = {}) returns Apps\.secret|error {
+    # + return - Successful response 
+    resource isolated function post apps/secrets(AppsSecretsBody payload, map<string|string[]> headers = {}) returns AppsSecret|error {
         string resourcePath = string `/apps/secrets`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "scope": {style: DEEPOBJECT, explode: true}};
@@ -3730,8 +629,8 @@ public isolated client class Client {
     # <p>Deletes a secret from the secret store by name and scope.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post apps/secrets/delete(secrets_delete_body payload, map<string|string[]> headers = {}) returns Apps\.secret|error {
+    # + return - Successful response 
+    resource isolated function post apps/secrets/delete(SecretsDeleteBody payload, map<string|string[]> headers = {}) returns AppsSecret|error {
         string resourcePath = string `/apps/secrets/delete`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "scope": {style: DEEPOBJECT, explode: true}};
@@ -3740,11 +639,92 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Finds a secret in the secret store by name and scope.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get apps/secrets/find(map<string|string[]> headers = {}, *GetAppsSecretsFindQueries queries) returns AppsSecret|error {
+        string resourcePath = string `/apps/secrets/find`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "scope": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the current account balance, based on the authentication that was used to make the request.
+    #  For a sample request, see <a href="/docs/connect/account-balances#accounting-for-negative-balances">Accounting for negative balances</a>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get balance(map<string|string[]> headers = {}, *GetBalanceQueries queries) returns Balance|error {
+        string resourcePath = string `/balance`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of transactions that have contributed to the Stripe account balance (e.g., charges, transfers, and so forth). The transactions are returned in sorted order, with the most recent transactions appearing first.</p>
+    # 
+    # <p>Note that this endpoint was previously called “Balance history” and used the path <code>/v1/balance/history</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get balance/history(map<string|string[]> headers = {}, *GetBalanceHistoryQueries queries) returns BalanceTransactionsList|error {
+        string resourcePath = string `/balance/history`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the balance transaction with the given ID.</p>
+    # 
+    # <p>Note that this endpoint previously used the path <code>/v1/balance/history/:id</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get balance/history/[string id](map<string|string[]> headers = {}, *GetBalanceHistoryIdQueries queries) returns BalanceTransaction|error {
+        string resourcePath = string `/balance/history/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of transactions that have contributed to the Stripe account balance (e.g., charges, transfers, and so forth). The transactions are returned in sorted order, with the most recent transactions appearing first.</p>
+    # 
+    # <p>Note that this endpoint was previously called “Balance history” and used the path <code>/v1/balance/history</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get balance_transactions(map<string|string[]> headers = {}, *GetBalanceTransactionsQueries queries) returns BalanceTransactionsList1|error {
+        string resourcePath = string `/balance_transactions`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the balance transaction with the given ID.</p>
+    # 
+    # <p>Note that this endpoint previously used the path <code>/v1/balance/history/:id</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get balance_transactions/[string id](map<string|string[]> headers = {}, *GetBalanceTransactionsIdQueries queries) returns BalanceTransaction|error {
+        string resourcePath = string `/balance_transactions/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a billing meter event adjustment</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing/meter_event_adjustments(billing_meter_event_adjustments_body payload, map<string|string[]> headers = {}) returns Billing\.meter_event_adjustment|error {
+    # + return - Successful response 
+    resource isolated function post billing/meter_event_adjustments(BillingMeterEventAdjustmentsBody payload, map<string|string[]> headers = {}) returns BillingMeterEventAdjustment|error {
         string resourcePath = string `/billing/meter_event_adjustments`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"cancel": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -3756,8 +736,8 @@ public isolated client class Client {
     # <p>Creates a billing meter event</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing/meter_events(billing_meter_events_body payload, map<string|string[]> headers = {}) returns Billing\.meter_event|error {
+    # + return - Successful response 
+    resource isolated function post billing/meter_events(BillingMeterEventsBody payload, map<string|string[]> headers = {}) returns BillingMeterEvent|error {
         string resourcePath = string `/billing/meter_events`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "payload": {style: DEEPOBJECT, explode: true}};
@@ -3766,11 +746,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve a list of billing meters.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get billing/meters(map<string|string[]> headers = {}, *GetBillingMetersQueries queries) returns BillingMeterResourceBillingMeterList|error {
+        string resourcePath = string `/billing/meters`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a billing meter</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing/meters(billing_meters_body payload, map<string|string[]> headers = {}) returns Billing\.meter|error {
+    # + return - Successful response 
+    resource isolated function post billing/meters(BillingMetersBody payload, map<string|string[]> headers = {}) returns BillingMeter|error {
         string resourcePath = string `/billing/meters`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"customer_mapping": {style: DEEPOBJECT, explode: true}, "default_aggregation": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "value_settings": {style: DEEPOBJECT, explode: true}};
@@ -3779,12 +771,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a billing meter given an ID</p>
+    #
+    # + id - Unique identifier for the object
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get billing/meters/[string id](map<string|string[]> headers = {}, *GetBillingMetersIdQueries queries) returns BillingMeter|error {
+        string resourcePath = string `/billing/meters/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a billing meter</p>
     #
-    # + id - Unique identifier for the object.
+    # + id - Unique identifier for the object
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing/meters/[string id](meters_id_body payload, map<string|string[]> headers = {}) returns Billing\.meter|error {
+    # + return - Successful response 
+    resource isolated function post billing/meters/[string id](MetersidBody payload, map<string|string[]> headers = {}) returns BillingMeter|error {
         string resourcePath = string `/billing/meters/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -3795,10 +800,10 @@ public isolated client class Client {
 
     # <p>Deactivates a billing meter</p>
     #
-    # + id - Unique identifier for the object.
+    # + id - Unique identifier for the object
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing/meters/[string id]/deactivate(id_deactivate_body payload, map<string|string[]> headers = {}) returns Billing\.meter|error {
+    # + return - Successful response 
+    resource isolated function post billing/meters/[string id]/deactivate(IdDeactivateBody payload, map<string|string[]> headers = {}) returns BillingMeter|error {
         string resourcePath = string `/billing/meters/${getEncodedUri(id)}/deactivate`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -3807,12 +812,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve a list of billing meter event summaries.</p>
+    #
+    # + id - Unique identifier for the object
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get billing/meters/[string id]/event_summaries(map<string|string[]> headers = {}, *GetBillingMetersIdEventSummariesQueries queries) returns BillingMeterResourceBillingMeterEventSummaryList|error {
+        string resourcePath = string `/billing/meters/${getEncodedUri(id)}/event_summaries`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Reactivates a billing meter</p>
     #
-    # + id - Unique identifier for the object.
+    # + id - Unique identifier for the object
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing/meters/[string id]/reactivate(id_reactivate_body payload, map<string|string[]> headers = {}) returns Billing\.meter|error {
+    # + return - Successful response 
+    resource isolated function post billing/meters/[string id]/reactivate(IdReactivateBody payload, map<string|string[]> headers = {}) returns BillingMeter|error {
         string resourcePath = string `/billing/meters/${getEncodedUri(id)}/reactivate`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -3821,11 +839,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of configurations that describe the functionality of the customer portal.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get billing_portal/configurations(map<string|string[]> headers = {}, *GetBillingPortalConfigurationsQueries queries) returns PortalPublicResourceConfigurationList|error {
+        string resourcePath = string `/billing_portal/configurations`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a configuration that describes the functionality and behavior of a PortalSession</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing_portal/configurations(billing_portal_configurations_body payload, map<string|string[]> headers = {}) returns Billing_portal\.configuration|error {
+    # + return - Successful response 
+    resource isolated function post billing_portal/configurations(BillingPortalConfigurationsBody payload, map<string|string[]> headers = {}) returns BillingPortalConfiguration|error {
         string resourcePath = string `/billing_portal/configurations`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"business_profile": {style: DEEPOBJECT, explode: true}, "default_return_url": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "features": {style: DEEPOBJECT, explode: true}, "login_page": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3834,11 +864,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a configuration that describes the functionality of the customer portal.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get billing_portal/configurations/[string configuration](map<string|string[]> headers = {}, *GetBillingPortalConfigurationsConfigurationQueries queries) returns BillingPortalConfiguration|error {
+        string resourcePath = string `/billing_portal/configurations/${getEncodedUri(configuration)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a configuration that describes the functionality of the customer portal.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing_portal/configurations/[string configuration](configurations_configuration_body payload, map<string|string[]> headers = {}) returns Billing_portal\.configuration|error {
+    # + return - Successful response 
+    resource isolated function post billing_portal/configurations/[string configuration](ConfigurationsconfigurationBody payload, map<string|string[]> headers = {}) returns BillingPortalConfiguration|error {
         string resourcePath = string `/billing_portal/configurations/${getEncodedUri(configuration)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"business_profile": {style: DEEPOBJECT, explode: true}, "default_return_url": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "features": {style: DEEPOBJECT, explode: true}, "login_page": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3850,8 +892,8 @@ public isolated client class Client {
     # <p>Creates a session of the customer portal.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post billing_portal/sessions(billing_portal_sessions_body payload, map<string|string[]> headers = {}) returns Billing_portal\.session|error {
+    # + return - Successful response 
+    resource isolated function post billing_portal/sessions(BillingPortalSessionsBody payload, map<string|string[]> headers = {}) returns BillingPortalSession|error {
         string resourcePath = string `/billing_portal/sessions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "flow_data": {style: DEEPOBJECT, explode: true}};
@@ -3860,13 +902,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of charges you’ve previously created. The charges are returned in sorted order, with the most recent charges appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get charges(map<string|string[]> headers = {}, *GetChargesQueries queries) returns ChargeList|error {
+        string resourcePath = string `/charges`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>This method is no longer recommended—use the <a href="/docs/api/payment_intents">Payment Intents API</a>
     # to initiate a new payment instead. Confirmation of the PaymentIntent creates the <code>Charge</code>
     # object used to request payment.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post charges(charges_body payload, map<string|string[]> headers = {}) returns Charge|error {
+    # + return - Successful response 
+    resource isolated function post charges(ChargesBody payload, map<string|string[]> headers = {}) returns Charge|error {
         string resourcePath = string `/charges`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"card": {style: DEEPOBJECT, explode: true}, "destination": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "radar_options": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
@@ -3875,11 +929,38 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Search for charges you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
+    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
+    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
+    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get charges/search(map<string|string[]> headers = {}, *GetChargesSearchQueries queries) returns SearchResult|error {
+        string resourcePath = string `/charges/search`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of a charge that has previously been created. Supply the unique charge ID that was returned from your previous request, and Stripe will return the corresponding charge information. The same information is returned when creating or refunding the charge.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get charges/[string charge](map<string|string[]> headers = {}, *GetChargesChargeQueries queries) returns Charge|error {
+        string resourcePath = string `/charges/${getEncodedUri(charge)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified charge by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post charges/[string charge](charges_charge_body payload, map<string|string[]> headers = {}) returns Charge|error {
+    # + return - Successful response 
+    resource isolated function post charges/[string charge](ChargeschargeBody payload, map<string|string[]> headers = {}) returns Charge|error {
         string resourcePath = string `/charges/${getEncodedUri(charge)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "fraud_details": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}};
@@ -3895,8 +976,8 @@ public isolated client class Client {
     # <p>Don’t use this method to capture a PaymentIntent-initiated charge. Use <a href="/docs/api/payment_intents/capture">Capture a PaymentIntent</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post charges/[string charge]/capture(charge_capture_body payload, map<string|string[]> headers = {}) returns Charge|error {
+    # + return - Successful response 
+    resource isolated function post charges/[string charge]/capture(ChargeCaptureBody payload, map<string|string[]> headers = {}) returns Charge|error {
         string resourcePath = string `/charges/${getEncodedUri(charge)}/capture`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
@@ -3905,11 +986,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve a dispute for a specified charge.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get charges/[string charge]/dispute(map<string|string[]> headers = {}, *GetChargesChargeDisputeQueries queries) returns Dispute|error {
+        string resourcePath = string `/charges/${getEncodedUri(charge)}/dispute`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # 
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post charges/[string charge]/dispute(charge_dispute_body payload, map<string|string[]> headers = {}) returns Dispute|error {
+    # + return - Successful response 
+    resource isolated function post charges/[string charge]/dispute(ChargeDisputeBody payload, map<string|string[]> headers = {}) returns Dispute|error {
         string resourcePath = string `/charges/${getEncodedUri(charge)}/dispute`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"evidence": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3921,8 +1014,8 @@ public isolated client class Client {
     # 
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post charges/[string charge]/dispute/close(dispute_close_body payload, map<string|string[]> headers = {}) returns Dispute|error {
+    # + return - Successful response 
+    resource isolated function post charges/[string charge]/dispute/close(DisputeCloseBody payload, map<string|string[]> headers = {}) returns Dispute|error {
         string resourcePath = string `/charges/${getEncodedUri(charge)}/dispute/close`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -3943,16 +1036,28 @@ public isolated client class Client {
     # This method raises an error when it’s called on an already-refunded charge,
     # or when you attempt to refund more money than is left on a charge.</p>
     #
-    # + charge - The identifier of the charge to refund.
+    # + charge - The identifier of the charge to refund
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post charges/[string charge]/refund(charge_refund_body payload, map<string|string[]> headers = {}) returns Charge|error {
+    # + return - Successful response 
+    resource isolated function post charges/[string charge]/refund(ChargeRefundBody payload, map<string|string[]> headers = {}) returns Charge|error {
         string resourcePath = string `/charges/${getEncodedUri(charge)}/refund`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>You can see a list of the refunds belonging to a specific charge. Note that the 10 most recent refunds are always available by default on the charge object. If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional refunds.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get charges/[string charge]/refunds(map<string|string[]> headers = {}, *GetChargesChargeRefundsQueries queries) returns RefundList|error {
+        string resourcePath = string `/charges/${getEncodedUri(charge)}/refunds`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>When you create a new refund, you must specify a Charge or a PaymentIntent object on which to create it.</p>
@@ -3967,10 +1072,10 @@ public isolated client class Client {
     # This method will raise an error when called on an already-refunded charge,
     # or when trying to refund more money than is left on a charge.</p>
     #
-    # + charge - The identifier of the charge to refund.
+    # + charge - The identifier of the charge to refund
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post charges/[string charge]/refunds(charge_refunds_body payload, map<string|string[]> headers = {}) returns Refund|error {
+    # + return - Successful response 
+    resource isolated function post charges/[string charge]/refunds(ChargeRefundsBody payload, map<string|string[]> headers = {}) returns Refund|error {
         string resourcePath = string `/charges/${getEncodedUri(charge)}/refunds`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3979,11 +1084,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing refund.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get charges/[string charge]/refunds/[string refund](map<string|string[]> headers = {}, *GetChargesChargeRefundsRefundQueries queries) returns Refund|error {
+        string resourcePath = string `/charges/${getEncodedUri(charge)}/refunds/${getEncodedUri(refund)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Update a specified refund.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post charges/[string charge]/refunds/[string refund](refunds_refund_body payload, map<string|string[]> headers = {}) returns Refund|error {
+    # + return - Successful response 
+    resource isolated function post charges/[string charge]/refunds/[string refund](RefundsrefundBody payload, map<string|string[]> headers = {}) returns Refund|error {
         string resourcePath = string `/charges/${getEncodedUri(charge)}/refunds/${getEncodedUri(refund)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -3992,11 +1109,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of Checkout Sessions.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get checkout/sessions(map<string|string[]> headers = {}, *GetCheckoutSessionsQueries queries) returns PaymentPagesCheckoutSessionList|error {
+        string resourcePath = string `/checkout/sessions`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "customer_details": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a Session object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post checkout/sessions(checkout_sessions_body payload, map<string|string[]> headers = {}) returns Checkout\.session|error {
+    # + return - Successful response 
+    resource isolated function post checkout/sessions(CheckoutSessionsBody payload, map<string|string[]> headers = {}) returns CheckoutSession|error {
         string resourcePath = string `/checkout/sessions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"after_expiration": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "consent_collection": {style: DEEPOBJECT, explode: true}, "custom_fields": {style: DEEPOBJECT, explode: true}, "custom_text": {style: DEEPOBJECT, explode: true}, "customer_update": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_creation": {style: DEEPOBJECT, explode: true}, "line_items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "payment_intent_data": {style: DEEPOBJECT, explode: true}, "payment_method_data": {style: DEEPOBJECT, explode: true}, "payment_method_options": {style: DEEPOBJECT, explode: true}, "payment_method_types": {style: DEEPOBJECT, explode: true}, "phone_number_collection": {style: DEEPOBJECT, explode: true}, "saved_payment_method_options": {style: DEEPOBJECT, explode: true}, "setup_intent_data": {style: DEEPOBJECT, explode: true}, "shipping_address_collection": {style: DEEPOBJECT, explode: true}, "shipping_options": {style: DEEPOBJECT, explode: true}, "subscription_data": {style: DEEPOBJECT, explode: true}, "tax_id_collection": {style: DEEPOBJECT, explode: true}};
@@ -4005,13 +1134,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a Session object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get checkout/sessions/[string session](map<string|string[]> headers = {}, *GetCheckoutSessionsSessionQueries queries) returns CheckoutSession|error {
+        string resourcePath = string `/checkout/sessions/${getEncodedUri(session)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>A Session can be expired when it is in one of these statuses: <code>open</code> </p>
     # 
     # <p>After it expires, a customer can’t complete a Session and customers loading the Session see a message saying the Session is expired.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post checkout/sessions/[string session]/expire(session_expire_body payload, map<string|string[]> headers = {}) returns Checkout\.session|error {
+    # + return - Successful response 
+    resource isolated function post checkout/sessions/[string session]/expire(SessionExpireBody payload, map<string|string[]> headers = {}) returns CheckoutSession|error {
         string resourcePath = string `/checkout/sessions/${getEncodedUri(session)}/expire`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4020,12 +1161,37 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>When retrieving a Checkout Session, there is an includable <strong>line_items</strong> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get checkout/sessions/[string session]/line_items(map<string|string[]> headers = {}, *GetCheckoutSessionsSessionLineItemsQueries queries) returns PaymentPagesCheckoutSessionListLineItems|error {
+        string resourcePath = string `/checkout/sessions/${getEncodedUri(session)}/line_items`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Lists all Climate order objects. The orders are returned sorted by creation date, with the
+    # most recently created orders appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get climate/orders(map<string|string[]> headers = {}, *GetClimateOrdersQueries queries) returns ClimateRemovalsOrdersList|error {
+        string resourcePath = string `/climate/orders`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a Climate order object for a given Climate product. The order will be processed immediately
     # after creation and payment will be deducted your Stripe balance.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post climate/orders(climate_orders_body payload, map<string|string[]> headers = {}) returns Climate\.order|error {
+    # + return - Successful response 
+    resource isolated function post climate/orders(ClimateOrdersBody payload, map<string|string[]> headers = {}) returns ClimateOrder|error {
         string resourcePath = string `/climate/orders`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"beneficiary": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4034,12 +1200,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of a Climate order object with the given ID.</p>
+    #
+    # + 'order - Unique identifier of the order
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get climate/orders/[string 'order](map<string|string[]> headers = {}, *GetClimateOrdersOrderQueries queries) returns ClimateOrder|error {
+        string resourcePath = string `/climate/orders/${getEncodedUri('order)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified order by setting the values of the parameters passed.</p>
     #
-    # + 'order - Unique identifier of the order.
+    # + 'order - Unique identifier of the order
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post climate/orders/[string 'order](orders_order_body payload, map<string|string[]> headers = {}) returns Climate\.order|error {
+    # + return - Successful response 
+    resource isolated function post climate/orders/[string 'order](OrdersorderBody payload, map<string|string[]> headers = {}) returns ClimateOrder|error {
         string resourcePath = string `/climate/orders/${getEncodedUri('order)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"beneficiary": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4053,10 +1232,10 @@ public isolated client class Client {
     # might cancel reservations if suppliers fail to deliver. If Frontier cancels the reservation, Stripe
     # provides 90 days advance notice and refunds the <code>amount_total</code>.</p>
     #
-    # + 'order - Unique identifier of the order.
+    # + 'order - Unique identifier of the order
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post climate/orders/[string 'order]/cancel(order_cancel_body payload, map<string|string[]> headers = {}) returns Climate\.order|error {
+    # + return - Successful response 
+    resource isolated function post climate/orders/[string 'order]/cancel(OrderCancelBody payload, map<string|string[]> headers = {}) returns ClimateOrder|error {
         string resourcePath = string `/climate/orders/${getEncodedUri('order)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4065,13 +1244,109 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Lists all available Climate product objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get climate/products(map<string|string[]> headers = {}, *GetClimateProductsQueries queries) returns ClimateRemovalsProductsList|error {
+        string resourcePath = string `/climate/products`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of a Climate product with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get climate/products/[string product](map<string|string[]> headers = {}, *GetClimateProductsProductQueries queries) returns ClimateProduct|error {
+        string resourcePath = string `/climate/products/${getEncodedUri(product)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Lists all available Climate supplier objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get climate/suppliers(map<string|string[]> headers = {}, *GetClimateSuppliersQueries queries) returns ClimateRemovalsSuppliersList|error {
+        string resourcePath = string `/climate/suppliers`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a Climate supplier object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get climate/suppliers/[string supplier](map<string|string[]> headers = {}, *GetClimateSuppliersSupplierQueries queries) returns ClimateSupplier|error {
+        string resourcePath = string `/climate/suppliers/${getEncodedUri(supplier)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves an existing ConfirmationToken object</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get confirmation_tokens/[string confirmationToken](map<string|string[]> headers = {}, *GetConfirmationTokensConfirmationTokenQueries queries) returns ConfirmationToken|error {
+        string resourcePath = string `/confirmation_tokens/${getEncodedUri(confirmationToken)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Lists all Country Spec objects available in the API.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get country_specs(map<string|string[]> headers = {}, *GetCountrySpecsQueries queries) returns CountrySpecList|error {
+        string resourcePath = string `/country_specs`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a Country Spec for a given Country code.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get country_specs/[string country](map<string|string[]> headers = {}, *GetCountrySpecsCountryQueries queries) returns CountrySpec|error {
+        string resourcePath = string `/country_specs/${getEncodedUri(country)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of your coupons.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get coupons(map<string|string[]> headers = {}, *GetCouponsQueries queries) returns CouponsResourceCouponList|error {
+        string resourcePath = string `/coupons`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>You can create coupons easily via the <a href="https://dashboard.stripe.com/coupons">coupon management</a> page of the Stripe dashboard. Coupon creation is also accessible via the API if you need to create coupons on the fly.</p>
     # 
     # <p>A coupon has either a <code>percent_off</code> or an <code>amount_off</code> and <code>currency</code>. If you set an <code>amount_off</code>, that amount will be subtracted from any invoice’s subtotal. For example, an invoice with a subtotal of <currency>100</currency> will have a final total of <currency>0</currency> if a coupon with an <code>amount_off</code> of <amount>200</amount> is applied to it and an invoice with a subtotal of <currency>300</currency> will have a final total of <currency>100</currency> if a coupon with an <code>amount_off</code> of <amount>200</amount> is applied to it.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post coupons(coupons_body payload, map<string|string[]> headers = {}) returns Coupon|error {
+    # + return - Successful response 
+    resource isolated function post coupons(CouponsBody payload, map<string|string[]> headers = {}) returns Coupon|error {
         string resourcePath = string `/coupons`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"applies_to": {style: DEEPOBJECT, explode: true}, "currency_options": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4080,17 +1355,50 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the coupon with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get coupons/[string coupon](map<string|string[]> headers = {}, *GetCouponsCouponQueries queries) returns Coupon|error {
+        string resourcePath = string `/coupons/${getEncodedUri(coupon)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the metadata of a coupon. Other coupon details (currency, duration, amount_off) are, by design, not editable.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post coupons/[string coupon](coupons_coupon_body payload, map<string|string[]> headers = {}) returns Coupon|error {
+    # + return - Successful response 
+    resource isolated function post coupons/[string coupon](CouponscouponBody payload, map<string|string[]> headers = {}) returns Coupon|error {
         string resourcePath = string `/coupons/${getEncodedUri(coupon)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"currency_options": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>You can delete coupons via the <a href="https://dashboard.stripe.com/coupons">coupon management</a> page of the Stripe dashboard. However, deleting a coupon does not affect any customers who have already applied the coupon; it means that new customers can’t redeem the coupon. You can also delete coupons via the API.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete coupons/[string coupon](map<string|string[]> headers = {}) returns DeletedCoupon|error {
+        string resourcePath = string `/coupons/${getEncodedUri(coupon)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of credit notes.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get credit_notes(map<string|string[]> headers = {}, *GetCreditNotesQueries queries) returns CreditNotesList|error {
+        string resourcePath = string `/credit_notes`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Issue a credit note to adjust the amount of a finalized invoice. For a <code>status=open</code> invoice, a credit note reduces
@@ -4109,8 +1417,8 @@ public isolated client class Client {
     # or <code>post_payment_credit_notes_amount</code> depending on its <code>status</code> at the time of credit note creation.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post credit_notes(credit_notes_body payload, map<string|string[]> headers = {}) returns Credit_note|error {
+    # + return - Successful response 
+    resource isolated function post credit_notes(CreditNotesBody payload, map<string|string[]> headers = {}) returns CreditNote|error {
         string resourcePath = string `/credit_notes`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}};
@@ -4119,11 +1427,59 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Get a preview of a credit note without creating it.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get credit_notes/preview(map<string|string[]> headers = {}, *GetCreditNotesPreviewQueries queries) returns CreditNote|error {
+        string resourcePath = string `/credit_notes/preview`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>When retrieving a credit note preview, you’ll get a <strong>lines</strong> property containing the first handful of those items. This URL you can retrieve the full (paginated) list of line items.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get credit_notes/preview/lines(map<string|string[]> headers = {}, *GetCreditNotesPreviewLinesQueries queries) returns CreditNoteLinesList|error {
+        string resourcePath = string `/credit_notes/preview/lines`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>When retrieving a credit note, you’ll get a <strong>lines</strong> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get credit_notes/[string creditNote]/lines(map<string|string[]> headers = {}, *GetCreditNotesCreditNoteLinesQueries queries) returns CreditNoteLinesList1|error {
+        string resourcePath = string `/credit_notes/${getEncodedUri(creditNote)}/lines`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the credit note object with the given identifier.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get credit_notes/[string id](map<string|string[]> headers = {}, *GetCreditNotesIdQueries queries) returns CreditNote|error {
+        string resourcePath = string `/credit_notes/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing credit note.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post credit_notes/[string id](credit_notes_id_body payload, map<string|string[]> headers = {}) returns Credit_note|error {
+    # + return - Successful response 
+    resource isolated function post credit_notes/[string id](CreditNotesidBody payload, map<string|string[]> headers = {}) returns CreditNote|error {
         string resourcePath = string `/credit_notes/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4135,8 +1491,8 @@ public isolated client class Client {
     # <p>Marks a credit note as void. Learn more about <a href="/docs/billing/invoices/credit-notes#voiding">voiding credit notes</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post credit_notes/[string id]/void(id_void_body payload, map<string|string[]> headers = {}) returns Credit_note|error {
+    # + return - Successful response 
+    resource isolated function post credit_notes/[string id]/void(IdVoidBody payload, map<string|string[]> headers = {}) returns CreditNote|error {
         string resourcePath = string `/credit_notes/${getEncodedUri(id)}/void`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4148,8 +1504,8 @@ public isolated client class Client {
     # <p>Creates a Customer Session object that includes a single-use client secret that you can use on your front-end to grant client-side API access for certain customer resources.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customer_sessions(customer_sessions_body payload, map<string|string[]> headers = {}) returns Customer_session|error {
+    # + return - Successful response 
+    resource isolated function post customer_sessions(CustomerSessionsBody payload, map<string|string[]> headers = {}) returns CustomerSession|error {
         string resourcePath = string `/customer_sessions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"components": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -4158,11 +1514,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your customers. The customers are returned sorted by creation date, with the most recent customers appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers(map<string|string[]> headers = {}, *GetCustomersQueries queries) returns CustomerResourceCustomerList|error {
+        string resourcePath = string `/customers`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new customer object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers(customers_body payload, map<string|string[]> headers = {}) returns Customer|error {
+    # + return - Successful response 
+    resource isolated function post customers(CustomersBody payload, map<string|string[]> headers = {}) returns Customer|error {
         string resourcePath = string `/customers`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"address": {style: DEEPOBJECT, explode: true}, "cash_balance": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_settings": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "preferred_locales": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}, "tax": {style: DEEPOBJECT, explode: true}, "tax_id_data": {style: DEEPOBJECT, explode: true}};
@@ -4171,13 +1539,40 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Search for customers you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
+    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
+    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
+    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/search(map<string|string[]> headers = {}, *GetCustomersSearchQueries queries) returns SearchResult1|error {
+        string resourcePath = string `/customers/search`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a Customer object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer](map<string|string[]> headers = {}, *GetCustomersCustomerQueries queries) returns InlineResponse200|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified customer by setting the values of the parameters passed. Any parameters not provided will be left unchanged. For example, if you pass the <strong>source</strong> parameter, that becomes the customer’s active source (e.g., a card) to be used for all charges in the future. When you update a customer to a new valid card source by passing the <strong>source</strong> parameter: for each of the customer’s current subscriptions, if the subscription bills automatically and is in the <code>past_due</code> state, then the latest open invoice for the subscription with automatic collection enabled will be retried. This retry will not count as an automatic retry, and will not affect the next regularly scheduled payment for the invoice. Changing the <strong>default_source</strong> for a customer will not trigger this behavior.</p>
     # 
     # <p>This request accepts mostly the same arguments as the customer creation call.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer](customers_customer_body payload, map<string|string[]> headers = {}) returns Customer|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer](CustomerscustomerBody payload, map<string|string[]> headers = {}) returns Customer|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"address": {style: DEEPOBJECT, explode: true}, "bank_account": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "cash_balance": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_settings": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "preferred_locales": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}, "tax": {style: DEEPOBJECT, explode: true}};
@@ -4186,11 +1581,32 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Permanently deletes a customer. It cannot be undone. Also immediately cancels any active subscriptions on the customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete customers/[string customer](map<string|string[]> headers = {}) returns DeletedCustomer|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of transactions that updated the customer’s <a href="/docs/billing/customer/balance">balances</a>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/balance_transactions(map<string|string[]> headers = {}, *GetCustomersCustomerBalanceTransactionsQueries queries) returns CustomerBalanceTransactionList|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/balance_transactions`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates an immutable transaction that updates the customer’s credit <a href="/docs/billing/customer/balance">balance</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/balance_transactions(customer_balance_transactions_body payload, map<string|string[]> headers = {}) returns Customer_balance_transaction|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/balance_transactions(CustomerBalanceTransactionsBody payload, map<string|string[]> headers = {}) returns CustomerBalanceTransaction|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/balance_transactions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4199,11 +1615,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a specific customer balance transaction that updated the customer’s <a href="/docs/billing/customer/balance">balances</a>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/balance_transactions/[string 'transaction](map<string|string[]> headers = {}, *GetCustomersCustomerBalanceTransactionsTransactionQueries queries) returns CustomerBalanceTransaction|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/balance_transactions/${getEncodedUri('transaction)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Most credit balance transaction fields are immutable, but you may update its <code>description</code> and <code>metadata</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/balance_transactions/[string 'transaction](balance_transactions_transaction_body payload, map<string|string[]> headers = {}) returns Customer_balance_transaction|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/balance_transactions/[string 'transaction](BalanceTransactionstransactionBody payload, map<string|string[]> headers = {}) returns CustomerBalanceTransaction|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/balance_transactions/${getEncodedUri('transaction)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4212,6 +1640,21 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>You can see a list of the bank accounts belonging to a Customer. Note that the 10 most recent sources are always available by default on the Customer. If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional bank accounts.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    # 
+    # # Deprecated
+    @deprecated
+    resource isolated function get customers/[string customer]/bank_accounts(map<string|string[]> headers = {}, *GetCustomersCustomerBankAccountsQueries queries) returns BankAccountList|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>When you create a new credit card, you must specify a customer or recipient on which to create it.</p>
     # 
     # <p>If the card’s owner has no default card, then the new card will become the default.
@@ -4219,8 +1662,8 @@ public isolated client class Client {
     # To change the default, you should <a href="/docs/api#update_customer">update the customer</a> to have a new <code>default_source</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/bank_accounts(customer_bank_accounts_body payload, map<string|string[]> headers = {}) returns Payment_source|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/bank_accounts(CustomerBankAccountsBody payload, map<string|string[]> headers = {}) returns PaymentSource|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bank_account": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4229,11 +1672,26 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>By default, you can see the 10 most recent sources stored on a Customer directly on the object, but you can also retrieve details about a specific bank account stored on the Stripe account.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    # 
+    # # Deprecated
+    @deprecated
+    resource isolated function get customers/[string customer]/bank_accounts/[string id](map<string|string[]> headers = {}, *GetCustomersCustomerBankAccountsIdQueries queries) returns BankAccount|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Update a specified source for a given customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/bank_accounts/[string id](bank_accounts_id_body_1 payload, map<string|string[]> headers = {}) returns inline_response_200_1|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/bank_accounts/[string id](BankAccountsidBody1 payload, map<string|string[]> headers = {}) returns InlineResponse2001|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "owner": {style: DEEPOBJECT, explode: true}};
@@ -4242,11 +1700,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Delete a specified source for a given customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete customers/[string customer]/bank_accounts/[string id](BankAccountsidBody2 payload, map<string|string[]> headers = {}) returns InlineResponse2002|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts/${getEncodedUri(id)}`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->delete(resourcePath, request, headers);
+    }
+
     # <p>Verify a specified bank account for a given customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/bank_accounts/[string id]/verify(id_verify_body payload, map<string|string[]> headers = {}) returns Bank_account|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/bank_accounts/[string id]/verify(IdVerifyBody payload, map<string|string[]> headers = {}) returns BankAccount|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/bank_accounts/${getEncodedUri(id)}/verify`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"amounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -4255,6 +1726,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>You can see a list of the cards belonging to a customer.
+    # Note that the 10 most recent sources are always available on the <code>Customer</code> object.
+    # If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional cards.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    # 
+    # # Deprecated
+    @deprecated
+    resource isolated function get customers/[string customer]/cards(map<string|string[]> headers = {}, *GetCustomersCustomerCardsQueries queries) returns CardList|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/cards`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>When you create a new credit card, you must specify a customer or recipient on which to create it.</p>
     # 
     # <p>If the card’s owner has no default card, then the new card will become the default.
@@ -4262,8 +1750,8 @@ public isolated client class Client {
     # To change the default, you should <a href="/docs/api#update_customer">update the customer</a> to have a new <code>default_source</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/cards(customer_cards_body payload, map<string|string[]> headers = {}) returns Payment_source|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/cards(CustomerCardsBody payload, map<string|string[]> headers = {}) returns PaymentSource|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/cards`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bank_account": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4272,11 +1760,26 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>You can always see the 10 most recent cards directly on a customer; this method lets you retrieve details about a specific card stored on the customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    # 
+    # # Deprecated
+    @deprecated
+    resource isolated function get customers/[string customer]/cards/[string id](map<string|string[]> headers = {}, *GetCustomersCustomerCardsIdQueries queries) returns Card|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/cards/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Update a specified source for a given customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/cards/[string id](cards_id_body payload, map<string|string[]> headers = {}) returns inline_response_200_1|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/cards/[string id](CardsidBody payload, map<string|string[]> headers = {}) returns InlineResponse2003|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/cards/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "owner": {style: DEEPOBJECT, explode: true}};
@@ -4285,11 +1788,36 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Delete a specified source for a given customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete customers/[string customer]/cards/[string id](CardsidBody1 payload, map<string|string[]> headers = {}) returns InlineResponse2004|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/cards/${getEncodedUri(id)}`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->delete(resourcePath, request, headers);
+    }
+
+    # <p>Retrieves a customer’s cash balance.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/cash_balance(map<string|string[]> headers = {}, *GetCustomersCustomerCashBalanceQueries queries) returns CashBalance|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/cash_balance`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Changes the settings on a customer’s cash balance.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/cash_balance(customer_cash_balance_body payload, map<string|string[]> headers = {}) returns Cash_balance|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/cash_balance(CustomerCashBalanceBody payload, map<string|string[]> headers = {}) returns CashBalance|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/cash_balance`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "settings": {style: DEEPOBJECT, explode: true}};
@@ -4298,19 +1826,100 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of transactions that modified the customer’s <a href="/docs/payments/customer-balance">cash balance</a>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/cash_balance_transactions(map<string|string[]> headers = {}, *GetCustomersCustomerCashBalanceTransactionsQueries queries) returns CustomerCashBalanceTransactionList|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/cash_balance_transactions`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a specific cash balance transaction, which updated the customer’s <a href="/docs/payments/customer-balance">cash balance</a>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/cash_balance_transactions/[string 'transaction](map<string|string[]> headers = {}, *GetCustomersCustomerCashBalanceTransactionsTransactionQueries queries) returns CustomerCashBalanceTransaction|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/cash_balance_transactions/${getEncodedUri('transaction)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # 
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/discount(map<string|string[]> headers = {}, *GetCustomersCustomerDiscountQueries queries) returns Discount|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/discount`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Removes the currently applied discount on a customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete customers/[string customer]/discount(map<string|string[]> headers = {}) returns DeletedDiscount|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/discount`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
     # <p>Retrieve funding instructions for a customer cash balance. If funding instructions do not yet exist for the customer, new
     # funding instructions will be created. If funding instructions have already been created for a given customer, the same
     # funding instructions will be retrieved. In other words, we will return the same funding instructions each time.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/funding_instructions(customer_funding_instructions_body payload, map<string|string[]> headers = {}) returns Funding_instructions|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/funding_instructions(CustomerFundingInstructionsBody payload, map<string|string[]> headers = {}) returns FundingInstructions|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/funding_instructions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bank_transfer": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Returns a list of PaymentMethods for a given Customer</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/payment_methods(map<string|string[]> headers = {}, *GetCustomersCustomerPaymentMethodsQueries queries) returns CustomerPaymentMethodResourceList|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/payment_methods`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a PaymentMethod object for a given Customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/payment_methods/[string paymentMethod](map<string|string[]> headers = {}, *GetCustomersCustomerPaymentMethodsPaymentMethodQueries queries) returns PaymentMethod|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/payment_methods/${getEncodedUri(paymentMethod)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>List sources for a specified customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/sources(map<string|string[]> headers = {}, *GetCustomersCustomerSourcesQueries queries) returns ApmsSourcesSourceList|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/sources`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>When you create a new credit card, you must specify a customer or recipient on which to create it.</p>
@@ -4320,8 +1929,8 @@ public isolated client class Client {
     # To change the default, you should <a href="/docs/api#update_customer">update the customer</a> to have a new <code>default_source</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/sources(customer_sources_body payload, map<string|string[]> headers = {}) returns Payment_source|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/sources(CustomerSourcesBody payload, map<string|string[]> headers = {}) returns PaymentSource|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/sources`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bank_account": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4330,11 +1939,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve a specified source for a given customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/sources/[string id](map<string|string[]> headers = {}, *GetCustomersCustomerSourcesIdQueries queries) returns PaymentSource|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/sources/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Update a specified source for a given customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/sources/[string id](sources_id_body payload, map<string|string[]> headers = {}) returns inline_response_200_1|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/sources/[string id](SourcesidBody payload, map<string|string[]> headers = {}) returns InlineResponse2005|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/sources/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "owner": {style: DEEPOBJECT, explode: true}};
@@ -4343,11 +1964,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Delete a specified source for a given customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete customers/[string customer]/sources/[string id](SourcesidBody1 payload, map<string|string[]> headers = {}) returns InlineResponse2006|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/sources/${getEncodedUri(id)}`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->delete(resourcePath, request, headers);
+    }
+
     # <p>Verify a specified bank account for a given customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/sources/[string id]/verify(id_verify_body_1 payload, map<string|string[]> headers = {}) returns Bank_account|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/sources/[string id]/verify(IdVerifyBody1 payload, map<string|string[]> headers = {}) returns BankAccount|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/sources/${getEncodedUri(id)}/verify`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"amounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -4356,11 +1990,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>You can see a list of the customer’s active subscriptions. Note that the 10 most recent active subscriptions are always available by default on the customer object. If you need more than those 10, you can use the limit and starting_after parameters to page through additional subscriptions.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/subscriptions(map<string|string[]> headers = {}, *GetCustomersCustomerSubscriptionsQueries queries) returns SubscriptionList|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new subscription on an existing customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/subscriptions(customer_subscriptions_body payload, map<string|string[]> headers = {}) returns Subscription|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/subscriptions(CustomerSubscriptionsBody payload, map<string|string[]> headers = {}) returns Subscription|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"add_invoice_items": {style: DEEPOBJECT, explode: true}, "application_fee_percent": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "billing_thresholds": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_settings": {style: DEEPOBJECT, explode: true}, "items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "payment_settings": {style: DEEPOBJECT, explode: true}, "pending_invoice_item_interval": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}, "trial_end": {style: DEEPOBJECT, explode: true}, "trial_settings": {style: DEEPOBJECT, explode: true}};
@@ -4369,12 +2015,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the subscription with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/subscriptions/[string subscriptionExposedId](map<string|string[]> headers = {}, *GetCustomersCustomerSubscriptionsSubscriptionExposedIdQueries queries) returns Subscription|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscriptionExposedId)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing subscription on a customer to match the specified parameters. When changing plans or quantities, we will optionally prorate the price we charge next month to make up for any price changes. To preview how the proration will be calculated, use the <a href="#upcoming_invoice">upcoming invoice</a> endpoint.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/subscriptions/[string subscription_exposed_id](subscriptions_subscription_exposed_id_body payload, map<string|string[]> headers = {}) returns Subscription|error {
-        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscription_exposed_id)}`;
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/subscriptions/[string subscriptionExposedId](SubscriptionssubscriptionExposedIdBody payload, map<string|string[]> headers = {}) returns Subscription|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscriptionExposedId)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"add_invoice_items": {style: DEEPOBJECT, explode: true}, "application_fee_percent": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "billing_thresholds": {style: DEEPOBJECT, explode: true}, "cancel_at": {style: DEEPOBJECT, explode: true}, "cancellation_details": {style: DEEPOBJECT, explode: true}, "default_source": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_settings": {style: DEEPOBJECT, explode: true}, "items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "pause_collection": {style: DEEPOBJECT, explode: true}, "payment_settings": {style: DEEPOBJECT, explode: true}, "pending_invoice_item_interval": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}, "trial_end": {style: DEEPOBJECT, explode: true}, "trial_settings": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -4382,11 +2040,61 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Cancels a customer’s subscription. If you set the <code>at_period_end</code> parameter to <code>true</code>, the subscription will remain active until the end of the period, at which point it will be canceled and not renewed. Otherwise, with the default <code>false</code> value, the subscription is terminated immediately. In either case, the customer will not be charged again for the subscription.</p>
+    # 
+    # <p>Note, however, that any pending invoice items that you’ve created will still be charged for at the end of the period, unless manually <a href="#delete_invoiceitem">deleted</a>. If you’ve set the subscription to cancel at the end of the period, any pending prorations will also be left in place and collected at the end of the period. But if the subscription is set to cancel immediately, pending prorations will be removed.</p>
+    # 
+    # <p>By default, upon subscription cancellation, Stripe will stop automatic collection of all finalized invoices for the customer. This is intended to prevent unexpected payment attempts after the customer has canceled a subscription. However, you can resume automatic collection of the invoices manually after subscription cancellation to have us proceed. Or, you could check for unpaid invoices before allowing the customer to cancel the subscription at all.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete customers/[string customer]/subscriptions/[string subscriptionExposedId](SubscriptionssubscriptionExposedIdBody1 payload, map<string|string[]> headers = {}) returns Subscription|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscriptionExposedId)}`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->delete(resourcePath, request, headers);
+    }
+
+    # 
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/subscriptions/[string subscriptionExposedId]/discount(map<string|string[]> headers = {}, *GetCustomersCustomerSubscriptionsSubscriptionExposedIdDiscountQueries queries) returns Discount|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscriptionExposedId)}/discount`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Removes the currently applied discount on a customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete customers/[string customer]/subscriptions/[string subscriptionExposedId]/discount(map<string|string[]> headers = {}) returns DeletedDiscount|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/subscriptions/${getEncodedUri(subscriptionExposedId)}/discount`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of tax IDs for a customer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/tax_ids(map<string|string[]> headers = {}, *GetCustomersCustomerTaxIdsQueries queries) returns TaxIDsList|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/tax_ids`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new <code>tax_id</code> object for a customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post customers/[string customer]/tax_ids(customer_tax_ids_body payload, map<string|string[]> headers = {}) returns Tax_id|error {
+    # + return - Successful response 
+    resource isolated function post customers/[string customer]/tax_ids(CustomerTaxIdsBody payload, map<string|string[]> headers = {}) returns TaxId|error {
         string resourcePath = string `/customers/${getEncodedUri(customer)}/tax_ids`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4395,13 +2103,58 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the <code>tax_id</code> object with the given identifier.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get customers/[string customer]/tax_ids/[string id](map<string|string[]> headers = {}, *GetCustomersCustomerTaxIdsIdQueries queries) returns TaxId|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/tax_ids/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Deletes an existing <code>tax_id</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete customers/[string customer]/tax_ids/[string id](map<string|string[]> headers = {}) returns DeletedTaxId|error {
+        string resourcePath = string `/customers/${getEncodedUri(customer)}/tax_ids/${getEncodedUri(id)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of your disputes.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get disputes(map<string|string[]> headers = {}, *GetDisputesQueries queries) returns DisputeList|error {
+        string resourcePath = string `/disputes`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the dispute with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get disputes/[string dispute](map<string|string[]> headers = {}, *GetDisputesDisputeQueries queries) returns Dispute|error {
+        string resourcePath = string `/disputes/${getEncodedUri(dispute)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>When you get a dispute, contacting your customer is always the best first step. If that doesn’t work, you can submit evidence to help us resolve the dispute in your favor. You can do this in your <a href="https://dashboard.stripe.com/disputes">dashboard</a>, but if you prefer, you can use the API to submit evidence programmatically.</p>
     # 
     # <p>Depending on your dispute type, different evidence fields will give you a better chance of winning your dispute. To figure out which evidence fields to provide, see our <a href="/docs/disputes/categories">guide to dispute types</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post disputes/[string dispute](disputes_dispute_body payload, map<string|string[]> headers = {}) returns Dispute|error {
+    # + return - Successful response 
+    resource isolated function post disputes/[string dispute](DisputesdisputeBody payload, map<string|string[]> headers = {}) returns Dispute|error {
         string resourcePath = string `/disputes/${getEncodedUri(dispute)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"evidence": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4415,8 +2168,8 @@ public isolated client class Client {
     # <p>The status of the dispute will change from <code>needs_response</code> to <code>lost</code>. <em>Closing a dispute is irreversible</em>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post disputes/[string dispute]/close(dispute_close_body_1 payload, map<string|string[]> headers = {}) returns Dispute|error {
+    # + return - Successful response 
+    resource isolated function post disputes/[string dispute]/close(DisputeCloseBody payload, map<string|string[]> headers = {}) returns Dispute|error {
         string resourcePath = string `/disputes/${getEncodedUri(dispute)}/close`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4425,11 +2178,48 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve a list of active entitlements for a customer</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get entitlements/active_entitlements(map<string|string[]> headers = {}, *GetEntitlementsActiveEntitlementsQueries queries) returns EntitlementsResourceCustomerEntitlementList|error {
+        string resourcePath = string `/entitlements/active_entitlements`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieve an active entitlement</p>
+    #
+    # + id - The ID of the entitlement
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get entitlements/active_entitlements/[string id](map<string|string[]> headers = {}, *GetEntitlementsActiveEntitlementsIdQueries queries) returns EntitlementsActiveEntitlement|error {
+        string resourcePath = string `/entitlements/active_entitlements/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieve a list of features</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get entitlements/features(map<string|string[]> headers = {}, *GetEntitlementsFeaturesQueries queries) returns EntitlementsResourceFeatureList|error {
+        string resourcePath = string `/entitlements/features`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a feature</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post entitlements/features(entitlements_features_body payload, map<string|string[]> headers = {}) returns Entitlements\.feature|error {
+    # + return - Successful response 
+    resource isolated function post entitlements/features(EntitlementsFeaturesBody payload, map<string|string[]> headers = {}) returns EntitlementsFeature|error {
         string resourcePath = string `/entitlements/features`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4438,11 +2228,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a feature</p>
+    #
+    # + id - The ID of the feature
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get entitlements/features/[string id](map<string|string[]> headers = {}, *GetEntitlementsFeaturesIdQueries queries) returns EntitlementsFeature|error {
+        string resourcePath = string `/entitlements/features/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Update a feature’s metadata or permanently deactivate it.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post entitlements/features/[string id](features_id_body payload, map<string|string[]> headers = {}) returns Entitlements\.feature|error {
+    # + return - Successful response 
+    resource isolated function post entitlements/features/[string id](FeaturesidBody payload, map<string|string[]> headers = {}) returns EntitlementsFeature|error {
         string resourcePath = string `/entitlements/features/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4454,8 +2257,8 @@ public isolated client class Client {
     # <p>Creates a short-lived API key for a given resource.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post ephemeral_keys(ephemeral_keys_body payload, map<string|string[]> headers = {}) returns Ephemeral_key|error {
+    # + return - Successful response 
+    resource isolated function post ephemeral_keys(EphemeralKeysBody payload, map<string|string[]> headers = {}) returns EphemeralKey|error {
         string resourcePath = string `/ephemeral_keys`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4464,11 +2267,84 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Invalidates a short-lived API key for a given resource.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete ephemeral_keys/[string 'key](EphemeralKeyskeyBody payload, map<string|string[]> headers = {}) returns EphemeralKey|error {
+        string resourcePath = string `/ephemeral_keys/${getEncodedUri('key)}`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->delete(resourcePath, request, headers);
+    }
+
+    # <p>List events, going back up to 30 days. Each event data is rendered according to Stripe API version at its creation time, specified in <a href="https://docs.stripe.com/api/events/object">event object</a> <code>api_version</code> attribute (not according to your current Stripe API version or <code>Stripe-Version</code> header).</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get events(map<string|string[]> headers = {}, *GetEventsQueries queries) returns NotificationEventList|error {
+        string resourcePath = string `/events`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "types": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an event. Supply the unique identifier of the event, which you might have received in a webhook.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get events/[string id](map<string|string[]> headers = {}, *GetEventsIdQueries queries) returns Event|error {
+        string resourcePath = string `/events/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of objects that contain the rates at which foreign currencies are converted to one another. Only shows the currencies for which Stripe supports.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get exchange_rates(map<string|string[]> headers = {}, *GetExchangeRatesQueries queries) returns ExchangeRateList|error {
+        string resourcePath = string `/exchange_rates`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the exchange rates from the given currency to every supported currency.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get exchange_rates/[string rateId](map<string|string[]> headers = {}, *GetExchangeRatesRateIdQueries queries) returns ExchangeRate|error {
+        string resourcePath = string `/exchange_rates/${getEncodedUri(rateId)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of file links.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get file_links(map<string|string[]> headers = {}, *GetFileLinksQueries queries) returns FileResourceFileLinkList|error {
+        string resourcePath = string `/file_links`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new file link object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post file_links(file_links_body payload, map<string|string[]> headers = {}) returns File_link|error {
+    # + return - Successful response 
+    resource isolated function post file_links(FileLinksBody payload, map<string|string[]> headers = {}) returns FileLink|error {
         string resourcePath = string `/file_links`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4477,11 +2353,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the file link with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get file_links/[string link](map<string|string[]> headers = {}, *GetFileLinksLinkQueries queries) returns FileLink|error {
+        string resourcePath = string `/file_links/${getEncodedUri(link)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing file link object. Expired links can no longer be updated.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post file_links/[string link](file_links_link_body payload, map<string|string[]> headers = {}) returns File_link|error {
+    # + return - Successful response 
+    resource isolated function post file_links/[string link](FileLinkslinkBody payload, map<string|string[]> headers = {}) returns FileLink|error {
         string resourcePath = string `/file_links/${getEncodedUri(link)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "expires_at": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4490,13 +2378,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of the files that your account has access to. Stripe sorts and returns the files by their creation dates, placing the most recently created files at the top.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get files(map<string|string[]> headers = {}, *GetFilesQueries queries) returns FileResourceFileList|error {
+        string resourcePath = string `/files`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>To upload a file to Stripe, you need to send a request of type <code>multipart/form-data</code>. Include the file you want to upload in the request, and the parameters for creating a file.</p>
     # 
     # <p>All of Stripe’s officially supported Client libraries support sending <code>multipart/form-data</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post files(files_body payload, map<string|string[]> headers = {}) returns File|error {
+    # + return - Successful response 
+    resource isolated function post files(FilesBody payload, map<string|string[]> headers = {}) returns File|error {
         string resourcePath = string `/files`;
         http:Request request = new;
         map<Encoding> encodingMap = {"expand": {}, "file_link_data": {}};
@@ -4505,11 +2405,47 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing file object. After you supply a unique file ID, Stripe returns the corresponding file object. Learn how to <a href="/docs/file-upload#download-file-contents">access file contents</a>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get files/[string file](map<string|string[]> headers = {}, *GetFilesFileQueries queries) returns File|error {
+        string resourcePath = string `/files/${getEncodedUri(file)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of Financial Connections <code>Account</code> objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get financial_connections/accounts(map<string|string[]> headers = {}, *GetFinancialConnectionsAccountsQueries queries) returns BankConnectionsResourceLinkedAccountList|error {
+        string resourcePath = string `/financial_connections/accounts`;
+        map<Encoding> queryParamEncoding = {"account_holder": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an Financial Connections <code>Account</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get financial_connections/accounts/[string account](map<string|string[]> headers = {}, *GetFinancialConnectionsAccountsAccountQueries queries) returns FinancialConnectionsAccount|error {
+        string resourcePath = string `/financial_connections/accounts/${getEncodedUri(account)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Disables your access to a Financial Connections <code>Account</code>. You will no longer be able to access data associated with the account (e.g. balances, transactions).</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post financial_connections/accounts/[string account]/disconnect(account_disconnect_body payload, map<string|string[]> headers = {}) returns Financial_connections\.account|error {
+    # + return - Successful response 
+    resource isolated function post financial_connections/accounts/[string account]/disconnect(AccountDisconnectBody payload, map<string|string[]> headers = {}) returns FinancialConnectionsAccount|error {
         string resourcePath = string `/financial_connections/accounts/${getEncodedUri(account)}/disconnect`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4518,11 +2454,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Lists all owners for a given <code>Account</code></p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get financial_connections/accounts/[string account]/owners(map<string|string[]> headers = {}, *GetFinancialConnectionsAccountsAccountOwnersQueries queries) returns BankConnectionsResourceOwnerList|error {
+        string resourcePath = string `/financial_connections/accounts/${getEncodedUri(account)}/owners`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Refreshes the data associated with a Financial Connections <code>Account</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post financial_connections/accounts/[string account]/refresh(account_refresh_body payload, map<string|string[]> headers = {}) returns Financial_connections\.account|error {
+    # + return - Successful response 
+    resource isolated function post financial_connections/accounts/[string account]/refresh(AccountRefreshBody payload, map<string|string[]> headers = {}) returns FinancialConnectionsAccount|error {
         string resourcePath = string `/financial_connections/accounts/${getEncodedUri(account)}/refresh`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "features": {style: DEEPOBJECT, explode: true}};
@@ -4534,8 +2482,8 @@ public isolated client class Client {
     # <p>Subscribes to periodic refreshes of data associated with a Financial Connections <code>Account</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post financial_connections/accounts/[string account]/subscribe(account_subscribe_body payload, map<string|string[]> headers = {}) returns Financial_connections\.account|error {
+    # + return - Successful response 
+    resource isolated function post financial_connections/accounts/[string account]/subscribe(AccountSubscribeBody payload, map<string|string[]> headers = {}) returns FinancialConnectionsAccount|error {
         string resourcePath = string `/financial_connections/accounts/${getEncodedUri(account)}/subscribe`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "features": {style: DEEPOBJECT, explode: true}};
@@ -4547,8 +2495,8 @@ public isolated client class Client {
     # <p>Unsubscribes from periodic refreshes of data associated with a Financial Connections <code>Account</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post financial_connections/accounts/[string account]/unsubscribe(account_unsubscribe_body payload, map<string|string[]> headers = {}) returns Financial_connections\.account|error {
+    # + return - Successful response 
+    resource isolated function post financial_connections/accounts/[string account]/unsubscribe(AccountUnsubscribeBody payload, map<string|string[]> headers = {}) returns FinancialConnectionsAccount|error {
         string resourcePath = string `/financial_connections/accounts/${getEncodedUri(account)}/unsubscribe`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "features": {style: DEEPOBJECT, explode: true}};
@@ -4560,8 +2508,8 @@ public isolated client class Client {
     # <p>To launch the Financial Connections authorization flow, create a <code>Session</code>. The session’s <code>client_secret</code> can be used to launch the flow using Stripe.js.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post financial_connections/sessions(financial_connections_sessions_body payload, map<string|string[]> headers = {}) returns Financial_connections\.session|error {
+    # + return - Successful response 
+    resource isolated function post financial_connections/sessions(FinancialConnectionsSessionsBody payload, map<string|string[]> headers = {}) returns FinancialConnectionsSession|error {
         string resourcePath = string `/financial_connections/sessions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"account_holder": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "filters": {style: DEEPOBJECT, explode: true}, "permissions": {style: DEEPOBJECT, explode: true}, "prefetch": {style: DEEPOBJECT, explode: true}};
@@ -4570,17 +2518,113 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of a Financial Connections <code>Session</code></p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get financial_connections/sessions/[string session](map<string|string[]> headers = {}, *GetFinancialConnectionsSessionsSessionQueries queries) returns FinancialConnectionsSession|error {
+        string resourcePath = string `/financial_connections/sessions/${getEncodedUri(session)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of Financial Connections <code>Transaction</code> objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get financial_connections/transactions(map<string|string[]> headers = {}, *GetFinancialConnectionsTransactionsQueries queries) returns BankConnectionsResourceTransactionList|error {
+        string resourcePath = string `/financial_connections/transactions`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "transacted_at": {style: DEEPOBJECT, explode: true}, "transaction_refresh": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of a Financial Connections <code>Transaction</code></p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get financial_connections/transactions/[string 'transaction](map<string|string[]> headers = {}, *GetFinancialConnectionsTransactionsTransactionQueries queries) returns FinancialConnectionsTransaction|error {
+        string resourcePath = string `/financial_connections/transactions/${getEncodedUri('transaction)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Lists all ForwardingRequest objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get forwarding/requests(map<string|string[]> headers = {}, *GetForwardingRequestsQueries queries) returns ForwardingRequestList|error {
+        string resourcePath = string `/forwarding/requests`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a ForwardingRequest object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post forwarding/requests(forwarding_requests_body payload, map<string|string[]> headers = {}) returns Forwarding\.request|error {
+    # + return - Successful response 
+    resource isolated function post forwarding/requests(ForwardingRequestsBody payload, map<string|string[]> headers = {}) returns ForwardingRequest|error {
         string resourcePath = string `/forwarding/requests`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "replacements": {style: DEEPOBJECT, explode: true}, "request": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Retrieves a ForwardingRequest object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get forwarding/requests/[string id](map<string|string[]> headers = {}, *GetForwardingRequestsIdQueries queries) returns ForwardingRequest|error {
+        string resourcePath = string `/forwarding/requests/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>List all verification reports.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get identity/verification_reports(map<string|string[]> headers = {}, *GetIdentityVerificationReportsQueries queries) returns GelatoVerificationReportList|error {
+        string resourcePath = string `/identity/verification_reports`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves an existing VerificationReport</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get identity/verification_reports/[string report](map<string|string[]> headers = {}, *GetIdentityVerificationReportsReportQueries queries) returns IdentityVerificationReport|error {
+        string resourcePath = string `/identity/verification_reports/${getEncodedUri(report)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of VerificationSessions</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get identity/verification_sessions(map<string|string[]> headers = {}, *GetIdentityVerificationSessionsQueries queries) returns GelatoVerificationSessionList|error {
+        string resourcePath = string `/identity/verification_sessions`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Creates a VerificationSession object.</p>
@@ -4592,8 +2636,8 @@ public isolated client class Client {
     # <p>Related guide: <a href="/docs/identity/verify-identity-documents">Verify your users’ identity documents</a></p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post identity/verification_sessions(identity_verification_sessions_body payload, map<string|string[]> headers = {}) returns Identity\.verification_session|error {
+    # + return - Successful response 
+    resource isolated function post identity/verification_sessions(IdentityVerificationSessionsBody payload, map<string|string[]> headers = {}) returns IdentityVerificationSession|error {
         string resourcePath = string `/identity/verification_sessions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "options": {style: DEEPOBJECT, explode: true}, "provided_details": {style: DEEPOBJECT, explode: true}};
@@ -4602,14 +2646,29 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of a VerificationSession that was previously created.</p>
+    # 
+    # <p>When the session status is <code>requires_input</code>, you can use this method to retrieve a valid
+    # <code>client_secret</code> or <code>url</code> to allow re-submission.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get identity/verification_sessions/[string session](map<string|string[]> headers = {}, *GetIdentityVerificationSessionsSessionQueries queries) returns IdentityVerificationSession|error {
+        string resourcePath = string `/identity/verification_sessions/${getEncodedUri(session)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a VerificationSession object.</p>
     # 
     # <p>When the session status is <code>requires_input</code>, you can use this method to update the
     # verification check and options.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post identity/verification_sessions/[string session](verification_sessions_session_body payload, map<string|string[]> headers = {}) returns Identity\.verification_session|error {
+    # + return - Successful response 
+    resource isolated function post identity/verification_sessions/[string session](VerificationSessionssessionBody payload, map<string|string[]> headers = {}) returns IdentityVerificationSession|error {
         string resourcePath = string `/identity/verification_sessions/${getEncodedUri(session)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "options": {style: DEEPOBJECT, explode: true}, "provided_details": {style: DEEPOBJECT, explode: true}};
@@ -4623,8 +2682,8 @@ public isolated client class Client {
     # <p>Once canceled, future submission attempts are disabled. This cannot be undone. <a href="/docs/identity/verification-sessions#cancel">Learn more</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post identity/verification_sessions/[string session]/cancel(session_cancel_body payload, map<string|string[]> headers = {}) returns Identity\.verification_session|error {
+    # + return - Successful response 
+    resource isolated function post identity/verification_sessions/[string session]/cancel(SessionCancelBody payload, map<string|string[]> headers = {}) returns IdentityVerificationSession|error {
         string resourcePath = string `/identity/verification_sessions/${getEncodedUri(session)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4654,8 +2713,8 @@ public isolated client class Client {
     # <p><a href="/docs/identity/verification-sessions#redact">Learn more</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post identity/verification_sessions/[string session]/redact(session_redact_body payload, map<string|string[]> headers = {}) returns Identity\.verification_session|error {
+    # + return - Successful response 
+    resource isolated function post identity/verification_sessions/[string session]/redact(SessionRedactBody payload, map<string|string[]> headers = {}) returns IdentityVerificationSession|error {
         string resourcePath = string `/identity/verification_sessions/${getEncodedUri(session)}/redact`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -4664,11 +2723,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your invoice items. Invoice items are returned sorted by creation date, with the most recently created invoice items appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get invoiceitems(map<string|string[]> headers = {}, *GetInvoiceitemsQueries queries) returns InvoicesItemsList|error {
+        string resourcePath = string `/invoiceitems`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates an item to be added to a draft invoice (up to 250 items per invoice). If no invoice is specified, the item will be on the next invoice created for the customer specified.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoiceitems(invoiceitems_body payload, map<string|string[]> headers = {}) returns Invoiceitem|error {
+    # + return - Successful response 
+    resource isolated function post invoiceitems(InvoiceitemsBody payload, map<string|string[]> headers = {}) returns Invoiceitem|error {
         string resourcePath = string `/invoiceitems`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "period": {style: DEEPOBJECT, explode: true}, "price_data": {style: DEEPOBJECT, explode: true}, "tax_code": {style: DEEPOBJECT, explode: true}, "tax_rates": {style: DEEPOBJECT, explode: true}};
@@ -4677,11 +2748,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the invoice item with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get invoiceitems/[string invoiceitem](map<string|string[]> headers = {}, *GetInvoiceitemsInvoiceitemQueries queries) returns Invoiceitem|error {
+        string resourcePath = string `/invoiceitems/${getEncodedUri(invoiceitem)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the amount or description of an invoice item on an upcoming invoice. Updating an invoice item is only possible before the invoice it’s attached to is closed.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoiceitems/[string invoiceitem](invoiceitems_invoiceitem_body payload, map<string|string[]> headers = {}) returns Invoiceitem|error {
+    # + return - Successful response 
+    resource isolated function post invoiceitems/[string invoiceitem](InvoiceitemsinvoiceitemBody payload, map<string|string[]> headers = {}) returns Invoiceitem|error {
         string resourcePath = string `/invoiceitems/${getEncodedUri(invoiceitem)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "period": {style: DEEPOBJECT, explode: true}, "price_data": {style: DEEPOBJECT, explode: true}, "tax_code": {style: DEEPOBJECT, explode: true}, "tax_rates": {style: DEEPOBJECT, explode: true}};
@@ -4690,158 +2773,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Deletes an invoice item, removing it from an invoice. Deleting invoice items is only possible when they’re not attached to invoices, or if it’s attached to a draft invoice.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete invoiceitems/[string invoiceitem](map<string|string[]> headers = {}) returns DeletedInvoiceitem|error {
+        string resourcePath = string `/invoiceitems/${getEncodedUri(invoiceitem)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>You can list all invoices, or list the invoices for a specific customer. The invoices are returned sorted by creation date, with the most recently created invoices appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get invoices(map<string|string[]> headers = {}, *GetInvoicesQueries queries) returns InvoicesResourceList|error {
+        string resourcePath = string `/invoices`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "due_date": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>This endpoint creates a draft invoice for a given customer. The invoice remains a draft until you <a href="#finalize_invoice">finalize</a> the invoice, which allows you to <a href="#pay_invoice">pay</a> or <a href="#send_invoice">send</a> the invoice to your customers.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices(invoices_body payload, map<string|string[]> headers = {}) returns Invoice|error {
+    # + return - Successful response 
+    resource isolated function post invoices(InvoicesBody payload, map<string|string[]> headers = {}) returns Invoice|error {
         string resourcePath = string `/invoices`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"account_tax_ids": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "custom_fields": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "from_invoice": {style: DEEPOBJECT, explode: true}, "issuer": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "payment_settings": {style: DEEPOBJECT, explode: true}, "rendering": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}, "shipping_details": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Draft invoices are fully editable. Once an invoice is <a href="/docs/billing/invoices/workflow#finalized">finalized</a>,
-    # monetary values, as well as <code>collection_method</code>, become uneditable.</p>
-    # 
-    # <p>If you would like to stop the Stripe Billing engine from automatically finalizing, reattempting payments on,
-    # sending reminders for, or <a href="/docs/billing/invoices/reconciliation">automatically reconciling</a> invoices, pass
-    # <code>auto_advance=false</code>.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice](invoices_invoice_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"account_tax_ids": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "custom_fields": {style: DEEPOBJECT, explode: true}, "default_source": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "effective_at": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "issuer": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "number": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "payment_settings": {style: DEEPOBJECT, explode: true}, "rendering": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}, "shipping_details": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Adds multiple line items to an invoice. This is only possible when an invoice is still a draft.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/add_lines(invoice_add_lines_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/add_lines`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "invoice_metadata": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Stripe automatically finalizes drafts before sending and attempting payment on invoices. However, if you’d like to finalize a draft invoice manually, you can do so using this method.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/finalize(invoice_finalize_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/finalize`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Updates an invoice’s line item. Some fields, such as <code>tax_amounts</code>, only live on the invoice line item,
-    # so they can only be updated through this endpoint. Other fields, such as <code>amount</code>, live on both the invoice
-    # item and the invoice line item, so updates on this endpoint will propagate to the invoice item as well.
-    # Updating an invoice’s line item is only possible before the invoice is finalized.</p>
-    #
-    # + invoice - Invoice ID of line item
-    # + line_item_id - Invoice line item ID
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/lines/[string line_item_id](lines_line_item_id_body payload, map<string|string[]> headers = {}) returns Line_item|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/lines/${getEncodedUri(line_item_id)}`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "period": {style: DEEPOBJECT, explode: true}, "price_data": {style: DEEPOBJECT, explode: true}, "tax_amounts": {style: DEEPOBJECT, explode: true}, "tax_rates": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Marking an invoice as uncollectible is useful for keeping track of bad debts that can be written off for accounting purposes.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/mark_uncollectible(invoice_mark_uncollectible_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/mark_uncollectible`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Stripe automatically creates and then attempts to collect payment on invoices for customers on subscriptions according to your <a href="https://dashboard.stripe.com/account/billing/automatic">subscriptions settings</a>. However, if you’d like to attempt payment on an invoice out of the normal collection schedule or for some other reason, you can do so.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/pay(invoice_pay_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/pay`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "mandate": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Removes multiple line items from an invoice. This is only possible when an invoice is still a draft.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/remove_lines(invoice_remove_lines_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/remove_lines`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "invoice_metadata": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Stripe will automatically send invoices to customers according to your <a href="https://dashboard.stripe.com/account/billing/automatic">subscriptions settings</a>. However, if you’d like to manually send an invoice to your customer out of the normal schedule, you can do so. When sending invoices that have already been paid, there will be no reference to the payment in the email.</p>
-    # 
-    # <p>Requests made in test-mode result in no emails being sent, despite sending an <code>invoice.sent</code> event.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/send(invoice_send_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/send`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Updates multiple line items on an invoice. This is only possible when an invoice is still a draft.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/update_lines(invoice_update_lines_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/update_lines`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "invoice_metadata": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to <a href="#delete_invoice">deletion</a>, however it only applies to finalized invoices and maintains a papertrail where the invoice can still be found.</p>
-    # 
-    # <p>Consult with local regulations to determine whether and how an invoice might be amended, canceled, or voided in the jurisdiction you’re doing business in. You might need to <a href="#create_invoice">issue another invoice</a> or <a href="#create_credit_note">credit note</a> instead. Stripe recommends that you consult with your legal counsel for advice specific to your business.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/[string invoice]/void(invoice_void_body payload, map<string|string[]> headers = {}) returns Invoice|error {
-        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/void`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
@@ -4856,8 +2816,8 @@ public isolated client class Client {
     # <p>Note: Currency conversion calculations use the latest exchange rates. Exchange rates may vary between the time of the preview and the time of the actual invoice creation. <a href="https://docs.stripe.com/currencies/conversions">Learn more</a></p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post invoices/create_preview(invoices_create_preview_body payload, map<string|string[]> headers = {}) returns Invoice|error {
+    # + return - Successful response 
+    resource isolated function post invoices/create_preview(InvoicesCreatePreviewBody payload, map<string|string[]> headers = {}) returns Invoice|error {
         string resourcePath = string `/invoices/create_preview`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"automatic_tax": {style: DEEPOBJECT, explode: true}, "customer_details": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_items": {style: DEEPOBJECT, explode: true}, "issuer": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "schedule_details": {style: DEEPOBJECT, explode: true}, "subscription_details": {style: DEEPOBJECT, explode: true}};
@@ -4866,11 +2826,257 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Search for invoices you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
+    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
+    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
+    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get invoices/search(map<string|string[]> headers = {}, *GetInvoicesSearchQueries queries) returns SearchResult2|error {
+        string resourcePath = string `/invoices/search`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>At any time, you can preview the upcoming invoice for a customer. This will show you all the charges that are pending, including subscription renewal charges, invoice item charges, etc. It will also show you any discounts that are applicable to the invoice.</p>
+    # 
+    # <p>Note that when you are viewing an upcoming invoice, you are simply viewing a preview – the invoice has not yet been created. As such, the upcoming invoice will not show up in invoice listing calls, and you cannot use the API to pay or edit the invoice. If you want to change the amount that your customer will be billed, you can add, remove, or update pending invoice items, or update the customer’s discount.</p>
+    # 
+    # <p>You can preview the effects of updating a subscription, including a preview of what proration will take place. To ensure that the actual proration is calculated exactly the same as the previewed proration, you should pass the <code>subscription_details.proration_date</code> parameter when doing the actual subscription update. The recommended way to get only the prorations being previewed is to consider only proration line items where <code>period[start]</code> is equal to the <code>subscription_details.proration_date</code> value passed in the request.</p>
+    # 
+    # <p>Note: Currency conversion calculations use the latest exchange rates. Exchange rates may vary between the time of the preview and the time of the actual invoice creation. <a href="https://docs.stripe.com/currencies/conversions">Learn more</a></p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get invoices/upcoming(map<string|string[]> headers = {}, *GetInvoicesUpcomingQueries queries) returns Invoice|error {
+        string resourcePath = string `/invoices/upcoming`;
+        map<Encoding> queryParamEncoding = {"automatic_tax": {style: DEEPOBJECT, explode: true}, "customer_details": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_items": {style: DEEPOBJECT, explode: true}, "issuer": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "schedule_details": {style: DEEPOBJECT, explode: true}, "subscription_billing_cycle_anchor": {style: DEEPOBJECT, explode: true}, "subscription_cancel_at": {style: DEEPOBJECT, explode: true}, "subscription_default_tax_rates": {style: DEEPOBJECT, explode: true}, "subscription_details": {style: DEEPOBJECT, explode: true}, "subscription_items": {style: DEEPOBJECT, explode: true}, "subscription_trial_end": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>When retrieving an upcoming invoice, you’ll get a <strong>lines</strong> property containing the total count of line items and the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get invoices/upcoming/lines(map<string|string[]> headers = {}, *GetInvoicesUpcomingLinesQueries queries) returns InvoiceLinesList|error {
+        string resourcePath = string `/invoices/upcoming/lines`;
+        map<Encoding> queryParamEncoding = {"automatic_tax": {style: DEEPOBJECT, explode: true}, "customer_details": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_items": {style: DEEPOBJECT, explode: true}, "issuer": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "schedule_details": {style: DEEPOBJECT, explode: true}, "subscription_billing_cycle_anchor": {style: DEEPOBJECT, explode: true}, "subscription_cancel_at": {style: DEEPOBJECT, explode: true}, "subscription_default_tax_rates": {style: DEEPOBJECT, explode: true}, "subscription_details": {style: DEEPOBJECT, explode: true}, "subscription_items": {style: DEEPOBJECT, explode: true}, "subscription_trial_end": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the invoice with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get invoices/[string invoice](map<string|string[]> headers = {}, *GetInvoicesInvoiceQueries queries) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Draft invoices are fully editable. Once an invoice is <a href="/docs/billing/invoices/workflow#finalized">finalized</a>,
+    # monetary values, as well as <code>collection_method</code>, become uneditable.</p>
+    # 
+    # <p>If you would like to stop the Stripe Billing engine from automatically finalizing, reattempting payments on,
+    # sending reminders for, or <a href="/docs/billing/invoices/reconciliation">automatically reconciling</a> invoices, pass
+    # <code>auto_advance=false</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice](InvoicesinvoiceBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"account_tax_ids": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "custom_fields": {style: DEEPOBJECT, explode: true}, "default_source": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "effective_at": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "issuer": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "number": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "payment_settings": {style: DEEPOBJECT, explode: true}, "rendering": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}, "shipping_details": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Permanently deletes a one-off invoice draft. This cannot be undone. Attempts to delete invoices that are no longer in a draft state will fail; once an invoice has been finalized or if an invoice is for a subscription, it must be <a href="#void_invoice">voided</a>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete invoices/[string invoice](map<string|string[]> headers = {}) returns DeletedInvoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Adds multiple line items to an invoice. This is only possible when an invoice is still a draft.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/add_lines(InvoiceAddLinesBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/add_lines`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "invoice_metadata": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Stripe automatically finalizes drafts before sending and attempting payment on invoices. However, if you’d like to finalize a draft invoice manually, you can do so using this method.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/finalize(InvoiceFinalizeBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/finalize`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>When retrieving an invoice, you’ll get a <strong>lines</strong> property containing the total count of line items and the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get invoices/[string invoice]/lines(map<string|string[]> headers = {}, *GetInvoicesInvoiceLinesQueries queries) returns InvoiceLinesList1|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/lines`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Updates an invoice’s line item. Some fields, such as <code>tax_amounts</code>, only live on the invoice line item,
+    # so they can only be updated through this endpoint. Other fields, such as <code>amount</code>, live on both the invoice
+    # item and the invoice line item, so updates on this endpoint will propagate to the invoice item as well.
+    # Updating an invoice’s line item is only possible before the invoice is finalized.</p>
+    #
+    # + invoice - Invoice ID of line item
+    # + lineItemId - Invoice line item ID
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/lines/[string lineItemId](LineslineItemIdBody payload, map<string|string[]> headers = {}) returns LineItem1|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/lines/${getEncodedUri(lineItemId)}`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "period": {style: DEEPOBJECT, explode: true}, "price_data": {style: DEEPOBJECT, explode: true}, "tax_amounts": {style: DEEPOBJECT, explode: true}, "tax_rates": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Marking an invoice as uncollectible is useful for keeping track of bad debts that can be written off for accounting purposes.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/mark_uncollectible(InvoiceMarkUncollectibleBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/mark_uncollectible`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Stripe automatically creates and then attempts to collect payment on invoices for customers on subscriptions according to your <a href="https://dashboard.stripe.com/account/billing/automatic">subscriptions settings</a>. However, if you’d like to attempt payment on an invoice out of the normal collection schedule or for some other reason, you can do so.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/pay(InvoicePayBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/pay`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "mandate": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Removes multiple line items from an invoice. This is only possible when an invoice is still a draft.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/remove_lines(InvoiceRemoveLinesBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/remove_lines`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "invoice_metadata": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Stripe will automatically send invoices to customers according to your <a href="https://dashboard.stripe.com/account/billing/automatic">subscriptions settings</a>. However, if you’d like to manually send an invoice to your customer out of the normal schedule, you can do so. When sending invoices that have already been paid, there will be no reference to the payment in the email.</p>
+    # 
+    # <p>Requests made in test-mode result in no emails being sent, despite sending an <code>invoice.sent</code> event.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/send(InvoiceSendBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/send`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Updates multiple line items on an invoice. This is only possible when an invoice is still a draft.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/update_lines(InvoiceUpdateLinesBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/update_lines`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "invoice_metadata": {style: DEEPOBJECT, explode: true}, "lines": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to <a href="#delete_invoice">deletion</a>, however it only applies to finalized invoices and maintains a papertrail where the invoice can still be found.</p>
+    # 
+    # <p>Consult with local regulations to determine whether and how an invoice might be amended, canceled, or voided in the jurisdiction you’re doing business in. You might need to <a href="#create_invoice">issue another invoice</a> or <a href="#create_credit_note">credit note</a> instead. Stripe recommends that you consult with your legal counsel for advice specific to your business.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post invoices/[string invoice]/void(InvoiceVoidBody payload, map<string|string[]> headers = {}) returns Invoice|error {
+        string resourcePath = string `/invoices/${getEncodedUri(invoice)}/void`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Returns a list of Issuing <code>Authorization</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/authorizations(map<string|string[]> headers = {}, *GetIssuingAuthorizationsQueries queries) returns IssuingAuthorizationList|error {
+        string resourcePath = string `/issuing/authorizations`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves an Issuing <code>Authorization</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/authorizations/[string authorization](map<string|string[]> headers = {}, *GetIssuingAuthorizationsAuthorizationQueries queries) returns IssuingAuthorization|error {
+        string resourcePath = string `/issuing/authorizations/${getEncodedUri(authorization)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified Issuing <code>Authorization</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/authorizations/[string authorization](authorizations_authorization_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    # + return - Successful response 
+    resource isolated function post issuing/authorizations/[string authorization](AuthorizationsauthorizationBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/issuing/authorizations/${getEncodedUri(authorization)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4883,11 +3089,11 @@ public isolated client class Client {
     # This method is deprecated. Instead, <a href="/docs/issuing/controls/real-time-authorizations#authorization-handling">respond directly to the webhook request to approve an authorization</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
+    # + return - Successful response 
     # 
     # # Deprecated
     @deprecated
-    resource isolated function post issuing/authorizations/[string authorization]/approve(authorization_approve_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    resource isolated function post issuing/authorizations/[string authorization]/approve(AuthorizationApproveBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/issuing/authorizations/${getEncodedUri(authorization)}/approve`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4900,11 +3106,11 @@ public isolated client class Client {
     # This method is deprecated. Instead, <a href="/docs/issuing/controls/real-time-authorizations#authorization-handling">respond directly to the webhook request to decline an authorization</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
+    # + return - Successful response 
     # 
     # # Deprecated
     @deprecated
-    resource isolated function post issuing/authorizations/[string authorization]/decline(authorization_decline_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    resource isolated function post issuing/authorizations/[string authorization]/decline(AuthorizationDeclineBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/issuing/authorizations/${getEncodedUri(authorization)}/decline`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4913,11 +3119,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of Issuing <code>Cardholder</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/cardholders(map<string|string[]> headers = {}, *GetIssuingCardholdersQueries queries) returns IssuingCardholderList|error {
+        string resourcePath = string `/issuing/cardholders`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new Issuing <code>Cardholder</code> object that can be issued cards.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/cardholders(issuing_cardholders_body payload, map<string|string[]> headers = {}) returns Issuing\.cardholder|error {
+    # + return - Successful response 
+    resource isolated function post issuing/cardholders(IssuingCardholdersBody payload, map<string|string[]> headers = {}) returns IssuingCardholder|error {
         string resourcePath = string `/issuing/cardholders`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"billing": {style: DEEPOBJECT, explode: true}, "company": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "individual": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "preferred_locales": {style: DEEPOBJECT, explode: true}, "spending_controls": {style: DEEPOBJECT, explode: true}};
@@ -4926,11 +3144,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves an Issuing <code>Cardholder</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/cardholders/[string cardholder](map<string|string[]> headers = {}, *GetIssuingCardholdersCardholderQueries queries) returns IssuingCardholder|error {
+        string resourcePath = string `/issuing/cardholders/${getEncodedUri(cardholder)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified Issuing <code>Cardholder</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/cardholders/[string cardholder](cardholders_cardholder_body payload, map<string|string[]> headers = {}) returns Issuing\.cardholder|error {
+    # + return - Successful response 
+    resource isolated function post issuing/cardholders/[string cardholder](CardholderscardholderBody payload, map<string|string[]> headers = {}) returns IssuingCardholder|error {
         string resourcePath = string `/issuing/cardholders/${getEncodedUri(cardholder)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"billing": {style: DEEPOBJECT, explode: true}, "company": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "individual": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "preferred_locales": {style: DEEPOBJECT, explode: true}, "spending_controls": {style: DEEPOBJECT, explode: true}};
@@ -4939,11 +3169,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of Issuing <code>Card</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/cards(map<string|string[]> headers = {}, *GetIssuingCardsQueries queries) returns IssuingCardList|error {
+        string resourcePath = string `/issuing/cards`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates an Issuing <code>Card</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/cards(issuing_cards_body payload, map<string|string[]> headers = {}) returns Issuing\.card|error {
+    # + return - Successful response 
+    resource isolated function post issuing/cards(IssuingCardsBody payload, map<string|string[]> headers = {}) returns IssuingCard|error {
         string resourcePath = string `/issuing/cards`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "pin": {style: DEEPOBJECT, explode: true}, "second_line": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}, "spending_controls": {style: DEEPOBJECT, explode: true}};
@@ -4952,11 +3194,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves an Issuing <code>Card</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/cards/[string card](map<string|string[]> headers = {}, *GetIssuingCardsCardQueries queries) returns IssuingCard|error {
+        string resourcePath = string `/issuing/cards/${getEncodedUri(card)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified Issuing <code>Card</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/cards/[string card](cards_card_body payload, map<string|string[]> headers = {}) returns Issuing\.card|error {
+    # + return - Successful response 
+    resource isolated function post issuing/cards/[string card](CardscardBody payload, map<string|string[]> headers = {}) returns IssuingCard|error {
         string resourcePath = string `/issuing/cards/${getEncodedUri(card)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "pin": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}, "spending_controls": {style: DEEPOBJECT, explode: true}};
@@ -4965,11 +3219,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of Issuing <code>Dispute</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/disputes(map<string|string[]> headers = {}, *GetIssuingDisputesQueries queries) returns IssuingDisputeList|error {
+        string resourcePath = string `/issuing/disputes`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates an Issuing <code>Dispute</code> object. Individual pieces of evidence within the <code>evidence</code> object are optional at this point. Stripe only validates that required evidence is present during submission. Refer to <a href="/docs/issuing/purchases/disputes#dispute-reasons-and-evidence">Dispute reasons and evidence</a> for more details about evidence requirements.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/disputes(issuing_disputes_body payload, map<string|string[]> headers = {}) returns Issuing\.dispute|error {
+    # + return - Successful response 
+    resource isolated function post issuing/disputes(IssuingDisputesBody payload, map<string|string[]> headers = {}) returns IssuingDispute|error {
         string resourcePath = string `/issuing/disputes`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"evidence": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "treasury": {style: DEEPOBJECT, explode: true}};
@@ -4978,11 +3244,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves an Issuing <code>Dispute</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/disputes/[string dispute](map<string|string[]> headers = {}, *GetIssuingDisputesDisputeQueries queries) returns IssuingDispute|error {
+        string resourcePath = string `/issuing/disputes/${getEncodedUri(dispute)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified Issuing <code>Dispute</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged. Properties on the <code>evidence</code> object can be unset by passing in an empty string.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/disputes/[string dispute](disputes_dispute_body_1 payload, map<string|string[]> headers = {}) returns Issuing\.dispute|error {
+    # + return - Successful response 
+    resource isolated function post issuing/disputes/[string dispute](DisputesdisputeBody1 payload, map<string|string[]> headers = {}) returns IssuingDispute|error {
         string resourcePath = string `/issuing/disputes/${getEncodedUri(dispute)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"evidence": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -4994,8 +3272,8 @@ public isolated client class Client {
     # <p>Submits an Issuing <code>Dispute</code> to the card network. Stripe validates that all evidence fields required for the dispute’s reason are present. For more details, see <a href="/docs/issuing/purchases/disputes#dispute-reasons-and-evidence">Dispute reasons and evidence</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/disputes/[string dispute]/submit(dispute_submit_body payload, map<string|string[]> headers = {}) returns Issuing\.dispute|error {
+    # + return - Successful response 
+    resource isolated function post issuing/disputes/[string dispute]/submit(DisputeSubmitBody payload, map<string|string[]> headers = {}) returns IssuingDispute|error {
         string resourcePath = string `/issuing/disputes/${getEncodedUri(dispute)}/submit`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5004,11 +3282,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of personalization design objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/personalization_designs(map<string|string[]> headers = {}, *GetIssuingPersonalizationDesignsQueries queries) returns IssuingPersonalizationDesignList|error {
+        string resourcePath = string `/issuing/personalization_designs`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "lookup_keys": {style: DEEPOBJECT, explode: true}, "preferences": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a personalization design object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/personalization_designs(issuing_personalization_designs_body payload, map<string|string[]> headers = {}) returns Issuing\.personalization_design|error {
+    # + return - Successful response 
+    resource isolated function post issuing/personalization_designs(IssuingPersonalizationDesignsBody payload, map<string|string[]> headers = {}) returns IssuingPersonalizationDesign|error {
         string resourcePath = string `/issuing/personalization_designs`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"carrier_text": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "preferences": {style: DEEPOBJECT, explode: true}};
@@ -5017,12 +3307,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a personalization design object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/personalization_designs/[string personalizationDesign](map<string|string[]> headers = {}, *GetIssuingPersonalizationDesignsPersonalizationDesignQueries queries) returns IssuingPersonalizationDesign|error {
+        string resourcePath = string `/issuing/personalization_designs/${getEncodedUri(personalizationDesign)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a card personalization object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/personalization_designs/[string personalization_design](personalization_designs_personalization_design_body payload, map<string|string[]> headers = {}) returns Issuing\.personalization_design|error {
-        string resourcePath = string `/issuing/personalization_designs/${getEncodedUri(personalization_design)}`;
+    # + return - Successful response 
+    resource isolated function post issuing/personalization_designs/[string personalizationDesign](PersonalizationDesignspersonalizationDesignBody payload, map<string|string[]> headers = {}) returns IssuingPersonalizationDesign|error {
+        string resourcePath = string `/issuing/personalization_designs/${getEncodedUri(personalizationDesign)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"card_logo": {style: DEEPOBJECT, explode: true}, "carrier_text": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "lookup_key": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "name": {style: DEEPOBJECT, explode: true}, "preferences": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5030,11 +3332,47 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of physical bundle objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/physical_bundles(map<string|string[]> headers = {}, *GetIssuingPhysicalBundlesQueries queries) returns IssuingPhysicalBundleList|error {
+        string resourcePath = string `/issuing/physical_bundles`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a physical bundle object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/physical_bundles/[string physicalBundle](map<string|string[]> headers = {}, *GetIssuingPhysicalBundlesPhysicalBundleQueries queries) returns IssuingPhysicalBundle|error {
+        string resourcePath = string `/issuing/physical_bundles/${getEncodedUri(physicalBundle)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves an Issuing <code>Settlement</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/settlements/[string settlement](map<string|string[]> headers = {}, *GetIssuingSettlementsSettlementQueries queries) returns IssuingSettlement|error {
+        string resourcePath = string `/issuing/settlements/${getEncodedUri(settlement)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified Issuing <code>Settlement</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/settlements/[string settlement](settlements_settlement_body payload, map<string|string[]> headers = {}) returns Issuing\.settlement|error {
+    # + return - Successful response 
+    resource isolated function post issuing/settlements/[string settlement](SettlementssettlementBody payload, map<string|string[]> headers = {}) returns IssuingSettlement|error {
         string resourcePath = string `/issuing/settlements/${getEncodedUri(settlement)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5043,11 +3381,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Lists all Issuing <code>Token</code> objects for a given card.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/tokens(map<string|string[]> headers = {}, *GetIssuingTokensQueries queries) returns IssuingNetworkTokenList|error {
+        string resourcePath = string `/issuing/tokens`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves an Issuing <code>Token</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/tokens/[string token](map<string|string[]> headers = {}, *GetIssuingTokensTokenQueries queries) returns IssuingToken|error {
+        string resourcePath = string `/issuing/tokens/${getEncodedUri(token)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Attempts to update the specified Issuing <code>Token</code> object to the status specified.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/tokens/[string token](tokens_token_body payload, map<string|string[]> headers = {}) returns Issuing\.token|error {
+    # + return - Successful response 
+    resource isolated function post issuing/tokens/[string token](TokenstokenBody payload, map<string|string[]> headers = {}) returns IssuingToken|error {
         string resourcePath = string `/issuing/tokens/${getEncodedUri(token)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5056,11 +3418,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of Issuing <code>Transaction</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/transactions(map<string|string[]> headers = {}, *GetIssuingTransactionsQueries queries) returns IssuingTransactionList|error {
+        string resourcePath = string `/issuing/transactions`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves an Issuing <code>Transaction</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get issuing/transactions/[string 'transaction](map<string|string[]> headers = {}, *GetIssuingTransactionsTransactionQueries queries) returns IssuingTransaction|error {
+        string resourcePath = string `/issuing/transactions/${getEncodedUri('transaction)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified Issuing <code>Transaction</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post issuing/transactions/[string 'transaction](transactions_transaction_body payload, map<string|string[]> headers = {}) returns Issuing\.transaction|error {
+    # + return - Successful response 
+    resource isolated function post issuing/transactions/[string 'transaction](TransactionstransactionBody payload, map<string|string[]> headers = {}) returns IssuingTransaction|error {
         string resourcePath = string `/issuing/transactions/${getEncodedUri('transaction)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5072,8 +3458,8 @@ public isolated client class Client {
     # <p>To launch the Financial Connections authorization flow, create a <code>Session</code>. The session’s <code>client_secret</code> can be used to launch the flow using Stripe.js.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post link_account_sessions(link_account_sessions_body payload, map<string|string[]> headers = {}) returns Financial_connections\.session|error {
+    # + return - Successful response 
+    resource isolated function post link_account_sessions(LinkAccountSessionsBody payload, map<string|string[]> headers = {}) returns FinancialConnectionsSession|error {
         string resourcePath = string `/link_account_sessions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"account_holder": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "filters": {style: DEEPOBJECT, explode: true}, "permissions": {style: DEEPOBJECT, explode: true}, "prefetch": {style: DEEPOBJECT, explode: true}};
@@ -5082,11 +3468,47 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of a Financial Connections <code>Session</code></p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get link_account_sessions/[string session](map<string|string[]> headers = {}, *GetLinkAccountSessionsSessionQueries queries) returns FinancialConnectionsSession|error {
+        string resourcePath = string `/link_account_sessions/${getEncodedUri(session)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of Financial Connections <code>Account</code> objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get linked_accounts(map<string|string[]> headers = {}, *GetLinkedAccountsQueries queries) returns BankConnectionsResourceLinkedAccountList1|error {
+        string resourcePath = string `/linked_accounts`;
+        map<Encoding> queryParamEncoding = {"account_holder": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an Financial Connections <code>Account</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get linked_accounts/[string account](map<string|string[]> headers = {}, *GetLinkedAccountsAccountQueries queries) returns FinancialConnectionsAccount|error {
+        string resourcePath = string `/linked_accounts/${getEncodedUri(account)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Disables your access to a Financial Connections <code>Account</code>. You will no longer be able to access data associated with the account (e.g. balances, transactions).</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post linked_accounts/[string account]/disconnect(account_disconnect_body_1 payload, map<string|string[]> headers = {}) returns Financial_connections\.account|error {
+    # + return - Successful response 
+    resource isolated function post linked_accounts/[string account]/disconnect(AccountDisconnectBody1 payload, map<string|string[]> headers = {}) returns FinancialConnectionsAccount|error {
         string resourcePath = string `/linked_accounts/${getEncodedUri(account)}/disconnect`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5095,17 +3517,53 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Lists all owners for a given <code>Account</code></p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get linked_accounts/[string account]/owners(map<string|string[]> headers = {}, *GetLinkedAccountsAccountOwnersQueries queries) returns BankConnectionsResourceOwnerList1|error {
+        string resourcePath = string `/linked_accounts/${getEncodedUri(account)}/owners`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Refreshes the data associated with a Financial Connections <code>Account</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post linked_accounts/[string account]/refresh(account_refresh_body_1 payload, map<string|string[]> headers = {}) returns Financial_connections\.account|error {
+    # + return - Successful response 
+    resource isolated function post linked_accounts/[string account]/refresh(AccountRefreshBody1 payload, map<string|string[]> headers = {}) returns FinancialConnectionsAccount|error {
         string resourcePath = string `/linked_accounts/${getEncodedUri(account)}/refresh`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "features": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Retrieves a Mandate object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get mandates/[string mandate](map<string|string[]> headers = {}, *GetMandatesMandateQueries queries) returns Mandate|error {
+        string resourcePath = string `/mandates/${getEncodedUri(mandate)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of PaymentIntents.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_intents(map<string|string[]> headers = {}, *GetPaymentIntentsQueries queries) returns PaymentFlowsPaymentIntentList|error {
+        string resourcePath = string `/payment_intents`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Creates a PaymentIntent object.</p>
@@ -5120,14 +3578,45 @@ public isolated client class Client {
     # <code>confirm=true</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_intents(payment_intents_body payload, map<string|string[]> headers = {}) returns Payment_intent|error {
+    # + return - Successful response 
+    resource isolated function post payment_intents(PaymentIntentsBody payload, map<string|string[]> headers = {}) returns PaymentIntent|error {
         string resourcePath = string `/payment_intents`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"automatic_payment_methods": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "mandate_data": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "off_session": {style: DEEPOBJECT, explode: true}, "payment_method_data": {style: DEEPOBJECT, explode: true}, "payment_method_options": {style: DEEPOBJECT, explode: true}, "payment_method_types": {style: DEEPOBJECT, explode: true}, "radar_options": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Search for PaymentIntents you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
+    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
+    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
+    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_intents/search(map<string|string[]> headers = {}, *GetPaymentIntentsSearchQueries queries) returns SearchResult3|error {
+        string resourcePath = string `/payment_intents/search`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of a PaymentIntent that has previously been created. </p>
+    # 
+    # <p>You can retrieve a PaymentIntent client-side using a publishable key when the <code>client_secret</code> is in the query string. </p>
+    # 
+    # <p>If you retrieve a PaymentIntent with a publishable key, it only returns a subset of properties. Refer to the <a href="#payment_intent_object">payment intent</a> object reference for more details.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_intents/[string intent](map<string|string[]> headers = {}, *GetPaymentIntentsIntentQueries queries) returns PaymentIntent|error {
+        string resourcePath = string `/payment_intents/${getEncodedUri(intent)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Updates properties on a PaymentIntent object without confirming.</p>
@@ -5139,8 +3628,8 @@ public isolated client class Client {
     # the <a href="/docs/api/payment_intents/confirm">confirm API</a> instead.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_intents/[string intent](payment_intents_intent_body payload, map<string|string[]> headers = {}) returns Payment_intent|error {
+    # + return - Successful response 
+    resource isolated function post payment_intents/[string intent](PaymentIntentsintentBody payload, map<string|string[]> headers = {}) returns PaymentIntent|error {
         string resourcePath = string `/payment_intents/${getEncodedUri(intent)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"application_fee_amount": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "payment_method_data": {style: DEEPOBJECT, explode: true}, "payment_method_options": {style: DEEPOBJECT, explode: true}, "payment_method_types": {style: DEEPOBJECT, explode: true}, "receipt_email": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
@@ -5152,8 +3641,8 @@ public isolated client class Client {
     # <p>Manually reconcile the remaining amount for a <code>customer_balance</code> PaymentIntent.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_intents/[string intent]/apply_customer_balance(intent_apply_customer_balance_body payload, map<string|string[]> headers = {}) returns Payment_intent|error {
+    # + return - Successful response 
+    resource isolated function post payment_intents/[string intent]/apply_customer_balance(IntentApplyCustomerBalanceBody payload, map<string|string[]> headers = {}) returns PaymentIntent|error {
         string resourcePath = string `/payment_intents/${getEncodedUri(intent)}/apply_customer_balance`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5169,8 +3658,8 @@ public isolated client class Client {
     # <p>You can’t cancel the PaymentIntent for a Checkout Session. <a href="/docs/api/checkout/sessions/expire">Expire the Checkout Session</a> instead.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_intents/[string intent]/cancel(intent_cancel_body payload, map<string|string[]> headers = {}) returns Payment_intent|error {
+    # + return - Successful response 
+    resource isolated function post payment_intents/[string intent]/cancel(IntentCancelBody payload, map<string|string[]> headers = {}) returns PaymentIntent|error {
         string resourcePath = string `/payment_intents/${getEncodedUri(intent)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5186,8 +3675,8 @@ public isolated client class Client {
     # <p>Learn more about <a href="/docs/payments/capture-later">separate authorization and capture</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_intents/[string intent]/capture(intent_capture_body payload, map<string|string[]> headers = {}) returns Payment_intent|error {
+    # + return - Successful response 
+    resource isolated function post payment_intents/[string intent]/capture(IntentCaptureBody payload, map<string|string[]> headers = {}) returns PaymentIntent|error {
         string resourcePath = string `/payment_intents/${getEncodedUri(intent)}/capture`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
@@ -5220,8 +3709,8 @@ public isolated client class Client {
     # attempt.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_intents/[string intent]/confirm(intent_confirm_body payload, map<string|string[]> headers = {}) returns Payment_intent|error {
+    # + return - Successful response 
+    resource isolated function post payment_intents/[string intent]/confirm(IntentConfirmBody payload, map<string|string[]> headers = {}) returns PaymentIntent|error {
         string resourcePath = string `/payment_intents/${getEncodedUri(intent)}/confirm`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "mandate_data": {style: DEEPOBJECT, explode: true}, "off_session": {style: DEEPOBJECT, explode: true}, "payment_method_data": {style: DEEPOBJECT, explode: true}, "payment_method_options": {style: DEEPOBJECT, explode: true}, "payment_method_types": {style: DEEPOBJECT, explode: true}, "radar_options": {style: DEEPOBJECT, explode: true}, "receipt_email": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}};
@@ -5256,8 +3745,8 @@ public isolated client class Client {
     # <p>Learn more about <a href="/docs/terminal/features/incremental-authorizations">incremental authorizations</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_intents/[string intent]/increment_authorization(intent_increment_authorization_body payload, map<string|string[]> headers = {}) returns Payment_intent|error {
+    # + return - Successful response 
+    resource isolated function post payment_intents/[string intent]/increment_authorization(IntentIncrementAuthorizationBody payload, map<string|string[]> headers = {}) returns PaymentIntent|error {
         string resourcePath = string `/payment_intents/${getEncodedUri(intent)}/increment_authorization`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
@@ -5269,8 +3758,8 @@ public isolated client class Client {
     # <p>Verifies microdeposits on a PaymentIntent object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_intents/[string intent]/verify_microdeposits(intent_verify_microdeposits_body payload, map<string|string[]> headers = {}) returns Payment_intent|error {
+    # + return - Successful response 
+    resource isolated function post payment_intents/[string intent]/verify_microdeposits(IntentVerifyMicrodepositsBody payload, map<string|string[]> headers = {}) returns PaymentIntent|error {
         string resourcePath = string `/payment_intents/${getEncodedUri(intent)}/verify_microdeposits`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"amounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -5279,11 +3768,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your payment links.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_links(map<string|string[]> headers = {}, *GetPaymentLinksQueries queries) returns PaymentLinksResourcePaymentLinkList|error {
+        string resourcePath = string `/payment_links`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a payment link.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_links(payment_links_body payload, map<string|string[]> headers = {}) returns Payment_link|error {
+    # + return - Successful response 
+    resource isolated function post payment_links(PaymentLinksBody payload, map<string|string[]> headers = {}) returns PaymentLink|error {
         string resourcePath = string `/payment_links`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"after_completion": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "consent_collection": {style: DEEPOBJECT, explode: true}, "custom_fields": {style: DEEPOBJECT, explode: true}, "custom_text": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_creation": {style: DEEPOBJECT, explode: true}, "line_items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "payment_intent_data": {style: DEEPOBJECT, explode: true}, "payment_method_types": {style: DEEPOBJECT, explode: true}, "phone_number_collection": {style: DEEPOBJECT, explode: true}, "restrictions": {style: DEEPOBJECT, explode: true}, "shipping_address_collection": {style: DEEPOBJECT, explode: true}, "shipping_options": {style: DEEPOBJECT, explode: true}, "subscription_data": {style: DEEPOBJECT, explode: true}, "tax_id_collection": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
@@ -5292,12 +3793,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve a payment link.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_links/[string paymentLink](map<string|string[]> headers = {}, *GetPaymentLinksPaymentLinkQueries queries) returns PaymentLink|error {
+        string resourcePath = string `/payment_links/${getEncodedUri(paymentLink)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a payment link.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_links/[string payment_link](payment_links_payment_link_body payload, map<string|string[]> headers = {}) returns Payment_link|error {
-        string resourcePath = string `/payment_links/${getEncodedUri(payment_link)}`;
+    # + return - Successful response 
+    resource isolated function post payment_links/[string paymentLink](PaymentLinkspaymentLinkBody payload, map<string|string[]> headers = {}) returns PaymentLink|error {
+        string resourcePath = string `/payment_links/${getEncodedUri(paymentLink)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"after_completion": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "custom_fields": {style: DEEPOBJECT, explode: true}, "custom_text": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "inactive_message": {style: DEEPOBJECT, explode: true}, "invoice_creation": {style: DEEPOBJECT, explode: true}, "line_items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "payment_intent_data": {style: DEEPOBJECT, explode: true}, "payment_method_types": {style: DEEPOBJECT, explode: true}, "restrictions": {style: DEEPOBJECT, explode: true}, "shipping_address_collection": {style: DEEPOBJECT, explode: true}, "subscription_data": {style: DEEPOBJECT, explode: true}, "tax_id_collection": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5305,11 +3818,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>When retrieving a payment link, there is an includable <strong>line_items</strong> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_links/[string paymentLink]/line_items(map<string|string[]> headers = {}, *GetPaymentLinksPaymentLinkLineItemsQueries queries) returns PaymentLinksResourceListLineItems|error {
+        string resourcePath = string `/payment_links/${getEncodedUri(paymentLink)}/line_items`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>List payment method configurations</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_method_configurations(map<string|string[]> headers = {}, *GetPaymentMethodConfigurationsQueries queries) returns PaymentMethodConfigResourcePaymentMethodConfigurationsList|error {
+        string resourcePath = string `/payment_method_configurations`;
+        map<Encoding> queryParamEncoding = {"application": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a payment method configuration</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_method_configurations(payment_method_configurations_body payload, map<string|string[]> headers = {}) returns Payment_method_configuration|error {
+    # + return - Successful response 
+    resource isolated function post payment_method_configurations(PaymentMethodConfigurationsBody payload, map<string|string[]> headers = {}) returns PaymentMethodConfiguration|error {
         string resourcePath = string `/payment_method_configurations`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"acss_debit": {style: DEEPOBJECT, explode: true}, "affirm": {style: DEEPOBJECT, explode: true}, "afterpay_clearpay": {style: DEEPOBJECT, explode: true}, "alipay": {style: DEEPOBJECT, explode: true}, "amazon_pay": {style: DEEPOBJECT, explode: true}, "apple_pay": {style: DEEPOBJECT, explode: true}, "apple_pay_later": {style: DEEPOBJECT, explode: true}, "au_becs_debit": {style: DEEPOBJECT, explode: true}, "bacs_debit": {style: DEEPOBJECT, explode: true}, "bancontact": {style: DEEPOBJECT, explode: true}, "blik": {style: DEEPOBJECT, explode: true}, "boleto": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "cartes_bancaires": {style: DEEPOBJECT, explode: true}, "cashapp": {style: DEEPOBJECT, explode: true}, "customer_balance": {style: DEEPOBJECT, explode: true}, "eps": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "fpx": {style: DEEPOBJECT, explode: true}, "giropay": {style: DEEPOBJECT, explode: true}, "google_pay": {style: DEEPOBJECT, explode: true}, "grabpay": {style: DEEPOBJECT, explode: true}, "ideal": {style: DEEPOBJECT, explode: true}, "jcb": {style: DEEPOBJECT, explode: true}, "klarna": {style: DEEPOBJECT, explode: true}, "konbini": {style: DEEPOBJECT, explode: true}, "link": {style: DEEPOBJECT, explode: true}, "mobilepay": {style: DEEPOBJECT, explode: true}, "multibanco": {style: DEEPOBJECT, explode: true}, "oxxo": {style: DEEPOBJECT, explode: true}, "p24": {style: DEEPOBJECT, explode: true}, "paynow": {style: DEEPOBJECT, explode: true}, "paypal": {style: DEEPOBJECT, explode: true}, "promptpay": {style: DEEPOBJECT, explode: true}, "revolut_pay": {style: DEEPOBJECT, explode: true}, "sepa_debit": {style: DEEPOBJECT, explode: true}, "sofort": {style: DEEPOBJECT, explode: true}, "swish": {style: DEEPOBJECT, explode: true}, "us_bank_account": {style: DEEPOBJECT, explode: true}, "wechat_pay": {style: DEEPOBJECT, explode: true}, "zip": {style: DEEPOBJECT, explode: true}};
@@ -5318,11 +3855,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieve payment method configuration</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_method_configurations/[string configuration](map<string|string[]> headers = {}, *GetPaymentMethodConfigurationsConfigurationQueries queries) returns PaymentMethodConfiguration|error {
+        string resourcePath = string `/payment_method_configurations/${getEncodedUri(configuration)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Update payment method configuration</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_method_configurations/[string configuration](payment_method_configurations_configuration_body payload, map<string|string[]> headers = {}) returns Payment_method_configuration|error {
+    # + return - Successful response 
+    resource isolated function post payment_method_configurations/[string configuration](PaymentMethodConfigurationsconfigurationBody payload, map<string|string[]> headers = {}) returns PaymentMethodConfiguration|error {
         string resourcePath = string `/payment_method_configurations/${getEncodedUri(configuration)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"acss_debit": {style: DEEPOBJECT, explode: true}, "affirm": {style: DEEPOBJECT, explode: true}, "afterpay_clearpay": {style: DEEPOBJECT, explode: true}, "alipay": {style: DEEPOBJECT, explode: true}, "amazon_pay": {style: DEEPOBJECT, explode: true}, "apple_pay": {style: DEEPOBJECT, explode: true}, "apple_pay_later": {style: DEEPOBJECT, explode: true}, "au_becs_debit": {style: DEEPOBJECT, explode: true}, "bacs_debit": {style: DEEPOBJECT, explode: true}, "bancontact": {style: DEEPOBJECT, explode: true}, "blik": {style: DEEPOBJECT, explode: true}, "boleto": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "cartes_bancaires": {style: DEEPOBJECT, explode: true}, "cashapp": {style: DEEPOBJECT, explode: true}, "customer_balance": {style: DEEPOBJECT, explode: true}, "eps": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "fpx": {style: DEEPOBJECT, explode: true}, "giropay": {style: DEEPOBJECT, explode: true}, "google_pay": {style: DEEPOBJECT, explode: true}, "grabpay": {style: DEEPOBJECT, explode: true}, "ideal": {style: DEEPOBJECT, explode: true}, "jcb": {style: DEEPOBJECT, explode: true}, "klarna": {style: DEEPOBJECT, explode: true}, "konbini": {style: DEEPOBJECT, explode: true}, "link": {style: DEEPOBJECT, explode: true}, "mobilepay": {style: DEEPOBJECT, explode: true}, "multibanco": {style: DEEPOBJECT, explode: true}, "oxxo": {style: DEEPOBJECT, explode: true}, "p24": {style: DEEPOBJECT, explode: true}, "paynow": {style: DEEPOBJECT, explode: true}, "paypal": {style: DEEPOBJECT, explode: true}, "promptpay": {style: DEEPOBJECT, explode: true}, "revolut_pay": {style: DEEPOBJECT, explode: true}, "sepa_debit": {style: DEEPOBJECT, explode: true}, "sofort": {style: DEEPOBJECT, explode: true}, "swish": {style: DEEPOBJECT, explode: true}, "us_bank_account": {style: DEEPOBJECT, explode: true}, "wechat_pay": {style: DEEPOBJECT, explode: true}, "zip": {style: DEEPOBJECT, explode: true}};
@@ -5331,11 +3880,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Lists the details of existing payment method domains.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_method_domains(map<string|string[]> headers = {}, *GetPaymentMethodDomainsQueries queries) returns PaymentMethodDomainResourcePaymentMethodDomainList|error {
+        string resourcePath = string `/payment_method_domains`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a payment method domain.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_method_domains(payment_method_domains_body payload, map<string|string[]> headers = {}) returns Payment_method_domain|error {
+    # + return - Successful response 
+    resource isolated function post payment_method_domains(PaymentMethodDomainsBody payload, map<string|string[]> headers = {}) returns PaymentMethodDomain|error {
         string resourcePath = string `/payment_method_domains`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5344,12 +3905,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing payment method domain.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_method_domains/[string paymentMethodDomain](map<string|string[]> headers = {}, *GetPaymentMethodDomainsPaymentMethodDomainQueries queries) returns PaymentMethodDomain|error {
+        string resourcePath = string `/payment_method_domains/${getEncodedUri(paymentMethodDomain)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing payment method domain.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_method_domains/[string payment_method_domain](payment_method_domains_payment_method_domain_body payload, map<string|string[]> headers = {}) returns Payment_method_domain|error {
-        string resourcePath = string `/payment_method_domains/${getEncodedUri(payment_method_domain)}`;
+    # + return - Successful response 
+    resource isolated function post payment_method_domains/[string paymentMethodDomain](PaymentMethodDomainspaymentMethodDomainBody payload, map<string|string[]> headers = {}) returns PaymentMethodDomain|error {
+        string resourcePath = string `/payment_method_domains/${getEncodedUri(paymentMethodDomain)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5365,9 +3938,9 @@ public isolated client class Client {
     # <p>Related guides: <a href="/docs/payments/payment-methods/pmd-registration">Payment method domains</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_method_domains/[string payment_method_domain]/validate(payment_method_domain_validate_body payload, map<string|string[]> headers = {}) returns Payment_method_domain|error {
-        string resourcePath = string `/payment_method_domains/${getEncodedUri(payment_method_domain)}/validate`;
+    # + return - Successful response 
+    resource isolated function post payment_method_domains/[string paymentMethodDomain]/validate(PaymentMethodDomainValidateBody payload, map<string|string[]> headers = {}) returns PaymentMethodDomain|error {
+        string resourcePath = string `/payment_method_domains/${getEncodedUri(paymentMethodDomain)}/validate`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5375,13 +3948,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of PaymentMethods for Treasury flows. If you want to list the PaymentMethods attached to a Customer for payments, you should use the <a href="/docs/api/payment_methods/customer_list">List a Customer’s PaymentMethods</a> API instead.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_methods(map<string|string[]> headers = {}, *GetPaymentMethodsQueries queries) returns PaymentFlowsPaymentMethodList|error {
+        string resourcePath = string `/payment_methods`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a PaymentMethod object. Read the <a href="/docs/stripe-js/reference#stripe-create-payment-method">Stripe.js reference</a> to learn how to create PaymentMethods via Stripe.js.</p>
     # 
     # <p>Instead of creating a PaymentMethod directly, we recommend using the <a href="/docs/payments/accept-a-payment">PaymentIntents</a> API to accept a payment immediately or the <a href="/docs/payments/save-and-reuse">SetupIntent</a> API to collect payment method details ahead of a future payment.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_methods(payment_methods_body payload, map<string|string[]> headers = {}) returns Payment_method|error {
+    # + return - Successful response 
+    resource isolated function post payment_methods(PaymentMethodsBody payload, map<string|string[]> headers = {}) returns PaymentMethod|error {
         string resourcePath = string `/payment_methods`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"acss_debit": {style: DEEPOBJECT, explode: true}, "affirm": {style: DEEPOBJECT, explode: true}, "afterpay_clearpay": {style: DEEPOBJECT, explode: true}, "alipay": {style: DEEPOBJECT, explode: true}, "amazon_pay": {style: DEEPOBJECT, explode: true}, "au_becs_debit": {style: DEEPOBJECT, explode: true}, "bacs_debit": {style: DEEPOBJECT, explode: true}, "bancontact": {style: DEEPOBJECT, explode: true}, "billing_details": {style: DEEPOBJECT, explode: true}, "blik": {style: DEEPOBJECT, explode: true}, "boleto": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "cashapp": {style: DEEPOBJECT, explode: true}, "customer_balance": {style: DEEPOBJECT, explode: true}, "eps": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "fpx": {style: DEEPOBJECT, explode: true}, "giropay": {style: DEEPOBJECT, explode: true}, "grabpay": {style: DEEPOBJECT, explode: true}, "ideal": {style: DEEPOBJECT, explode: true}, "interac_present": {style: DEEPOBJECT, explode: true}, "klarna": {style: DEEPOBJECT, explode: true}, "konbini": {style: DEEPOBJECT, explode: true}, "link": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "mobilepay": {style: DEEPOBJECT, explode: true}, "multibanco": {style: DEEPOBJECT, explode: true}, "oxxo": {style: DEEPOBJECT, explode: true}, "p24": {style: DEEPOBJECT, explode: true}, "paynow": {style: DEEPOBJECT, explode: true}, "paypal": {style: DEEPOBJECT, explode: true}, "pix": {style: DEEPOBJECT, explode: true}, "promptpay": {style: DEEPOBJECT, explode: true}, "radar_options": {style: DEEPOBJECT, explode: true}, "revolut_pay": {style: DEEPOBJECT, explode: true}, "sepa_debit": {style: DEEPOBJECT, explode: true}, "sofort": {style: DEEPOBJECT, explode: true}, "swish": {style: DEEPOBJECT, explode: true}, "twint": {style: DEEPOBJECT, explode: true}, "us_bank_account": {style: DEEPOBJECT, explode: true}, "wechat_pay": {style: DEEPOBJECT, explode: true}, "zip": {style: DEEPOBJECT, explode: true}};
@@ -5390,12 +3975,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a PaymentMethod object attached to the StripeAccount. To retrieve a payment method attached to a Customer, you should use <a href="/docs/api/payment_methods/customer">Retrieve a Customer’s PaymentMethods</a></p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payment_methods/[string paymentMethod](map<string|string[]> headers = {}, *GetPaymentMethodsPaymentMethodQueries queries) returns PaymentMethod|error {
+        string resourcePath = string `/payment_methods/${getEncodedUri(paymentMethod)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a PaymentMethod object. A PaymentMethod must be attached a customer to be updated.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_methods/[string payment_method](payment_methods_payment_method_body payload, map<string|string[]> headers = {}) returns Payment_method|error {
-        string resourcePath = string `/payment_methods/${getEncodedUri(payment_method)}`;
+    # + return - Successful response 
+    resource isolated function post payment_methods/[string paymentMethod](PaymentMethodspaymentMethodBody payload, map<string|string[]> headers = {}) returns PaymentMethod|error {
+        string resourcePath = string `/payment_methods/${getEncodedUri(paymentMethod)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"billing_details": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "link": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "us_bank_account": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5418,9 +4015,9 @@ public isolated client class Client {
     # on the Customer to the PaymentMethod’s ID.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_methods/[string payment_method]/attach(payment_method_attach_body payload, map<string|string[]> headers = {}) returns Payment_method|error {
-        string resourcePath = string `/payment_methods/${getEncodedUri(payment_method)}/attach`;
+    # + return - Successful response 
+    resource isolated function post payment_methods/[string paymentMethod]/attach(PaymentMethodAttachBody payload, map<string|string[]> headers = {}) returns PaymentMethod|error {
+        string resourcePath = string `/payment_methods/${getEncodedUri(paymentMethod)}/attach`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5431,14 +4028,26 @@ public isolated client class Client {
     # <p>Detaches a PaymentMethod object from a Customer. After a PaymentMethod is detached, it can no longer be used for a payment or re-attached to a Customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payment_methods/[string payment_method]/detach(payment_method_detach_body payload, map<string|string[]> headers = {}) returns Payment_method|error {
-        string resourcePath = string `/payment_methods/${getEncodedUri(payment_method)}/detach`;
+    # + return - Successful response 
+    resource isolated function post payment_methods/[string paymentMethod]/detach(PaymentMethodDetachBody payload, map<string|string[]> headers = {}) returns PaymentMethod|error {
+        string resourcePath = string `/payment_methods/${getEncodedUri(paymentMethod)}/detach`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Returns a list of existing payouts sent to third-party bank accounts or payouts that Stripe sent to you. The payouts return in sorted order, with the most recently created payouts appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payouts(map<string|string[]> headers = {}, *GetPayoutsQueries queries) returns PayoutList|error {
+        string resourcePath = string `/payouts`;
+        map<Encoding> queryParamEncoding = {"arrival_date": {style: DEEPOBJECT, explode: true}, "created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>To send funds to your own bank account, create a new payout object. Your <a href="#balance">Stripe balance</a> must cover the payout amount. If it doesn’t, you receive an “Insufficient Funds” error.</p>
@@ -5448,8 +4057,8 @@ public isolated client class Client {
     # <p>If you create a manual payout on a Stripe account that uses multiple payment source types, you need to specify the source type balance that the payout draws from. The <a href="#balance_object">balance object</a> details available and pending amounts by source type.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payouts(payouts_body payload, map<string|string[]> headers = {}) returns Payout|error {
+    # + return - Successful response 
+    resource isolated function post payouts(PayoutsBody payload, map<string|string[]> headers = {}) returns Payout|error {
         string resourcePath = string `/payouts`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5458,11 +4067,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing payout. Supply the unique payout ID from either a payout creation request or the payout list. Stripe returns the corresponding payout information.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get payouts/[string payout](map<string|string[]> headers = {}, *GetPayoutsPayoutQueries queries) returns Payout|error {
+        string resourcePath = string `/payouts/${getEncodedUri(payout)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified payout by setting the values of the parameters you pass. We don’t change parameters that you don’t provide. This request only accepts the metadata as arguments.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payouts/[string payout](payouts_payout_body payload, map<string|string[]> headers = {}) returns Payout|error {
+    # + return - Successful response 
+    resource isolated function post payouts/[string payout](PayoutspayoutBody payload, map<string|string[]> headers = {}) returns Payout|error {
         string resourcePath = string `/payouts/${getEncodedUri(payout)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5474,8 +4095,8 @@ public isolated client class Client {
     # <p>You can cancel a previously created payout if its status is <code>pending</code>. Stripe refunds the funds to your available balance. You can’t cancel automatic Stripe payouts.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payouts/[string payout]/cancel(payout_cancel_body payload, map<string|string[]> headers = {}) returns Payout|error {
+    # + return - Successful response 
+    resource isolated function post payouts/[string payout]/cancel(PayoutCancelBody payload, map<string|string[]> headers = {}) returns Payout|error {
         string resourcePath = string `/payouts/${getEncodedUri(payout)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5489,8 +4110,8 @@ public isolated client class Client {
     # <p>By requesting a reversal through <code>/v1/payouts/:id/reverse</code>, you confirm that the authorized signatory of the selected bank account authorizes the debit on the bank account and that no other authorization is required.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post payouts/[string payout]/reverse(payout_reverse_body payload, map<string|string[]> headers = {}) returns Payout|error {
+    # + return - Successful response 
+    resource isolated function post payouts/[string payout]/reverse(PayoutReverseBody payload, map<string|string[]> headers = {}) returns Payout|error {
         string resourcePath = string `/payouts/${getEncodedUri(payout)}/reverse`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5499,11 +4120,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your plans.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get plans(map<string|string[]> headers = {}, *GetPlansQueries queries) returns PlanList|error {
+        string resourcePath = string `/plans`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>You can now model subscriptions more flexibly using the <a href="#prices">Prices API</a>. It replaces the Plans API and is backwards compatible to simplify your migration.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post plans(plans_body payload, map<string|string[]> headers = {}) returns Plan|error {
+    # + return - Successful response 
+    resource isolated function post plans(PlansBody payload, map<string|string[]> headers = {}) returns Plan|error {
         string resourcePath = string `/plans`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "product": {style: DEEPOBJECT, explode: true}, "tiers": {style: DEEPOBJECT, explode: true}, "transform_usage": {style: DEEPOBJECT, explode: true}};
@@ -5512,11 +4145,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the plan with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get plans/[string plan](map<string|string[]> headers = {}, *GetPlansPlanQueries queries) returns Plan|error {
+        string resourcePath = string `/plans/${getEncodedUri(plan)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified plan by setting the values of the parameters passed. Any parameters not provided are left unchanged. By design, you cannot change a plan’s ID, amount, currency, or billing cycle.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post plans/[string plan](plans_plan_body payload, map<string|string[]> headers = {}) returns Plan|error {
+    # + return - Successful response 
+    resource isolated function post plans/[string plan](PlansplanBody payload, map<string|string[]> headers = {}) returns Plan|error {
         string resourcePath = string `/plans/${getEncodedUri(plan)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5525,11 +4170,32 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Deleting plans means new subscribers can’t be added. Existing subscribers aren’t affected.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete plans/[string plan](map<string|string[]> headers = {}) returns DeletedPlan|error {
+        string resourcePath = string `/plans/${getEncodedUri(plan)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of your active prices, excluding <a href="/docs/products-prices/pricing-models#inline-pricing">inline prices</a>. For the list of inactive prices, set <code>active</code> to false.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get prices(map<string|string[]> headers = {}, *GetPricesQueries queries) returns PriceList|error {
+        string resourcePath = string `/prices`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "lookup_keys": {style: DEEPOBJECT, explode: true}, "recurring": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new price for an existing product. The price can be recurring or one-time.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post prices(prices_body payload, map<string|string[]> headers = {}) returns Price|error {
+    # + return - Successful response 
+    resource isolated function post prices(PricesBody payload, map<string|string[]> headers = {}) returns Price|error {
         string resourcePath = string `/prices`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"currency_options": {style: DEEPOBJECT, explode: true}, "custom_unit_amount": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "product_data": {style: DEEPOBJECT, explode: true}, "recurring": {style: DEEPOBJECT, explode: true}, "tiers": {style: DEEPOBJECT, explode: true}, "transform_quantity": {style: DEEPOBJECT, explode: true}};
@@ -5538,11 +4204,38 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Search for prices you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
+    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
+    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
+    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get prices/search(map<string|string[]> headers = {}, *GetPricesSearchQueries queries) returns SearchResult4|error {
+        string resourcePath = string `/prices/search`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the price with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get prices/[string price](map<string|string[]> headers = {}, *GetPricesPriceQueries queries) returns Price|error {
+        string resourcePath = string `/prices/${getEncodedUri(price)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified price by setting the values of the parameters passed. Any parameters not provided are left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post prices/[string price](prices_price_body payload, map<string|string[]> headers = {}) returns Price|error {
+    # + return - Successful response 
+    resource isolated function post prices/[string price](PricespriceBody payload, map<string|string[]> headers = {}) returns Price|error {
         string resourcePath = string `/prices/${getEncodedUri(price)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"currency_options": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5551,11 +4244,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your products. The products are returned sorted by creation date, with the most recently created products appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get products(map<string|string[]> headers = {}, *GetProductsQueries queries) returns ProductList|error {
+        string resourcePath = string `/products`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "ids": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new product object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post products(products_body payload, map<string|string[]> headers = {}) returns Product|error {
+    # + return - Successful response 
+    resource isolated function post products(ProductsBody payload, map<string|string[]> headers = {}) returns Product|error {
         string resourcePath = string `/products`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"default_price_data": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "images": {style: DEEPOBJECT, explode: true}, "marketing_features": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "package_dimensions": {style: DEEPOBJECT, explode: true}};
@@ -5564,11 +4269,38 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Search for products you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
+    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
+    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
+    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get products/search(map<string|string[]> headers = {}, *GetProductsSearchQueries queries) returns SearchResult5|error {
+        string resourcePath = string `/products/search`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an existing product. Supply the unique product ID from either a product creation request or the product list, and Stripe will return the corresponding product information.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get products/[string id](map<string|string[]> headers = {}, *GetProductsIdQueries queries) returns Product|error {
+        string resourcePath = string `/products/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specific product by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post products/[string id](products_id_body payload, map<string|string[]> headers = {}) returns Product|error {
+    # + return - Successful response 
+    resource isolated function post products/[string id](ProductsidBody payload, map<string|string[]> headers = {}) returns Product|error {
         string resourcePath = string `/products/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"description": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "images": {style: DEEPOBJECT, explode: true}, "marketing_features": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "package_dimensions": {style: DEEPOBJECT, explode: true}, "tax_code": {style: DEEPOBJECT, explode: true}, "unit_label": {style: DEEPOBJECT, explode: true}, "url": {style: DEEPOBJECT, explode: true}};
@@ -5577,11 +4309,32 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Delete a product. Deleting a product is only possible if it has no prices associated with it. Additionally, deleting a product with <code>type=good</code> is only possible if it has no SKUs associated with it.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete products/[string id](map<string|string[]> headers = {}) returns DeletedProduct|error {
+        string resourcePath = string `/products/${getEncodedUri(id)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Retrieve a list of features for a product</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get products/[string product]/features(map<string|string[]> headers = {}, *GetProductsProductFeaturesQueries queries) returns EntitlementsResourceProductFeatureList|error {
+        string resourcePath = string `/products/${getEncodedUri(product)}/features`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a product_feature, which represents a feature attachment to a product</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post products/[string product]/features(product_features_body payload, map<string|string[]> headers = {}) returns Product_feature|error {
+    # + return - Successful response 
+    resource isolated function post products/[string product]/features(ProductFeaturesBody payload, map<string|string[]> headers = {}) returns ProductFeature|error {
         string resourcePath = string `/products/${getEncodedUri(product)}/features`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5590,11 +4343,46 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a product_feature, which represents a feature attachment to a product</p>
+    #
+    # + id - The ID of the product_feature
+    # + product - The ID of the product
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get products/[string product]/features/[string id](map<string|string[]> headers = {}, *GetProductsProductFeaturesIdQueries queries) returns ProductFeature|error {
+        string resourcePath = string `/products/${getEncodedUri(product)}/features/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Deletes the feature attachment to a product</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete products/[string product]/features/[string id](map<string|string[]> headers = {}) returns DeletedProductFeature|error {
+        string resourcePath = string `/products/${getEncodedUri(product)}/features/${getEncodedUri(id)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of your promotion codes.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get promotion_codes(map<string|string[]> headers = {}, *GetPromotionCodesQueries queries) returns PromotionCodesResourcePromotionCodeList|error {
+        string resourcePath = string `/promotion_codes`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>A promotion code points to a coupon. You can optionally restrict the code to a specific customer, redemption limit, and expiration date.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post promotion_codes(promotion_codes_body payload, map<string|string[]> headers = {}) returns Promotion_code|error {
+    # + return - Successful response 
+    resource isolated function post promotion_codes(PromotionCodesBody payload, map<string|string[]> headers = {}) returns PromotionCode|error {
         string resourcePath = string `/promotion_codes`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "restrictions": {style: DEEPOBJECT, explode: true}};
@@ -5603,12 +4391,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the promotion code with the given ID. In order to retrieve a promotion code by the customer-facing <code>code</code> use <a href="/docs/api/promotion_codes/list">list</a> with the desired <code>code</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get promotion_codes/[string promotionCode](map<string|string[]> headers = {}, *GetPromotionCodesPromotionCodeQueries queries) returns PromotionCode|error {
+        string resourcePath = string `/promotion_codes/${getEncodedUri(promotionCode)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified promotion code by setting the values of the parameters passed. Most fields are, by design, not editable.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post promotion_codes/[string promotion_code](promotion_codes_promotion_code_body payload, map<string|string[]> headers = {}) returns Promotion_code|error {
-        string resourcePath = string `/promotion_codes/${getEncodedUri(promotion_code)}`;
+    # + return - Successful response 
+    resource isolated function post promotion_codes/[string promotionCode](PromotionCodespromotionCodeBody payload, map<string|string[]> headers = {}) returns PromotionCode|error {
+        string resourcePath = string `/promotion_codes/${getEncodedUri(promotionCode)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "restrictions": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5616,11 +4416,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your quotes.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get quotes(map<string|string[]> headers = {}, *GetQuotesQueries queries) returns QuotesResourceQuoteList|error {
+        string resourcePath = string `/quotes`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>A quote models prices and services for a customer. Default options for <code>header</code>, <code>description</code>, <code>footer</code>, and <code>expires_at</code> can be set in the dashboard via the <a href="https://dashboard.stripe.com/settings/billing/quote">quote template</a>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post quotes(quotes_body payload, map<string|string[]> headers = {}) returns Quote|error {
+    # + return - Successful response 
+    resource isolated function post quotes(QuotesBody payload, map<string|string[]> headers = {}) returns Quote|error {
         string resourcePath = string `/quotes`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"application_fee_amount": {style: DEEPOBJECT, explode: true}, "application_fee_percent": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "description": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "footer": {style: DEEPOBJECT, explode: true}, "from_quote": {style: DEEPOBJECT, explode: true}, "header": {style: DEEPOBJECT, explode: true}, "invoice_settings": {style: DEEPOBJECT, explode: true}, "line_items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "subscription_data": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
@@ -5629,11 +4441,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the quote with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get quotes/[string quote](map<string|string[]> headers = {}, *GetQuotesQuoteQueries queries) returns Quote|error {
+        string resourcePath = string `/quotes/${getEncodedUri(quote)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>A quote models prices and services for a customer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post quotes/[string quote](quotes_quote_body payload, map<string|string[]> headers = {}) returns Quote|error {
+    # + return - Successful response 
+    resource isolated function post quotes/[string quote](QuotesquoteBody payload, map<string|string[]> headers = {}) returns Quote|error {
         string resourcePath = string `/quotes/${getEncodedUri(quote)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"application_fee_amount": {style: DEEPOBJECT, explode: true}, "application_fee_percent": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "description": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "footer": {style: DEEPOBJECT, explode: true}, "header": {style: DEEPOBJECT, explode: true}, "invoice_settings": {style: DEEPOBJECT, explode: true}, "line_items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "subscription_data": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}};
@@ -5645,8 +4469,8 @@ public isolated client class Client {
     # <p>Accepts the specified quote.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post quotes/[string quote]/accept(quote_accept_body payload, map<string|string[]> headers = {}) returns Quote|error {
+    # + return - Successful response 
+    resource isolated function post quotes/[string quote]/accept(QuoteAcceptBody payload, map<string|string[]> headers = {}) returns Quote|error {
         string resourcePath = string `/quotes/${getEncodedUri(quote)}/accept`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5658,8 +4482,8 @@ public isolated client class Client {
     # <p>Cancels the quote.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post quotes/[string quote]/cancel(quote_cancel_body payload, map<string|string[]> headers = {}) returns Quote|error {
+    # + return - Successful response 
+    resource isolated function post quotes/[string quote]/cancel(QuoteCancelBody payload, map<string|string[]> headers = {}) returns Quote|error {
         string resourcePath = string `/quotes/${getEncodedUri(quote)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5668,11 +4492,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>When retrieving a quote, there is an includable <a href="https://stripe.com/docs/api/quotes/object#quote_object-computed-upfront-line_items"><strong>computed.upfront.line_items</strong></a> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of upfront line items.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get quotes/[string quote]/computed_upfront_line_items(map<string|string[]> headers = {}, *GetQuotesQuoteComputedUpfrontLineItemsQueries queries) returns QuotesResourceListLineItems|error {
+        string resourcePath = string `/quotes/${getEncodedUri(quote)}/computed_upfront_line_items`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Finalizes the quote.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post quotes/[string quote]/finalize(quote_finalize_body payload, map<string|string[]> headers = {}) returns Quote|error {
+    # + return - Successful response 
+    resource isolated function post quotes/[string quote]/finalize(QuoteFinalizeBody payload, map<string|string[]> headers = {}) returns Quote|error {
         string resourcePath = string `/quotes/${getEncodedUri(quote)}/finalize`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5681,11 +4517,73 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>When retrieving a quote, there is an includable <strong>line_items</strong> property containing the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get quotes/[string quote]/line_items(map<string|string[]> headers = {}, *GetQuotesQuoteLineItemsQueries queries) returns QuotesResourceListLineItems1|error {
+        string resourcePath = string `/quotes/${getEncodedUri(quote)}/line_items`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Download the PDF for a finalized quote. Explanation for special handling can be found <a href="https://docs.corp.stripe.com/quotes/overview#quote_pdf">here</a></p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get quotes/[string quote]/pdf(map<string|string[]> headers = {}, *GetQuotesQuotePdfQueries queries) returns http:Response|error {
+        string resourcePath = string `/quotes/${getEncodedUri(quote)}/pdf`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of early fraud warnings.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get radar/early_fraud_warnings(map<string|string[]> headers = {}, *GetRadarEarlyFraudWarningsQueries queries) returns RadarEarlyFraudWarningList|error {
+        string resourcePath = string `/radar/early_fraud_warnings`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an early fraud warning that has previously been created. </p>
+    # 
+    # <p>Please refer to the <a href="#early_fraud_warning_object">early fraud warning</a> object reference for more details.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get radar/early_fraud_warnings/[string earlyFraudWarning](map<string|string[]> headers = {}, *GetRadarEarlyFraudWarningsEarlyFraudWarningQueries queries) returns RadarEarlyFraudWarning|error {
+        string resourcePath = string `/radar/early_fraud_warnings/${getEncodedUri(earlyFraudWarning)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of <code>ValueListItem</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get radar/value_list_items(map<string|string[]> headers = {}, *GetRadarValueListItemsQueries queries) returns RadarListListItemList|error {
+        string resourcePath = string `/radar/value_list_items`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new <code>ValueListItem</code> object, which is added to the specified parent value list.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post radar/value_list_items(radar_value_list_items_body payload, map<string|string[]> headers = {}) returns Radar\.value_list_item|error {
+    # + return - Successful response 
+    resource isolated function post radar/value_list_items(RadarValueListItemsBody payload, map<string|string[]> headers = {}) returns RadarValueListItem|error {
         string resourcePath = string `/radar/value_list_items`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5694,11 +4592,44 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a <code>ValueListItem</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get radar/value_list_items/[string item](map<string|string[]> headers = {}, *GetRadarValueListItemsItemQueries queries) returns RadarValueListItem|error {
+        string resourcePath = string `/radar/value_list_items/${getEncodedUri(item)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Deletes a <code>ValueListItem</code> object, removing it from its parent value list.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete radar/value_list_items/[string item](map<string|string[]> headers = {}) returns DeletedRadarValueListItem|error {
+        string resourcePath = string `/radar/value_list_items/${getEncodedUri(item)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of <code>ValueList</code> objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get radar/value_lists(map<string|string[]> headers = {}, *GetRadarValueListsQueries queries) returns RadarListListList|error {
+        string resourcePath = string `/radar/value_lists`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new <code>ValueList</code> object, which can then be referenced in rules.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post radar/value_lists(radar_value_lists_body payload, map<string|string[]> headers = {}) returns Radar\.value_list|error {
+    # + return - Successful response 
+    resource isolated function post radar/value_lists(RadarValueListsBody payload, map<string|string[]> headers = {}) returns RadarValueList|error {
         string resourcePath = string `/radar/value_lists`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5707,17 +4638,50 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a <code>ValueList</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get radar/value_lists/[string valueList](map<string|string[]> headers = {}, *GetRadarValueListsValueListQueries queries) returns RadarValueList|error {
+        string resourcePath = string `/radar/value_lists/${getEncodedUri(valueList)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a <code>ValueList</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged. Note that <code>item_type</code> is immutable.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post radar/value_lists/[string value_list](value_lists_value_list_body payload, map<string|string[]> headers = {}) returns Radar\.value_list|error {
-        string resourcePath = string `/radar/value_lists/${getEncodedUri(value_list)}`;
+    # + return - Successful response 
+    resource isolated function post radar/value_lists/[string valueList](ValueListsvalueListBody payload, map<string|string[]> headers = {}) returns RadarValueList|error {
+        string resourcePath = string `/radar/value_lists/${getEncodedUri(valueList)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Deletes a <code>ValueList</code> object, also deleting any items contained within the value list. To be deleted, a value list must not be referenced in any rules.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete radar/value_lists/[string valueList](map<string|string[]> headers = {}) returns DeletedRadarValueList|error {
+        string resourcePath = string `/radar/value_lists/${getEncodedUri(valueList)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of all refunds you created. We return the refunds in sorted order, with the most recent refunds appearing first The 10 most recent refunds are always available by default on the Charge object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get refunds(map<string|string[]> headers = {}, *GetRefundsQueries queries) returns APIMethodRefundList|error {
+        string resourcePath = string `/refunds`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>When you create a new refund, you must specify a Charge or a PaymentIntent object on which to create it.</p>
@@ -5733,8 +4697,8 @@ public isolated client class Client {
     # or when trying to refund more money than is left on a charge.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post refunds(refunds_body payload, map<string|string[]> headers = {}) returns Refund|error {
+    # + return - Successful response 
+    resource isolated function post refunds(RefundsBody payload, map<string|string[]> headers = {}) returns Refund|error {
         string resourcePath = string `/refunds`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5743,13 +4707,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing refund.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get refunds/[string refund](map<string|string[]> headers = {}, *GetRefundsRefundQueries queries) returns Refund|error {
+        string resourcePath = string `/refunds/${getEncodedUri(refund)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the refund that you specify by setting the values of the passed parameters. Any parameters that you don’t provide remain unchanged.</p>
     # 
     # <p>This request only accepts <code>metadata</code> as an argument.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post refunds/[string refund](refunds_refund_body_1 payload, map<string|string[]> headers = {}) returns Refund|error {
+    # + return - Successful response 
+    resource isolated function post refunds/[string refund](RefundsrefundBody1 payload, map<string|string[]> headers = {}) returns Refund|error {
         string resourcePath = string `/refunds/${getEncodedUri(refund)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5763,8 +4739,8 @@ public isolated client class Client {
     # <p>You can’t cancel refunds in other states. Only refunds for payment methods that require customer action can enter the <code>requires_action</code> state.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post refunds/[string refund]/cancel(refund_cancel_body payload, map<string|string[]> headers = {}) returns Refund|error {
+    # + return - Successful response 
+    resource isolated function post refunds/[string refund]/cancel(RefundCancelBody payload, map<string|string[]> headers = {}) returns Refund|error {
         string resourcePath = string `/refunds/${getEncodedUri(refund)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5773,11 +4749,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of Report Runs, with the most recent appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get reporting/report_runs(map<string|string[]> headers = {}, *GetReportingReportRunsQueries queries) returns FinancialReportingFinanceReportRunList|error {
+        string resourcePath = string `/reporting/report_runs`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new object and begin running the report. (Certain report types require a <a href="https://stripe.com/docs/keys#test-live-modes">live-mode API key</a>.)</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post reporting/report_runs(reporting_report_runs_body payload, map<string|string[]> headers = {}) returns Reporting\.report_run|error {
+    # + return - Successful response 
+    resource isolated function post reporting/report_runs(ReportingReportRunsBody payload, map<string|string[]> headers = {}) returns ReportingReportRun|error {
         string resourcePath = string `/reporting/report_runs`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "parameters": {style: DEEPOBJECT, explode: true}};
@@ -5786,11 +4774,71 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing Report Run.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get reporting/report_runs/[string reportRun](map<string|string[]> headers = {}, *GetReportingReportRunsReportRunQueries queries) returns ReportingReportRun|error {
+        string resourcePath = string `/reporting/report_runs/${getEncodedUri(reportRun)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a full list of Report Types.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get reporting/report_types(map<string|string[]> headers = {}, *GetReportingReportTypesQueries queries) returns FinancialReportingFinanceReportTypeList|error {
+        string resourcePath = string `/reporting/report_types`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of a Report Type. (Certain report types require a <a href="https://stripe.com/docs/keys#test-live-modes">live-mode API key</a>.)</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get reporting/report_types/[string reportType](map<string|string[]> headers = {}, *GetReportingReportTypesReportTypeQueries queries) returns ReportingReportType|error {
+        string resourcePath = string `/reporting/report_types/${getEncodedUri(reportType)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of <code>Review</code> objects that have <code>open</code> set to <code>true</code>. The objects are sorted in descending order by creation date, with the most recently created object appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get reviews(map<string|string[]> headers = {}, *GetReviewsQueries queries) returns RadarReviewList|error {
+        string resourcePath = string `/reviews`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a <code>Review</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get reviews/[string review](map<string|string[]> headers = {}, *GetReviewsReviewQueries queries) returns Review|error {
+        string resourcePath = string `/reviews/${getEncodedUri(review)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Approves a <code>Review</code> object, closing it and removing it from the list of reviews.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post reviews/[string review]/approve(review_approve_body payload, map<string|string[]> headers = {}) returns Review|error {
+    # + return - Successful response 
+    resource isolated function post reviews/[string review]/approve(ReviewApproveBody payload, map<string|string[]> headers = {}) returns Review|error {
         string resourcePath = string `/reviews/${getEncodedUri(review)}/approve`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5799,14 +4847,38 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of SetupAttempts that associate with a provided SetupIntent.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get setup_attempts(map<string|string[]> headers = {}, *GetSetupAttemptsQueries queries) returns PaymentFlowsSetupIntentSetupAttemptList|error {
+        string resourcePath = string `/setup_attempts`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of SetupIntents.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get setup_intents(map<string|string[]> headers = {}, *GetSetupIntentsQueries queries) returns PaymentFlowsSetupIntentList|error {
+        string resourcePath = string `/setup_intents`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a SetupIntent object.</p>
     # 
     # <p>After you create the SetupIntent, attach a payment method and <a href="/docs/api/setup_intents/confirm">confirm</a>
     # it to collect any required permissions to charge the payment method later.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post setup_intents(setup_intents_body payload, map<string|string[]> headers = {}) returns Setup_intent|error {
+    # + return - Successful response 
+    resource isolated function post setup_intents(SetupIntentsBody payload, map<string|string[]> headers = {}) returns SetupIntent|error {
         string resourcePath = string `/setup_intents`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"automatic_payment_methods": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "flow_directions": {style: DEEPOBJECT, explode: true}, "mandate_data": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "payment_method_data": {style: DEEPOBJECT, explode: true}, "payment_method_options": {style: DEEPOBJECT, explode: true}, "payment_method_types": {style: DEEPOBJECT, explode: true}, "single_use": {style: DEEPOBJECT, explode: true}};
@@ -5815,11 +4887,27 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of a SetupIntent that has previously been created. </p>
+    # 
+    # <p>Client-side retrieval using a publishable key is allowed when the <code>client_secret</code> is provided in the query string. </p>
+    # 
+    # <p>When retrieved with a publishable key, only a subset of properties will be returned. Please refer to the <a href="#setup_intent_object">SetupIntent</a> object reference for more details.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get setup_intents/[string intent](map<string|string[]> headers = {}, *GetSetupIntentsIntentQueries queries) returns SetupIntent|error {
+        string resourcePath = string `/setup_intents/${getEncodedUri(intent)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a SetupIntent object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post setup_intents/[string intent](setup_intents_intent_body payload, map<string|string[]> headers = {}) returns Setup_intent|error {
+    # + return - Successful response 
+    resource isolated function post setup_intents/[string intent](SetupIntentsintentBody payload, map<string|string[]> headers = {}) returns SetupIntent|error {
         string resourcePath = string `/setup_intents/${getEncodedUri(intent)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "flow_directions": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "payment_method_data": {style: DEEPOBJECT, explode: true}, "payment_method_options": {style: DEEPOBJECT, explode: true}, "payment_method_types": {style: DEEPOBJECT, explode: true}};
@@ -5833,8 +4921,8 @@ public isolated client class Client {
     # <p>After you cancel it, setup is abandoned and any operations on the SetupIntent fail with an error. You can’t cancel the SetupIntent for a Checkout Session. <a href="/docs/api/checkout/sessions/expire">Expire the Checkout Session</a> instead.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post setup_intents/[string intent]/cancel(intent_cancel_body_1 payload, map<string|string[]> headers = {}) returns Setup_intent|error {
+    # + return - Successful response 
+    resource isolated function post setup_intents/[string intent]/cancel(IntentCancelBody1 payload, map<string|string[]> headers = {}) returns SetupIntent|error {
         string resourcePath = string `/setup_intents/${getEncodedUri(intent)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -5859,8 +4947,8 @@ public isolated client class Client {
     # confirmation limit is reached.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post setup_intents/[string intent]/confirm(intent_confirm_body_1 payload, map<string|string[]> headers = {}) returns Setup_intent|error {
+    # + return - Successful response 
+    resource isolated function post setup_intents/[string intent]/confirm(IntentConfirmBody1 payload, map<string|string[]> headers = {}) returns SetupIntent|error {
         string resourcePath = string `/setup_intents/${getEncodedUri(intent)}/confirm`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "mandate_data": {style: DEEPOBJECT, explode: true}, "payment_method_data": {style: DEEPOBJECT, explode: true}, "payment_method_options": {style: DEEPOBJECT, explode: true}};
@@ -5872,8 +4960,8 @@ public isolated client class Client {
     # <p>Verifies microdeposits on a SetupIntent object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post setup_intents/[string intent]/verify_microdeposits(intent_verify_microdeposits_body_1 payload, map<string|string[]> headers = {}) returns Setup_intent|error {
+    # + return - Successful response 
+    resource isolated function post setup_intents/[string intent]/verify_microdeposits(IntentVerifyMicrodepositsBody1 payload, map<string|string[]> headers = {}) returns SetupIntent|error {
         string resourcePath = string `/setup_intents/${getEncodedUri(intent)}/verify_microdeposits`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"amounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -5882,11 +4970,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your shipping rates.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get shipping_rates(map<string|string[]> headers = {}, *GetShippingRatesQueries queries) returns ShippingResourcesShippingRateList|error {
+        string resourcePath = string `/shipping_rates`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new shipping rate object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post shipping_rates(shipping_rates_body payload, map<string|string[]> headers = {}) returns Shipping_rate|error {
+    # + return - Successful response 
+    resource isolated function post shipping_rates(ShippingRatesBody payload, map<string|string[]> headers = {}) returns ShippingRate|error {
         string resourcePath = string `/shipping_rates`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"delivery_estimate": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "fixed_amount": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -5895,12 +4995,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns the shipping rate object with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get shipping_rates/[string shippingRateToken](map<string|string[]> headers = {}, *GetShippingRatesShippingRateTokenQueries queries) returns ShippingRate|error {
+        string resourcePath = string `/shipping_rates/${getEncodedUri(shippingRateToken)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing shipping rate object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post shipping_rates/[string shipping_rate_token](shipping_rates_shipping_rate_token_body payload, map<string|string[]> headers = {}) returns Shipping_rate|error {
-        string resourcePath = string `/shipping_rates/${getEncodedUri(shipping_rate_token)}`;
+    # + return - Successful response 
+    resource isolated function post shipping_rates/[string shippingRateToken](ShippingRatesshippingRateTokenBody payload, map<string|string[]> headers = {}) returns ShippingRate|error {
+        string resourcePath = string `/shipping_rates/${getEncodedUri(shippingRateToken)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "fixed_amount": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5908,11 +5020,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of scheduled query runs.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get sigma/scheduled_query_runs(map<string|string[]> headers = {}, *GetSigmaScheduledQueryRunsQueries queries) returns SigmaScheduledQueryRunList|error {
+        string resourcePath = string `/sigma/scheduled_query_runs`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an scheduled query run.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get sigma/scheduled_query_runs/[string scheduledQueryRun](map<string|string[]> headers = {}, *GetSigmaScheduledQueryRunsScheduledQueryRunQueries queries) returns ScheduledQueryRun|error {
+        string resourcePath = string `/sigma/scheduled_query_runs/${getEncodedUri(scheduledQueryRun)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new source object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post sources(sources_body payload, map<string|string[]> headers = {}) returns Source|error {
+    # + return - Successful response 
+    resource isolated function post sources(SourcesBody payload, map<string|string[]> headers = {}) returns Source|error {
         string resourcePath = string `/sources`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "mandate": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "owner": {style: DEEPOBJECT, explode: true}, "receiver": {style: DEEPOBJECT, explode: true}, "redirect": {style: DEEPOBJECT, explode: true}, "source_order": {style: DEEPOBJECT, explode: true}};
@@ -5921,13 +5057,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves an existing source object. Supply the unique source ID from a source creation request and Stripe will return the corresponding up-to-date source object information.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get sources/[string 'source](map<string|string[]> headers = {}, *GetSourcesSourceQueries queries) returns Source|error {
+        string resourcePath = string `/sources/${getEncodedUri('source)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified source by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     # 
     # <p>This request accepts the <code>metadata</code> and <code>owner</code> as arguments. It is also possible to update type specific information for selected payment methods. Please refer to our <a href="/docs/sources">payment method guides</a> for more detail.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post sources/[string 'source](sources_source_body payload, map<string|string[]> headers = {}) returns Source|error {
+    # + return - Successful response 
+    resource isolated function post sources/[string 'source](SourcessourceBody payload, map<string|string[]> headers = {}) returns Source|error {
         string resourcePath = string `/sources/${getEncodedUri('source)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "mandate": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "owner": {style: DEEPOBJECT, explode: true}, "source_order": {style: DEEPOBJECT, explode: true}};
@@ -5936,11 +5084,47 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a new Source MandateNotification.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get sources/[string 'source]/mandate_notifications/[string mandateNotification](map<string|string[]> headers = {}, *GetSourcesSourceMandateNotificationsMandateNotificationQueries queries) returns SourceMandateNotification|error {
+        string resourcePath = string `/sources/${getEncodedUri('source)}/mandate_notifications/${getEncodedUri(mandateNotification)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>List source transactions for a given source.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get sources/[string 'source]/source_transactions(map<string|string[]> headers = {}, *GetSourcesSourceSourceTransactionsQueries queries) returns ApmsSourcesSourceTransactionList|error {
+        string resourcePath = string `/sources/${getEncodedUri('source)}/source_transactions`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieve an existing source transaction object. Supply the unique source ID from a source creation request and the source transaction ID and Stripe will return the corresponding up-to-date source object information.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get sources/[string 'source]/source_transactions/[string sourceTransaction](map<string|string[]> headers = {}, *GetSourcesSourceSourceTransactionsSourceTransactionQueries queries) returns SourceTransaction|error {
+        string resourcePath = string `/sources/${getEncodedUri('source)}/source_transactions/${getEncodedUri(sourceTransaction)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Verify a given source.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post sources/[string 'source]/verify(source_verify_body payload, map<string|string[]> headers = {}) returns Source|error {
+    # + return - Successful response 
+    resource isolated function post sources/[string 'source]/verify(SourceVerifyBody payload, map<string|string[]> headers = {}) returns Source|error {
         string resourcePath = string `/sources/${getEncodedUri('source)}/verify`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "values": {style: DEEPOBJECT, explode: true}};
@@ -5949,11 +5133,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your subscription items for a given subscription.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get subscription_items(map<string|string[]> headers = {}, *GetSubscriptionItemsQueries queries) returns SubscriptionsItemsSubscriptionItemList|error {
+        string resourcePath = string `/subscription_items`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Adds a new item to an existing subscription. No existing items will be changed or replaced.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscription_items(subscription_items_body payload, map<string|string[]> headers = {}) returns Subscription_item|error {
+    # + return - Successful response 
+    resource isolated function post subscription_items(SubscriptionItemsBody payload, map<string|string[]> headers = {}) returns SubscriptionItem|error {
         string resourcePath = string `/subscription_items`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"billing_thresholds": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "price_data": {style: DEEPOBJECT, explode: true}, "tax_rates": {style: DEEPOBJECT, explode: true}};
@@ -5962,17 +5158,55 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the subscription item with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get subscription_items/[string item](map<string|string[]> headers = {}, *GetSubscriptionItemsItemQueries queries) returns SubscriptionItem|error {
+        string resourcePath = string `/subscription_items/${getEncodedUri(item)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the plan or quantity of an item on a current subscription.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscription_items/[string item](subscription_items_item_body payload, map<string|string[]> headers = {}) returns Subscription_item|error {
+    # + return - Successful response 
+    resource isolated function post subscription_items/[string item](SubscriptionItemsitemBody payload, map<string|string[]> headers = {}) returns SubscriptionItem|error {
         string resourcePath = string `/subscription_items/${getEncodedUri(item)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"billing_thresholds": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "price_data": {style: DEEPOBJECT, explode: true}, "tax_rates": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Deletes an item from the subscription. Removing a subscription item from a subscription will not cancel the subscription.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete subscription_items/[string item](SubscriptionItemsitemBody1 payload, map<string|string[]> headers = {}) returns DeletedSubscriptionItem|error {
+        string resourcePath = string `/subscription_items/${getEncodedUri(item)}`;
+        http:Request request = new;
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->delete(resourcePath, request, headers);
+    }
+
+    # <p>For the specified subscription item, returns a list of summary objects. Each object in the list provides usage information that’s been summarized from multiple usage records and over a subscription billing period (e.g., 15 usage records in the month of September).</p>
+    # 
+    # <p>The list is sorted in reverse-chronological order (newest first). The first list item represents the most current usage period that hasn’t ended yet. Since new usage records can still be added, the returned summary information for the subscription item’s ID should be seen as unstable until the subscription billing period ends.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get subscription_items/[string subscriptionItem]/usage_record_summaries(map<string|string[]> headers = {}, *GetSubscriptionItemsSubscriptionItemUsageRecordSummariesQueries queries) returns UsageEventsResourceUsageRecordSummaryList|error {
+        string resourcePath = string `/subscription_items/${getEncodedUri(subscriptionItem)}/usage_record_summaries`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Creates a usage record for a specified subscription item and date, and fills it with a quantity.</p>
@@ -5984,9 +5218,9 @@ public isolated client class Client {
     # <p>The default pricing model for metered billing is <a href="/docs/api/plans/object#plan_object-billing_scheme">per-unit pricing</a>. For finer granularity, you can configure metered billing to have a <a href="https://stripe.com/docs/billing/subscriptions/tiers">tiered pricing</a> model.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscription_items/[string subscription_item]/usage_records(subscription_item_usage_records_body payload, map<string|string[]> headers = {}) returns Usage_record|error {
-        string resourcePath = string `/subscription_items/${getEncodedUri(subscription_item)}/usage_records`;
+    # + return - Successful response 
+    resource isolated function post subscription_items/[string subscriptionItem]/usage_records(SubscriptionItemUsageRecordsBody payload, map<string|string[]> headers = {}) returns UsageRecord|error {
+        string resourcePath = string `/subscription_items/${getEncodedUri(subscriptionItem)}/usage_records`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "timestamp": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -5994,11 +5228,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the list of your subscription schedules.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get subscription_schedules(map<string|string[]> headers = {}, *GetSubscriptionSchedulesQueries queries) returns SubscriptionSchedulesResourceScheduleList|error {
+        string resourcePath = string `/subscription_schedules`;
+        map<Encoding> queryParamEncoding = {"canceled_at": {style: DEEPOBJECT, explode: true}, "completed_at": {style: DEEPOBJECT, explode: true}, "created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "released_at": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new subscription schedule object. Each customer can have up to 500 active or scheduled subscriptions.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscription_schedules(subscription_schedules_body payload, map<string|string[]> headers = {}) returns Subscription_schedule|error {
+    # + return - Successful response 
+    resource isolated function post subscription_schedules(SubscriptionSchedulesBody payload, map<string|string[]> headers = {}) returns SubscriptionSchedule|error {
         string resourcePath = string `/subscription_schedules`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"default_settings": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "phases": {style: DEEPOBJECT, explode: true}, "start_date": {style: DEEPOBJECT, explode: true}};
@@ -6007,11 +5253,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing subscription schedule. You only need to supply the unique subscription schedule identifier that was returned upon subscription schedule creation.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get subscription_schedules/[string schedule](map<string|string[]> headers = {}, *GetSubscriptionSchedulesScheduleQueries queries) returns SubscriptionSchedule|error {
+        string resourcePath = string `/subscription_schedules/${getEncodedUri(schedule)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing subscription schedule.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscription_schedules/[string schedule](subscription_schedules_schedule_body payload, map<string|string[]> headers = {}) returns Subscription_schedule|error {
+    # + return - Successful response 
+    resource isolated function post subscription_schedules/[string schedule](SubscriptionSchedulesscheduleBody payload, map<string|string[]> headers = {}) returns SubscriptionSchedule|error {
         string resourcePath = string `/subscription_schedules/${getEncodedUri(schedule)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"default_settings": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "phases": {style: DEEPOBJECT, explode: true}};
@@ -6023,8 +5281,8 @@ public isolated client class Client {
     # <p>Cancels a subscription schedule and its associated subscription immediately (if the subscription schedule has an active subscription). A subscription schedule can only be canceled if its status is <code>not_started</code> or <code>active</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscription_schedules/[string schedule]/cancel(schedule_cancel_body payload, map<string|string[]> headers = {}) returns Subscription_schedule|error {
+    # + return - Successful response 
+    resource isolated function post subscription_schedules/[string schedule]/cancel(ScheduleCancelBody payload, map<string|string[]> headers = {}) returns SubscriptionSchedule|error {
         string resourcePath = string `/subscription_schedules/${getEncodedUri(schedule)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6036,14 +5294,26 @@ public isolated client class Client {
     # <p>Releases the subscription schedule immediately, which will stop scheduling of its phases, but leave any existing subscription in place. A schedule can only be released if its status is <code>not_started</code> or <code>active</code>. If the subscription schedule is currently associated with a subscription, releasing it will remove its <code>subscription</code> property and set the subscription’s ID to the <code>released_subscription</code> property.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscription_schedules/[string schedule]/release(schedule_release_body payload, map<string|string[]> headers = {}) returns Subscription_schedule|error {
+    # + return - Successful response 
+    resource isolated function post subscription_schedules/[string schedule]/release(ScheduleReleaseBody payload, map<string|string[]> headers = {}) returns SubscriptionSchedule|error {
         string resourcePath = string `/subscription_schedules/${getEncodedUri(schedule)}/release`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>By default, returns a list of subscriptions that have not been canceled. In order to list canceled subscriptions, specify <code>status=canceled</code>.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get subscriptions(map<string|string[]> headers = {}, *GetSubscriptionsQueries queries) returns SubscriptionsSubscriptionList|error {
+        string resourcePath = string `/subscriptions`;
+        map<Encoding> queryParamEncoding = {"automatic_tax": {style: DEEPOBJECT, explode: true}, "created": {style: DEEPOBJECT, explode: true}, "current_period_end": {style: DEEPOBJECT, explode: true}, "current_period_start": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Creates a new subscription on an existing customer. Each customer can have up to 500 active or scheduled subscriptions.</p>
@@ -6055,8 +5325,8 @@ public isolated client class Client {
     # Schedules provide the flexibility to model more complex billing configurations that change over time.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscriptions(subscriptions_body payload, map<string|string[]> headers = {}) returns Subscription|error {
+    # + return - Successful response 
+    resource isolated function post subscriptions(SubscriptionsBody payload, map<string|string[]> headers = {}) returns Subscription|error {
         string resourcePath = string `/subscriptions`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"add_invoice_items": {style: DEEPOBJECT, explode: true}, "application_fee_percent": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "billing_cycle_anchor_config": {style: DEEPOBJECT, explode: true}, "billing_thresholds": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_settings": {style: DEEPOBJECT, explode: true}, "items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "payment_settings": {style: DEEPOBJECT, explode: true}, "pending_invoice_item_interval": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}, "trial_end": {style: DEEPOBJECT, explode: true}, "trial_settings": {style: DEEPOBJECT, explode: true}};
@@ -6065,17 +5335,31 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
-    # <p>Initiates resumption of a paused subscription, optionally resetting the billing cycle anchor and creating prorations. If a resumption invoice is generated, it must be paid or marked uncollectible before the subscription will be unpaused. If payment succeeds the subscription will become <code>active</code>, and if payment fails the subscription will be <code>past_due</code>. The resumption invoice will void automatically if not paid by the expiration date.</p>
+    # <p>Search for subscriptions you’ve previously created using Stripe’s <a href="/docs/search#search-query-language">Search Query Language</a>.
+    # Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating
+    # conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up
+    # to an hour behind during outages. Search functionality is not available to merchants in India.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscriptions/[string subscription]/resume(subscription_resume_body payload, map<string|string[]> headers = {}) returns Subscription|error {
-        string resourcePath = string `/subscriptions/${getEncodedUri(subscription)}/resume`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get subscriptions/search(map<string|string[]> headers = {}, *GetSubscriptionsSearchQueries queries) returns SearchResult6|error {
+        string resourcePath = string `/subscriptions/search`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the subscription with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get subscriptions/[string subscriptionExposedId](map<string|string[]> headers = {}, *GetSubscriptionsSubscriptionExposedIdQueries queries) returns Subscription|error {
+        string resourcePath = string `/subscriptions/${getEncodedUri(subscriptionExposedId)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>Updates an existing subscription to match the specified parameters.
@@ -6101,11 +5385,50 @@ public isolated client class Client {
     # <p>Updating the quantity on a subscription many times in an hour may result in <a href="/docs/rate-limits">rate limiting</a>. If you need to bill for a frequently changing quantity, consider integrating <a href="/docs/billing/subscriptions/usage-based">usage-based billing</a> instead.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post subscriptions/[string subscription_exposed_id](subscriptions_subscription_exposed_id_body_2 payload, map<string|string[]> headers = {}) returns Subscription|error {
-        string resourcePath = string `/subscriptions/${getEncodedUri(subscription_exposed_id)}`;
+    # + return - Successful response 
+    resource isolated function post subscriptions/[string subscriptionExposedId](SubscriptionssubscriptionExposedIdBody2 payload, map<string|string[]> headers = {}) returns Subscription|error {
+        string resourcePath = string `/subscriptions/${getEncodedUri(subscriptionExposedId)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"add_invoice_items": {style: DEEPOBJECT, explode: true}, "application_fee_percent": {style: DEEPOBJECT, explode: true}, "automatic_tax": {style: DEEPOBJECT, explode: true}, "billing_thresholds": {style: DEEPOBJECT, explode: true}, "cancel_at": {style: DEEPOBJECT, explode: true}, "cancellation_details": {style: DEEPOBJECT, explode: true}, "default_source": {style: DEEPOBJECT, explode: true}, "default_tax_rates": {style: DEEPOBJECT, explode: true}, "description": {style: DEEPOBJECT, explode: true}, "discounts": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "invoice_settings": {style: DEEPOBJECT, explode: true}, "items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "on_behalf_of": {style: DEEPOBJECT, explode: true}, "pause_collection": {style: DEEPOBJECT, explode: true}, "payment_settings": {style: DEEPOBJECT, explode: true}, "pending_invoice_item_interval": {style: DEEPOBJECT, explode: true}, "transfer_data": {style: DEEPOBJECT, explode: true}, "trial_end": {style: DEEPOBJECT, explode: true}, "trial_settings": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>Cancels a customer’s subscription immediately. The customer will not be charged again for the subscription.</p>
+    # 
+    # <p>Note, however, that any pending invoice items that you’ve created will still be charged for at the end of the period, unless manually <a href="#delete_invoiceitem">deleted</a>. If you’ve set the subscription to cancel at the end of the period, any pending prorations will also be left in place and collected at the end of the period. But if the subscription is set to cancel immediately, pending prorations will be removed.</p>
+    # 
+    # <p>By default, upon subscription cancellation, Stripe will stop automatic collection of all finalized invoices for the customer. This is intended to prevent unexpected payment attempts after the customer has canceled a subscription. However, you can resume automatic collection of the invoices manually after subscription cancellation to have us proceed. Or, you could check for unpaid invoices before allowing the customer to cancel the subscription at all.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete subscriptions/[string subscriptionExposedId](SubscriptionssubscriptionExposedIdBody3 payload, map<string|string[]> headers = {}) returns Subscription|error {
+        string resourcePath = string `/subscriptions/${getEncodedUri(subscriptionExposedId)}`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"cancellation_details": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->delete(resourcePath, request, headers);
+    }
+
+    # <p>Removes the currently applied discount on a subscription.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete subscriptions/[string subscriptionExposedId]/discount(map<string|string[]> headers = {}) returns DeletedDiscount|error {
+        string resourcePath = string `/subscriptions/${getEncodedUri(subscriptionExposedId)}/discount`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Initiates resumption of a paused subscription, optionally resetting the billing cycle anchor and creating prorations. If a resumption invoice is generated, it must be paid or marked uncollectible before the subscription will be unpaused. If payment succeeds the subscription will become <code>active</code>, and if payment fails the subscription will be <code>past_due</code>. The resumption invoice will void automatically if not paid by the expiration date.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post subscriptions/[string subscription]/resume(SubscriptionResumeBody payload, map<string|string[]> headers = {}) returns Subscription|error {
+        string resourcePath = string `/subscriptions/${getEncodedUri(subscription)}/resume`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
@@ -6114,8 +5437,8 @@ public isolated client class Client {
     # <p>Calculates tax based on the input and returns a Tax <code>Calculation</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax/calculations(tax_calculations_body payload, map<string|string[]> headers = {}) returns Tax\.calculation|error {
+    # + return - Successful response 
+    resource isolated function post tax/calculations(TaxCalculationsBody payload, map<string|string[]> headers = {}) returns TaxCalculation|error {
         string resourcePath = string `/tax/calculations`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"customer_details": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "line_items": {style: DEEPOBJECT, explode: true}, "ship_from_details": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}};
@@ -6124,11 +5447,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the line items of a tax calculation as a collection, if the calculation hasn’t expired.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax/calculations/[string calculation]/line_items(map<string|string[]> headers = {}, *GetTaxCalculationsCalculationLineItemsQueries queries) returns TaxProductResourceTaxCalculationLineItemList|error {
+        string resourcePath = string `/tax/calculations/${getEncodedUri(calculation)}/line_items`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of Tax <code>Registration</code> objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax/registrations(map<string|string[]> headers = {}, *GetTaxRegistrationsQueries queries) returns TaxProductRegistrationsResourceTaxRegistrationList|error {
+        string resourcePath = string `/tax/registrations`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new Tax <code>Registration</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax/registrations(tax_registrations_body payload, map<string|string[]> headers = {}) returns Tax\.registration|error {
+    # + return - Successful response 
+    resource isolated function post tax/registrations(TaxRegistrationsBody payload, map<string|string[]> headers = {}) returns TaxRegistration|error {
         string resourcePath = string `/tax/registrations`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"active_from": {style: DEEPOBJECT, explode: true}, "country_options": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -6137,13 +5484,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a Tax <code>Registration</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax/registrations/[string id](map<string|string[]> headers = {}, *GetTaxRegistrationsIdQueries queries) returns TaxRegistration|error {
+        string resourcePath = string `/tax/registrations/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing Tax <code>Registration</code> object.</p>
     # 
     # <p>A registration cannot be deleted after it has been created. If you wish to end a registration you may do so by setting <code>expires_at</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax/registrations/[string id](registrations_id_body payload, map<string|string[]> headers = {}) returns Tax\.registration|error {
+    # + return - Successful response 
+    resource isolated function post tax/registrations/[string id](RegistrationsidBody payload, map<string|string[]> headers = {}) returns TaxRegistration|error {
         string resourcePath = string `/tax/registrations/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"active_from": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "expires_at": {style: DEEPOBJECT, explode: true}};
@@ -6152,11 +5511,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves Tax <code>Settings</code> for a merchant.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax/settings(map<string|string[]> headers = {}, *GetTaxSettingsQueries queries) returns TaxSettings|error {
+        string resourcePath = string `/tax/settings`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates Tax <code>Settings</code> parameters used in tax calculations. All parameters are editable but none can be removed once set.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax/settings(tax_settings_body payload, map<string|string[]> headers = {}) returns Tax\.settings|error {
+    # + return - Successful response 
+    resource isolated function post tax/settings(TaxSettingsBody payload, map<string|string[]> headers = {}) returns TaxSettings|error {
         string resourcePath = string `/tax/settings`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"defaults": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "head_office": {style: DEEPOBJECT, explode: true}};
@@ -6168,8 +5539,8 @@ public isolated client class Client {
     # <p>Creates a Tax Transaction from a calculation, if that calculation hasn’t expired. Calculations expire after 90 days.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax/transactions/create_from_calculation(transactions_create_from_calculation_body payload, map<string|string[]> headers = {}) returns Tax\.transaction|error {
+    # + return - Successful response 
+    resource isolated function post tax/transactions/create_from_calculation(TransactionsCreateFromCalculationBody payload, map<string|string[]> headers = {}) returns TaxTransaction|error {
         string resourcePath = string `/tax/transactions/create_from_calculation`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6181,8 +5552,8 @@ public isolated client class Client {
     # <p>Partially or fully reverses a previously created <code>Transaction</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax/transactions/create_reversal(transactions_create_reversal_body payload, map<string|string[]> headers = {}) returns Tax\.transaction|error {
+    # + return - Successful response 
+    resource isolated function post tax/transactions/create_reversal(TransactionsCreateReversalBody payload, map<string|string[]> headers = {}) returns TaxTransaction|error {
         string resourcePath = string `/tax/transactions/create_reversal`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "line_items": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "shipping_cost": {style: DEEPOBJECT, explode: true}};
@@ -6191,11 +5562,71 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a Tax <code>Transaction</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax/transactions/[string 'transaction](map<string|string[]> headers = {}, *GetTaxTransactionsTransactionQueries queries) returns TaxTransaction|error {
+        string resourcePath = string `/tax/transactions/${getEncodedUri('transaction)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the line items of a committed standalone transaction as a collection.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax/transactions/[string 'transaction]/line_items(map<string|string[]> headers = {}, *GetTaxTransactionsTransactionLineItemsQueries queries) returns TaxProductResourceTaxTransactionLineItemList|error {
+        string resourcePath = string `/tax/transactions/${getEncodedUri('transaction)}/line_items`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>A list of <a href="https://stripe.com/docs/tax/tax-categories">all tax codes available</a> to add to Products in order to allow specific tax calculations.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax_codes(map<string|string[]> headers = {}, *GetTaxCodesQueries queries) returns TaxProductResourceTaxCodeList|error {
+        string resourcePath = string `/tax_codes`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an existing tax code. Supply the unique tax code ID and Stripe will return the corresponding tax code information.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax_codes/[string id](map<string|string[]> headers = {}, *GetTaxCodesIdQueries queries) returns TaxCode|error {
+        string resourcePath = string `/tax_codes/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of tax IDs.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax_ids(map<string|string[]> headers = {}, *GetTaxIdsQueries queries) returns TaxIDsList1|error {
+        string resourcePath = string `/tax_ids`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "owner": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new account or customer <code>tax_id</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax_ids(tax_ids_body payload, map<string|string[]> headers = {}) returns Tax_id|error {
+    # + return - Successful response 
+    resource isolated function post tax_ids(TaxIdsBody payload, map<string|string[]> headers = {}) returns TaxId|error {
         string resourcePath = string `/tax_ids`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "owner": {style: DEEPOBJECT, explode: true}};
@@ -6204,11 +5635,44 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves an account or customer <code>tax_id</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax_ids/[string id](map<string|string[]> headers = {}, *GetTaxIdsIdQueries queries) returns TaxId|error {
+        string resourcePath = string `/tax_ids/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Deletes an existing account or customer <code>tax_id</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete tax_ids/[string id](map<string|string[]> headers = {}) returns DeletedTaxId|error {
+        string resourcePath = string `/tax_ids/${getEncodedUri(id)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of your tax rates. Tax rates are returned sorted by creation date, with the most recently created tax rates appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax_rates(map<string|string[]> headers = {}, *GetTaxRatesQueries queries) returns TaxRatesList|error {
+        string resourcePath = string `/tax_rates`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new tax rate.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax_rates(tax_rates_body payload, map<string|string[]> headers = {}) returns Tax_rate|error {
+    # + return - Successful response 
+    resource isolated function post tax_rates(TaxRatesBody payload, map<string|string[]> headers = {}) returns TaxRate|error {
         string resourcePath = string `/tax_rates`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6217,12 +5681,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a tax rate with the given ID</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tax_rates/[string taxRate](map<string|string[]> headers = {}, *GetTaxRatesTaxRateQueries queries) returns TaxRate|error {
+        string resourcePath = string `/tax_rates/${getEncodedUri(taxRate)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates an existing tax rate.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tax_rates/[string tax_rate](tax_rates_tax_rate_body payload, map<string|string[]> headers = {}) returns Tax_rate|error {
-        string resourcePath = string `/tax_rates/${getEncodedUri(tax_rate)}`;
+    # + return - Successful response 
+    resource isolated function post tax_rates/[string taxRate](TaxRatestaxRateBody payload, map<string|string[]> headers = {}) returns TaxRate|error {
+        string resourcePath = string `/tax_rates/${getEncodedUri(taxRate)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6230,11 +5706,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of <code>Configuration</code> objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get terminal/configurations(map<string|string[]> headers = {}, *GetTerminalConfigurationsQueries queries) returns TerminalConfigurationConfigurationList|error {
+        string resourcePath = string `/terminal/configurations`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new <code>Configuration</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/configurations(terminal_configurations_body payload, map<string|string[]> headers = {}) returns Terminal\.configuration|error {
+    # + return - Successful response 
+    resource isolated function post terminal/configurations(TerminalConfigurationsBody payload, map<string|string[]> headers = {}) returns TerminalConfiguration|error {
         string resourcePath = string `/terminal/configurations`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bbpos_wisepos_e": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "offline": {style: DEEPOBJECT, explode: true}, "reboot_window": {style: DEEPOBJECT, explode: true}, "stripe_s700": {style: DEEPOBJECT, explode: true}, "tipping": {style: DEEPOBJECT, explode: true}, "verifone_p400": {style: DEEPOBJECT, explode: true}};
@@ -6243,11 +5731,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a <code>Configuration</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get terminal/configurations/[string configuration](map<string|string[]> headers = {}, *GetTerminalConfigurationsConfigurationQueries queries) returns InlineResponse2007|error {
+        string resourcePath = string `/terminal/configurations/${getEncodedUri(configuration)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a new <code>Configuration</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/configurations/[string configuration](configurations_configuration_body_1 payload, map<string|string[]> headers = {}) returns inline_response_200_3|error {
+    # + return - Successful response 
+    resource isolated function post terminal/configurations/[string configuration](ConfigurationsconfigurationBody1 payload, map<string|string[]> headers = {}) returns InlineResponse2008|error {
         string resourcePath = string `/terminal/configurations/${getEncodedUri(configuration)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"bbpos_wisepos_e": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "offline": {style: DEEPOBJECT, explode: true}, "reboot_window": {style: DEEPOBJECT, explode: true}, "stripe_s700": {style: DEEPOBJECT, explode: true}, "tipping": {style: DEEPOBJECT, explode: true}, "verifone_p400": {style: DEEPOBJECT, explode: true}};
@@ -6256,11 +5756,20 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Deletes a <code>Configuration</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete terminal/configurations/[string configuration](map<string|string[]> headers = {}) returns DeletedTerminalConfiguration|error {
+        string resourcePath = string `/terminal/configurations/${getEncodedUri(configuration)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
     # <p>To connect to a reader the Stripe Terminal SDK needs to retrieve a short-lived connection token from Stripe, proxied through your server. On your backend, add an endpoint that creates and returns a connection token.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/connection_tokens(terminal_connection_tokens_body payload, map<string|string[]> headers = {}) returns Terminal\.connection_token|error {
+    # + return - Successful response 
+    resource isolated function post terminal/connection_tokens(TerminalConnectionTokensBody payload, map<string|string[]> headers = {}) returns TerminalConnectionToken|error {
         string resourcePath = string `/terminal/connection_tokens`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6269,12 +5778,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of <code>Location</code> objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get terminal/locations(map<string|string[]> headers = {}, *GetTerminalLocationsQueries queries) returns TerminalLocationLocationList|error {
+        string resourcePath = string `/terminal/locations`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new <code>Location</code> object.
     # For further details, including which address fields are required in each country, see the <a href="/docs/terminal/fleet/locations">Manage locations</a> guide.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/locations(terminal_locations_body payload, map<string|string[]> headers = {}) returns Terminal\.location|error {
+    # + return - Successful response 
+    resource isolated function post terminal/locations(TerminalLocationsBody payload, map<string|string[]> headers = {}) returns TerminalLocation|error {
         string resourcePath = string `/terminal/locations`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"address": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6283,11 +5804,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a <code>Location</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get terminal/locations/[string location](map<string|string[]> headers = {}, *GetTerminalLocationsLocationQueries queries) returns InlineResponse2009|error {
+        string resourcePath = string `/terminal/locations/${getEncodedUri(location)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a <code>Location</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/locations/[string location](locations_location_body payload, map<string|string[]> headers = {}) returns inline_response_200_4|error {
+    # + return - Successful response 
+    resource isolated function post terminal/locations/[string location](LocationslocationBody payload, map<string|string[]> headers = {}) returns InlineResponse20010|error {
         string resourcePath = string `/terminal/locations/${getEncodedUri(location)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"address": {style: DEEPOBJECT, explode: true}, "configuration_overrides": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6296,11 +5829,32 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Deletes a <code>Location</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete terminal/locations/[string location](map<string|string[]> headers = {}) returns DeletedTerminalLocation|error {
+        string resourcePath = string `/terminal/locations/${getEncodedUri(location)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
+    # <p>Returns a list of <code>Reader</code> objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get terminal/readers(map<string|string[]> headers = {}, *GetTerminalReadersQueries queries) returns TerminalReaderRetrieveReader|error {
+        string resourcePath = string `/terminal/readers`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new <code>Reader</code> object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/readers(terminal_readers_body payload, map<string|string[]> headers = {}) returns Terminal\.reader|error {
+    # + return - Successful response 
+    resource isolated function post terminal/readers(TerminalReadersBody payload, map<string|string[]> headers = {}) returns TerminalReader|error {
         string resourcePath = string `/terminal/readers`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6309,11 +5863,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a <code>Reader</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get terminal/readers/[string reader](map<string|string[]> headers = {}, *GetTerminalReadersReaderQueries queries) returns InlineResponse20011|error {
+        string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates a <code>Reader</code> object by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/readers/[string reader](readers_reader_body payload, map<string|string[]> headers = {}) returns inline_response_200_5|error {
+    # + return - Successful response 
+    resource isolated function post terminal/readers/[string reader](ReadersreaderBody payload, map<string|string[]> headers = {}) returns InlineResponse20012|error {
         string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "label": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6322,11 +5888,20 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Deletes a <code>Reader</code> object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete terminal/readers/[string reader](map<string|string[]> headers = {}) returns DeletedTerminalReader|error {
+        string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
     # <p>Cancels the current reader action.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/readers/[string reader]/cancel_action(reader_cancel_action_body payload, map<string|string[]> headers = {}) returns Terminal\.reader|error {
+    # + return - Successful response 
+    resource isolated function post terminal/readers/[string reader]/cancel_action(ReaderCancelActionBody payload, map<string|string[]> headers = {}) returns TerminalReader|error {
         string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}/cancel_action`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6338,8 +5913,8 @@ public isolated client class Client {
     # <p>Initiates a payment flow on a Reader.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/readers/[string reader]/process_payment_intent(reader_process_payment_intent_body payload, map<string|string[]> headers = {}) returns Terminal\.reader|error {
+    # + return - Successful response 
+    resource isolated function post terminal/readers/[string reader]/process_payment_intent(ReaderProcessPaymentIntentBody payload, map<string|string[]> headers = {}) returns TerminalReader|error {
         string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}/process_payment_intent`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "process_config": {style: DEEPOBJECT, explode: true}};
@@ -6351,8 +5926,8 @@ public isolated client class Client {
     # <p>Initiates a setup intent flow on a Reader.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/readers/[string reader]/process_setup_intent(reader_process_setup_intent_body payload, map<string|string[]> headers = {}) returns Terminal\.reader|error {
+    # + return - Successful response 
+    resource isolated function post terminal/readers/[string reader]/process_setup_intent(ReaderProcessSetupIntentBody payload, map<string|string[]> headers = {}) returns TerminalReader|error {
         string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}/process_setup_intent`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "process_config": {style: DEEPOBJECT, explode: true}};
@@ -6364,8 +5939,8 @@ public isolated client class Client {
     # <p>Initiates a refund on a Reader</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/readers/[string reader]/refund_payment(reader_refund_payment_body payload, map<string|string[]> headers = {}) returns Terminal\.reader|error {
+    # + return - Successful response 
+    resource isolated function post terminal/readers/[string reader]/refund_payment(ReaderRefundPaymentBody payload, map<string|string[]> headers = {}) returns TerminalReader|error {
         string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}/refund_payment`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "refund_payment_config": {style: DEEPOBJECT, explode: true}};
@@ -6377,8 +5952,8 @@ public isolated client class Client {
     # <p>Sets reader display to show cart details.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post terminal/readers/[string reader]/set_reader_display(reader_set_reader_display_body payload, map<string|string[]> headers = {}) returns Terminal\.reader|error {
+    # + return - Successful response 
+    resource isolated function post terminal/readers/[string reader]/set_reader_display(ReaderSetReaderDisplayBody payload, map<string|string[]> headers = {}) returns TerminalReader|error {
         string resourcePath = string `/terminal/readers/${getEncodedUri(reader)}/set_reader_display`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"cart": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
@@ -6390,8 +5965,8 @@ public isolated client class Client {
     # <p>Creates a test mode Confirmation Token server side for your integration tests.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/confirmation_tokens(test_helpers_confirmation_tokens_body payload, map<string|string[]> headers = {}) returns Confirmation_token|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/confirmation_tokens(TestHelpersConfirmationTokensBody payload, map<string|string[]> headers = {}) returns ConfirmationToken|error {
         string resourcePath = string `/test_helpers/confirmation_tokens`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "payment_method_data": {style: DEEPOBJECT, explode: true}, "shipping": {style: DEEPOBJECT, explode: true}};
@@ -6403,8 +5978,8 @@ public isolated client class Client {
     # <p>Create an incoming testmode bank transfer</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/customers/[string customer]/fund_cash_balance(customer_fund_cash_balance_body payload, map<string|string[]> headers = {}) returns Customer_cash_balance_transaction|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/customers/[string customer]/fund_cash_balance(CustomerFundCashBalanceBody payload, map<string|string[]> headers = {}) returns CustomerCashBalanceTransaction|error {
         string resourcePath = string `/test_helpers/customers/${getEncodedUri(customer)}/fund_cash_balance`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6416,8 +5991,8 @@ public isolated client class Client {
     # <p>Create a test-mode authorization.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/authorizations(issuing_authorizations_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/authorizations(IssuingAuthorizationsBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/test_helpers/issuing/authorizations`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"amount_details": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "fleet": {style: DEEPOBJECT, explode: true}, "fuel": {style: DEEPOBJECT, explode: true}, "merchant_data": {style: DEEPOBJECT, explode: true}, "network_data": {style: DEEPOBJECT, explode: true}, "verification_data": {style: DEEPOBJECT, explode: true}};
@@ -6429,8 +6004,8 @@ public isolated client class Client {
     # <p>Capture a test-mode authorization.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/capture(authorization_capture_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/capture(AuthorizationCaptureBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/test_helpers/issuing/authorizations/${getEncodedUri(authorization)}/capture`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "purchase_details": {style: DEEPOBJECT, explode: true}};
@@ -6442,8 +6017,8 @@ public isolated client class Client {
     # <p>Expire a test-mode Authorization.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/expire(authorization_expire_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/expire(AuthorizationExpireBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/test_helpers/issuing/authorizations/${getEncodedUri(authorization)}/expire`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6455,8 +6030,8 @@ public isolated client class Client {
     # <p>Finalize the amount on an Authorization prior to capture, when the initial authorization was for an estimated amount.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/finalize_amount(authorization_finalize_amount_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/finalize_amount(AuthorizationFinalizeAmountBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/test_helpers/issuing/authorizations/${getEncodedUri(authorization)}/finalize_amount`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "fleet": {style: DEEPOBJECT, explode: true}, "fuel": {style: DEEPOBJECT, explode: true}};
@@ -6468,8 +6043,8 @@ public isolated client class Client {
     # <p>Increment a test-mode Authorization.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/increment(authorization_increment_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/increment(AuthorizationIncrementBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/test_helpers/issuing/authorizations/${getEncodedUri(authorization)}/increment`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6481,27 +6056,9 @@ public isolated client class Client {
     # <p>Reverse a test-mode Authorization.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/reverse(authorization_reverse_body payload, map<string|string[]> headers = {}) returns Issuing\.authorization|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/authorizations/[string authorization]/reverse(AuthorizationReverseBody payload, map<string|string[]> headers = {}) returns IssuingAuthorization|error {
         string resourcePath = string `/test_helpers/issuing/authorizations/${getEncodedUri(authorization)}/reverse`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    resource isolated function post test_helpers/issuing/cards/[string card]/shipping/'fail(shipping_fail_body payload, map<string|string[]> headers = {}) returns Issuing\.card|error {
-        string resourcePath = string `/test_helpers/issuing/cards/${getEncodedUri(card)}/shipping/fail`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    resource isolated function post test_helpers/issuing/cards/[string card]/shipping/'return(shipping_return_body payload, map<string|string[]> headers = {}) returns Issuing\.card|error {
-        string resourcePath = string `/test_helpers/issuing/cards/${getEncodedUri(card)}/shipping/return`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6512,9 +6069,27 @@ public isolated client class Client {
     # <p>Updates the shipping status of the specified Issuing <code>Card</code> object to <code>delivered</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/cards/[string card]/shipping/deliver(shipping_deliver_body payload, map<string|string[]> headers = {}) returns Issuing\.card|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/cards/[string card]/shipping/deliver(ShippingDeliverBody payload, map<string|string[]> headers = {}) returns IssuingCard|error {
         string resourcePath = string `/test_helpers/issuing/cards/${getEncodedUri(card)}/shipping/deliver`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    resource isolated function post test_helpers/issuing/cards/[string card]/shipping/'fail(ShippingFailBody payload, map<string|string[]> headers = {}) returns IssuingCard|error {
+        string resourcePath = string `/test_helpers/issuing/cards/${getEncodedUri(card)}/shipping/fail`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    resource isolated function post test_helpers/issuing/cards/[string card]/shipping/'return(ShippingReturnBody payload, map<string|string[]> headers = {}) returns IssuingCard|error {
+        string resourcePath = string `/test_helpers/issuing/cards/${getEncodedUri(card)}/shipping/return`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6525,8 +6100,8 @@ public isolated client class Client {
     # <p>Updates the shipping status of the specified Issuing <code>Card</code> object to <code>shipped</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/cards/[string card]/shipping/ship(shipping_ship_body payload, map<string|string[]> headers = {}) returns Issuing\.card|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/cards/[string card]/shipping/ship(ShippingShipBody payload, map<string|string[]> headers = {}) returns IssuingCard|error {
         string resourcePath = string `/test_helpers/issuing/cards/${getEncodedUri(card)}/shipping/ship`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6538,9 +6113,9 @@ public isolated client class Client {
     # <p>Updates the <code>status</code> of the specified testmode personalization design object to <code>active</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/personalization_designs/[string personalization_design]/activate(personalization_design_activate_body payload, map<string|string[]> headers = {}) returns Issuing\.personalization_design|error {
-        string resourcePath = string `/test_helpers/issuing/personalization_designs/${getEncodedUri(personalization_design)}/activate`;
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/personalization_designs/[string personalizationDesign]/activate(PersonalizationDesignActivateBody payload, map<string|string[]> headers = {}) returns IssuingPersonalizationDesign|error {
+        string resourcePath = string `/test_helpers/issuing/personalization_designs/${getEncodedUri(personalizationDesign)}/activate`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6551,9 +6126,9 @@ public isolated client class Client {
     # <p>Updates the <code>status</code> of the specified testmode personalization design object to <code>inactive</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/personalization_designs/[string personalization_design]/deactivate(personalization_design_deactivate_body payload, map<string|string[]> headers = {}) returns Issuing\.personalization_design|error {
-        string resourcePath = string `/test_helpers/issuing/personalization_designs/${getEncodedUri(personalization_design)}/deactivate`;
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/personalization_designs/[string personalizationDesign]/deactivate(PersonalizationDesignDeactivateBody payload, map<string|string[]> headers = {}) returns IssuingPersonalizationDesign|error {
+        string resourcePath = string `/test_helpers/issuing/personalization_designs/${getEncodedUri(personalizationDesign)}/deactivate`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6564,24 +6139,11 @@ public isolated client class Client {
     # <p>Updates the <code>status</code> of the specified testmode personalization design object to <code>rejected</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/personalization_designs/[string personalization_design]/reject(personalization_design_reject_body payload, map<string|string[]> headers = {}) returns Issuing\.personalization_design|error {
-        string resourcePath = string `/test_helpers/issuing/personalization_designs/${getEncodedUri(personalization_design)}/reject`;
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/personalization_designs/[string personalizationDesign]/reject(PersonalizationDesignRejectBody payload, map<string|string[]> headers = {}) returns IssuingPersonalizationDesign|error {
+        string resourcePath = string `/test_helpers/issuing/personalization_designs/${getEncodedUri(personalizationDesign)}/reject`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "rejection_reasons": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    # <p>Refund a test-mode Transaction.</p>
-    #
-    # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/transactions/[string 'transaction]/refund(transaction_refund_body payload, map<string|string[]> headers = {}) returns Issuing\.transaction|error {
-        string resourcePath = string `/test_helpers/issuing/transactions/${getEncodedUri('transaction)}/refund`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
@@ -6590,8 +6152,8 @@ public isolated client class Client {
     # <p>Allows the user to capture an arbitrary amount, also known as a forced capture.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/transactions/create_force_capture(transactions_create_force_capture_body payload, map<string|string[]> headers = {}) returns Issuing\.transaction|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/transactions/create_force_capture(TransactionsCreateForceCaptureBody payload, map<string|string[]> headers = {}) returns IssuingTransaction|error {
         string resourcePath = string `/test_helpers/issuing/transactions/create_force_capture`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "merchant_data": {style: DEEPOBJECT, explode: true}, "purchase_details": {style: DEEPOBJECT, explode: true}};
@@ -6603,8 +6165,8 @@ public isolated client class Client {
     # <p>Allows the user to refund an arbitrary amount, also known as a unlinked refund.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/issuing/transactions/create_unlinked_refund(transactions_create_unlinked_refund_body payload, map<string|string[]> headers = {}) returns Issuing\.transaction|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/transactions/create_unlinked_refund(TransactionsCreateUnlinkedRefundBody payload, map<string|string[]> headers = {}) returns IssuingTransaction|error {
         string resourcePath = string `/test_helpers/issuing/transactions/create_unlinked_refund`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "merchant_data": {style: DEEPOBJECT, explode: true}, "purchase_details": {style: DEEPOBJECT, explode: true}};
@@ -6613,11 +6175,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Refund a test-mode Transaction.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function post test_helpers/issuing/transactions/[string 'transaction]/refund(TransactionRefundBody payload, map<string|string[]> headers = {}) returns IssuingTransaction|error {
+        string resourcePath = string `/test_helpers/issuing/transactions/${getEncodedUri('transaction)}/refund`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
     # <p>Expire a refund with a status of <code>requires_action</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/refunds/[string refund]/expire(refund_expire_body payload, map<string|string[]> headers = {}) returns Refund|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/refunds/[string refund]/expire(RefundExpireBody payload, map<string|string[]> headers = {}) returns Refund|error {
         string resourcePath = string `/test_helpers/refunds/${getEncodedUri(refund)}/expire`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6629,8 +6204,8 @@ public isolated client class Client {
     # <p>Presents a payment method on a simulated reader. Can be used to simulate accepting a payment, saving a card or refunding a transaction.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/terminal/readers/[string reader]/present_payment_method(reader_present_payment_method_body payload, map<string|string[]> headers = {}) returns Terminal\.reader|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/terminal/readers/[string reader]/present_payment_method(ReaderPresentPaymentMethodBody payload, map<string|string[]> headers = {}) returns TerminalReader|error {
         string resourcePath = string `/test_helpers/terminal/readers/${getEncodedUri(reader)}/present_payment_method`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"card_present": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "interac_present": {style: DEEPOBJECT, explode: true}};
@@ -6639,11 +6214,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of your test clocks.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get test_helpers/test_clocks(map<string|string[]> headers = {}, *GetTestHelpersTestClocksQueries queries) returns BillingClocksResourceBillingClockList|error {
+        string resourcePath = string `/test_helpers/test_clocks`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new test clock that can be attached to new customers and quotes.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/test_clocks(test_helpers_test_clocks_body payload, map<string|string[]> headers = {}) returns Test_helpers\.test_clock|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/test_clocks(TestHelpersTestClocksBody payload, map<string|string[]> headers = {}) returns TestHelpersTestClock|error {
         string resourcePath = string `/test_helpers/test_clocks`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6652,12 +6239,33 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a test clock.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get test_helpers/test_clocks/[string testClock](map<string|string[]> headers = {}, *GetTestHelpersTestClocksTestClockQueries queries) returns TestHelpersTestClock|error {
+        string resourcePath = string `/test_helpers/test_clocks/${getEncodedUri(testClock)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Deletes a test clock.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete test_helpers/test_clocks/[string testClock](map<string|string[]> headers = {}) returns DeletedTestHelpersTestClock|error {
+        string resourcePath = string `/test_helpers/test_clocks/${getEncodedUri(testClock)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
+    }
+
     # <p>Starts advancing a test clock to a specified time in the future. Advancement is done when status changes to <code>Ready</code>.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/test_clocks/[string test_clock]/advance(test_clock_advance_body payload, map<string|string[]> headers = {}) returns Test_helpers\.test_clock|error {
-        string resourcePath = string `/test_helpers/test_clocks/${getEncodedUri(test_clock)}/advance`;
+    # + return - Successful response 
+    resource isolated function post test_helpers/test_clocks/[string testClock]/advance(TestClockAdvanceBody payload, map<string|string[]> headers = {}) returns TestHelpersTestClock|error {
+        string resourcePath = string `/test_helpers/test_clocks/${getEncodedUri(testClock)}/advance`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6665,7 +6273,7 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
-    resource isolated function post test_helpers/treasury/inbound_transfers/[string id]/'fail(id_fail_body payload, map<string|string[]> headers = {}) returns Treasury\.inbound_transfer|error {
+    resource isolated function post test_helpers/treasury/inbound_transfers/[string id]/'fail(IdFailBody payload, map<string|string[]> headers = {}) returns TreasuryInboundTransfer|error {
         string resourcePath = string `/test_helpers/treasury/inbound_transfers/${getEncodedUri(id)}/fail`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "failure_details": {style: DEEPOBJECT, explode: true}};
@@ -6674,7 +6282,7 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
-    resource isolated function post test_helpers/treasury/inbound_transfers/[string id]/'return(id_return_body payload, map<string|string[]> headers = {}) returns Treasury\.inbound_transfer|error {
+    resource isolated function post test_helpers/treasury/inbound_transfers/[string id]/'return(IdReturnBody payload, map<string|string[]> headers = {}) returns TreasuryInboundTransfer|error {
         string resourcePath = string `/test_helpers/treasury/inbound_transfers/${getEncodedUri(id)}/return`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6686,8 +6294,8 @@ public isolated client class Client {
     # <p>Transitions a test mode created InboundTransfer to the <code>succeeded</code> status. The InboundTransfer must already be in the <code>processing</code> state.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/treasury/inbound_transfers/[string id]/succeed(id_succeed_body payload, map<string|string[]> headers = {}) returns Treasury\.inbound_transfer|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/treasury/inbound_transfers/[string id]/succeed(IdSucceedBody payload, map<string|string[]> headers = {}) returns TreasuryInboundTransfer|error {
         string resourcePath = string `/test_helpers/treasury/inbound_transfers/${getEncodedUri(id)}/succeed`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6699,8 +6307,8 @@ public isolated client class Client {
     # <p>Updates a test mode created OutboundPayment with tracking details. The OutboundPayment must not be cancelable, and cannot be in the <code>canceled</code> or <code>failed</code> states.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/treasury/outbound_payments/[string id](outbound_payments_id_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_payment|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/treasury/outbound_payments/[string id](OutboundPaymentsidBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundPayment|error {
         string resourcePath = string `/test_helpers/treasury/outbound_payments/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "tracking_details": {style: DEEPOBJECT, explode: true}};
@@ -6709,7 +6317,7 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
-    resource isolated function post test_helpers/treasury/outbound_payments/[string id]/'fail(id_fail_body_1 payload, map<string|string[]> headers = {}) returns Treasury\.outbound_payment|error {
+    resource isolated function post test_helpers/treasury/outbound_payments/[string id]/'fail(IdFailBody1 payload, map<string|string[]> headers = {}) returns TreasuryOutboundPayment|error {
         string resourcePath = string `/test_helpers/treasury/outbound_payments/${getEncodedUri(id)}/fail`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6718,20 +6326,11 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
-    resource isolated function post test_helpers/treasury/outbound_payments/[string id]/'return(id_return_body_1 payload, map<string|string[]> headers = {}) returns Treasury\.outbound_payment|error {
-        string resourcePath = string `/test_helpers/treasury/outbound_payments/${getEncodedUri(id)}/return`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "returned_details": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
     # <p>Transitions a test mode created OutboundPayment to the <code>posted</code> status. The OutboundPayment must already be in the <code>processing</code> state.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/treasury/outbound_payments/[string id]/post(id_post_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_payment|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/treasury/outbound_payments/[string id]/post(IdPostBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundPayment|error {
         string resourcePath = string `/test_helpers/treasury/outbound_payments/${getEncodedUri(id)}/post`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6740,12 +6339,21 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    resource isolated function post test_helpers/treasury/outbound_payments/[string id]/'return(IdReturnBody1 payload, map<string|string[]> headers = {}) returns TreasuryOutboundPayment|error {
+        string resourcePath = string `/test_helpers/treasury/outbound_payments/${getEncodedUri(id)}/return`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "returned_details": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
     # <p>Updates a test mode created OutboundTransfer with tracking details. The OutboundTransfer must not be cancelable, and cannot be in the <code>canceled</code> or <code>failed</code> states.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/treasury/outbound_transfers/[string outbound_transfer](outbound_transfers_outbound_transfer_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_transfer|error {
-        string resourcePath = string `/test_helpers/treasury/outbound_transfers/${getEncodedUri(outbound_transfer)}`;
+    # + return - Successful response 
+    resource isolated function post test_helpers/treasury/outbound_transfers/[string outboundTransfer](OutboundTransfersoutboundTransferBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundTransfer|error {
+        string resourcePath = string `/test_helpers/treasury/outbound_transfers/${getEncodedUri(outboundTransfer)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "tracking_details": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6753,19 +6361,10 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
-    resource isolated function post test_helpers/treasury/outbound_transfers/[string outbound_transfer]/'fail(outbound_transfer_fail_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_transfer|error {
-        string resourcePath = string `/test_helpers/treasury/outbound_transfers/${getEncodedUri(outbound_transfer)}/fail`;
+    resource isolated function post test_helpers/treasury/outbound_transfers/[string outboundTransfer]/'fail(OutboundTransferFailBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundTransfer|error {
+        string resourcePath = string `/test_helpers/treasury/outbound_transfers/${getEncodedUri(outboundTransfer)}/fail`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
-        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
-        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
-        return self.clientEp->post(resourcePath, request, headers);
-    }
-
-    resource isolated function post test_helpers/treasury/outbound_transfers/[string outbound_transfer]/'return(outbound_transfer_return_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_transfer|error {
-        string resourcePath = string `/test_helpers/treasury/outbound_transfers/${getEncodedUri(outbound_transfer)}/return`;
-        http:Request request = new;
-        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "returned_details": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
@@ -6774,11 +6373,20 @@ public isolated client class Client {
     # <p>Transitions a test mode created OutboundTransfer to the <code>posted</code> status. The OutboundTransfer must already be in the <code>processing</code> state.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/treasury/outbound_transfers/[string outbound_transfer]/post(outbound_transfer_post_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_transfer|error {
-        string resourcePath = string `/test_helpers/treasury/outbound_transfers/${getEncodedUri(outbound_transfer)}/post`;
+    # + return - Successful response 
+    resource isolated function post test_helpers/treasury/outbound_transfers/[string outboundTransfer]/post(OutboundTransferPostBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundTransfer|error {
+        string resourcePath = string `/test_helpers/treasury/outbound_transfers/${getEncodedUri(outboundTransfer)}/post`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
+        request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    resource isolated function post test_helpers/treasury/outbound_transfers/[string outboundTransfer]/'return(OutboundTransferReturnBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundTransfer|error {
+        string resourcePath = string `/test_helpers/treasury/outbound_transfers/${getEncodedUri(outboundTransfer)}/return`;
+        http:Request request = new;
+        map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "returned_details": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
@@ -6787,8 +6395,8 @@ public isolated client class Client {
     # <p>Use this endpoint to simulate a test mode ReceivedCredit initiated by a third party. In live mode, you can’t directly create ReceivedCredits initiated by third parties.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/treasury/received_credits(treasury_received_credits_body payload, map<string|string[]> headers = {}) returns Treasury\.received_credit|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/treasury/received_credits(TreasuryReceivedCreditsBody payload, map<string|string[]> headers = {}) returns TreasuryReceivedCredit|error {
         string resourcePath = string `/test_helpers/treasury/received_credits`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "initiating_payment_method_details": {style: DEEPOBJECT, explode: true}};
@@ -6800,8 +6408,8 @@ public isolated client class Client {
     # <p>Use this endpoint to simulate a test mode ReceivedDebit initiated by a third party. In live mode, you can’t directly create ReceivedDebits initiated by third parties.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post test_helpers/treasury/received_debits(treasury_received_debits_body payload, map<string|string[]> headers = {}) returns Treasury\.received_debit|error {
+    # + return - Successful response 
+    resource isolated function post test_helpers/treasury/received_debits(TreasuryReceivedDebitsBody payload, map<string|string[]> headers = {}) returns TreasuryReceivedDebit|error {
         string resourcePath = string `/test_helpers/treasury/received_debits`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "initiating_payment_method_details": {style: DEEPOBJECT, explode: true}};
@@ -6814,8 +6422,8 @@ public isolated client class Client {
     # You can use this token with any API method in place of a bank account dictionary. You can only use this token once. To do so, attach it to a <a href="#accounts">connected account</a> where <a href="/api/accounts/object#account_object-controller-requirement_collection">controller.requirement_collection</a> is <code>application</code>, which includes Custom accounts.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post tokens(tokens_body payload, map<string|string[]> headers = {}) returns Token|error {
+    # + return - Successful response 
+    resource isolated function post tokens(TokensBody payload, map<string|string[]> headers = {}) returns Token|error {
         string resourcePath = string `/tokens`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"account": {style: DEEPOBJECT, explode: true}, "bank_account": {style: DEEPOBJECT, explode: true}, "card": {style: DEEPOBJECT, explode: true}, "cvc_update": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "person": {style: DEEPOBJECT, explode: true}, "pii": {style: DEEPOBJECT, explode: true}};
@@ -6824,11 +6432,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the token with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get tokens/[string token](map<string|string[]> headers = {}, *GetTokensTokenQueries queries) returns Token|error {
+        string resourcePath = string `/tokens/${getEncodedUri(token)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of top-ups.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get topups(map<string|string[]> headers = {}, *GetTopupsQueries queries) returns TopupList|error {
+        string resourcePath = string `/topups`;
+        map<Encoding> queryParamEncoding = {"amount": {style: DEEPOBJECT, explode: true}, "created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Top up the balance of an account</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post topups(topups_body payload, map<string|string[]> headers = {}) returns Topup|error {
+    # + return - Successful response 
+    resource isolated function post topups(TopupsBody payload, map<string|string[]> headers = {}) returns Topup|error {
         string resourcePath = string `/topups`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6837,11 +6469,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of a top-up that has previously been created. Supply the unique top-up ID that was returned from your previous request, and Stripe will return the corresponding top-up information.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get topups/[string topup](map<string|string[]> headers = {}, *GetTopupsTopupQueries queries) returns Topup|error {
+        string resourcePath = string `/topups/${getEncodedUri(topup)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the metadata of a top-up. Other top-up details are not editable by design.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post topups/[string topup](topups_topup_body payload, map<string|string[]> headers = {}) returns Topup|error {
+    # + return - Successful response 
+    resource isolated function post topups/[string topup](TopupstopupBody payload, map<string|string[]> headers = {}) returns Topup|error {
         string resourcePath = string `/topups/${getEncodedUri(topup)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6853,8 +6497,8 @@ public isolated client class Client {
     # <p>Cancels a top-up. Only pending top-ups can be canceled.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post topups/[string topup]/cancel(topup_cancel_body payload, map<string|string[]> headers = {}) returns Topup|error {
+    # + return - Successful response 
+    resource isolated function post topups/[string topup]/cancel(TopupCancelBody payload, map<string|string[]> headers = {}) returns Topup|error {
         string resourcePath = string `/topups/${getEncodedUri(topup)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -6863,17 +6507,41 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of existing transfers sent to connected accounts. The transfers are returned in sorted order, with the most recently created transfers appearing first.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get transfers(map<string|string[]> headers = {}, *GetTransfersQueries queries) returns TransferList|error {
+        string resourcePath = string `/transfers`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>To send funds from your Stripe account to a connected account, you create a new transfer object. Your <a href="#balance">Stripe balance</a> must be able to cover the transfer amount, or you’ll receive an “Insufficient Funds” error.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post transfers(transfers_body payload, map<string|string[]> headers = {}) returns Transfer|error {
+    # + return - Successful response 
+    resource isolated function post transfers(TransfersBody payload, map<string|string[]> headers = {}) returns Transfer|error {
         string resourcePath = string `/transfers`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>You can see a list of the reversals belonging to a specific transfer. Note that the 10 most recent reversals are always available by default on the transfer object. If you need more than those 10, you can use this API method and the <code>limit</code> and <code>starting_after</code> parameters to page through additional reversals.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get transfers/[string id]/reversals(map<string|string[]> headers = {}, *GetTransfersIdReversalsQueries queries) returns TransferReversalList|error {
+        string resourcePath = string `/transfers/${getEncodedUri(id)}/reversals`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
     }
 
     # <p>When you create a new reversal, you must specify a transfer to create it on.</p>
@@ -6883,8 +6551,8 @@ public isolated client class Client {
     # <p>Once entirely reversed, a transfer can’t be reversed again. This method will return an error when called on an already-reversed transfer, or when trying to reverse more money than is left on a transfer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post transfers/[string id]/reversals(id_reversals_body payload, map<string|string[]> headers = {}) returns Transfer_reversal|error {
+    # + return - Successful response 
+    resource isolated function post transfers/[string id]/reversals(IdReversalsBody payload, map<string|string[]> headers = {}) returns TransferReversal|error {
         string resourcePath = string `/transfers/${getEncodedUri(id)}/reversals`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6893,13 +6561,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing transfer. Supply the unique transfer ID from either a transfer creation request or the transfer list, and Stripe will return the corresponding transfer information.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get transfers/[string transfer](map<string|string[]> headers = {}, *GetTransfersTransferQueries queries) returns Transfer|error {
+        string resourcePath = string `/transfers/${getEncodedUri(transfer)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified transfer by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     # 
     # <p>This request accepts only metadata as an argument.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post transfers/[string transfer](transfers_transfer_body payload, map<string|string[]> headers = {}) returns Transfer|error {
+    # + return - Successful response 
+    resource isolated function post transfers/[string transfer](TransferstransferBody payload, map<string|string[]> headers = {}) returns Transfer|error {
         string resourcePath = string `/transfers/${getEncodedUri(transfer)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6908,13 +6588,25 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>By default, you can see the 10 most recent reversals stored directly on the transfer object, but you can also retrieve details about a specific reversal stored on the transfer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get transfers/[string transfer]/reversals/[string id](map<string|string[]> headers = {}, *GetTransfersTransferReversalsIdQueries queries) returns TransferReversal|error {
+        string resourcePath = string `/transfers/${getEncodedUri(transfer)}/reversals/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the specified reversal by setting the values of the parameters passed. Any parameters not provided will be left unchanged.</p>
     # 
     # <p>This request only accepts metadata and description as arguments.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post transfers/[string transfer]/reversals/[string id](reversals_id_body payload, map<string|string[]> headers = {}) returns Transfer_reversal|error {
+    # + return - Successful response 
+    resource isolated function post transfers/[string transfer]/reversals/[string id](ReversalsidBody payload, map<string|string[]> headers = {}) returns TransferReversal|error {
         string resourcePath = string `/transfers/${getEncodedUri(transfer)}/reversals/${getEncodedUri(id)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6923,11 +6615,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of CreditReversals.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/credit_reversals(map<string|string[]> headers = {}, *GetTreasuryCreditReversalsQueries queries) returns TreasuryReceivedCreditsResourceCreditReversalList|error {
+        string resourcePath = string `/treasury/credit_reversals`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Reverses a ReceivedCredit and creates a CreditReversal object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/credit_reversals(treasury_credit_reversals_body payload, map<string|string[]> headers = {}) returns Treasury\.credit_reversal|error {
+    # + return - Successful response 
+    resource isolated function post treasury/credit_reversals(TreasuryCreditReversalsBody payload, map<string|string[]> headers = {}) returns TreasuryCreditReversal|error {
         string resourcePath = string `/treasury/credit_reversals`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6936,11 +6640,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing CreditReversal by passing the unique CreditReversal ID from either the CreditReversal creation request or CreditReversal list</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/credit_reversals/[string creditReversal](map<string|string[]> headers = {}, *GetTreasuryCreditReversalsCreditReversalQueries queries) returns TreasuryCreditReversal|error {
+        string resourcePath = string `/treasury/credit_reversals/${getEncodedUri(creditReversal)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of DebitReversals.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/debit_reversals(map<string|string[]> headers = {}, *GetTreasuryDebitReversalsQueries queries) returns TreasuryReceivedDebitsResourceDebitReversalList|error {
+        string resourcePath = string `/treasury/debit_reversals`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Reverses a ReceivedDebit and creates a DebitReversal object.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/debit_reversals(treasury_debit_reversals_body payload, map<string|string[]> headers = {}) returns Treasury\.debit_reversal|error {
+    # + return - Successful response 
+    resource isolated function post treasury/debit_reversals(TreasuryDebitReversalsBody payload, map<string|string[]> headers = {}) returns TreasuryDebitReversal|error {
         string resourcePath = string `/treasury/debit_reversals`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -6949,11 +6677,35 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves a DebitReversal object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/debit_reversals/[string debitReversal](map<string|string[]> headers = {}, *GetTreasuryDebitReversalsDebitReversalQueries queries) returns TreasuryDebitReversal|error {
+        string resourcePath = string `/treasury/debit_reversals/${getEncodedUri(debitReversal)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of FinancialAccounts.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/financial_accounts(map<string|string[]> headers = {}, *GetTreasuryFinancialAccountsQueries queries) returns TreasuryFinancialAccountsResourceFinancialAccountList|error {
+        string resourcePath = string `/treasury/financial_accounts`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates a new FinancialAccount. For now, each connected account can only have one FinancialAccount.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/financial_accounts(treasury_financial_accounts_body payload, map<string|string[]> headers = {}) returns Treasury\.financial_account|error {
+    # + return - Successful response 
+    resource isolated function post treasury/financial_accounts(TreasuryFinancialAccountsBody payload, map<string|string[]> headers = {}) returns TreasuryFinancialAccount|error {
         string resourcePath = string `/treasury/financial_accounts`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "features": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "platform_restrictions": {style: DEEPOBJECT, explode: true}, "supported_currencies": {style: DEEPOBJECT, explode: true}};
@@ -6962,12 +6714,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of a FinancialAccount.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/financial_accounts/[string financialAccount](map<string|string[]> headers = {}, *GetTreasuryFinancialAccountsFinancialAccountQueries queries) returns TreasuryFinancialAccount|error {
+        string resourcePath = string `/treasury/financial_accounts/${getEncodedUri(financialAccount)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the details of a FinancialAccount.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/financial_accounts/[string financial_account](financial_accounts_financial_account_body payload, map<string|string[]> headers = {}) returns Treasury\.financial_account|error {
-        string resourcePath = string `/treasury/financial_accounts/${getEncodedUri(financial_account)}`;
+    # + return - Successful response 
+    resource isolated function post treasury/financial_accounts/[string financialAccount](FinancialAccountsfinancialAccountBody payload, map<string|string[]> headers = {}) returns TreasuryFinancialAccount|error {
+        string resourcePath = string `/treasury/financial_accounts/${getEncodedUri(financialAccount)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "features": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}, "platform_restrictions": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6975,12 +6739,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves Features information associated with the FinancialAccount.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/financial_accounts/[string financialAccount]/features(map<string|string[]> headers = {}, *GetTreasuryFinancialAccountsFinancialAccountFeaturesQueries queries) returns TreasuryFinancialAccountFeatures|error {
+        string resourcePath = string `/treasury/financial_accounts/${getEncodedUri(financialAccount)}/features`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the Features associated with a FinancialAccount.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/financial_accounts/[string financial_account]/features(financial_account_features_body payload, map<string|string[]> headers = {}) returns Treasury\.financial_account_features|error {
-        string resourcePath = string `/treasury/financial_accounts/${getEncodedUri(financial_account)}/features`;
+    # + return - Successful response 
+    resource isolated function post treasury/financial_accounts/[string financialAccount]/features(FinancialAccountFeaturesBody payload, map<string|string[]> headers = {}) returns TreasuryFinancialAccountFeatures|error {
+        string resourcePath = string `/treasury/financial_accounts/${getEncodedUri(financialAccount)}/features`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"card_issuing": {style: DEEPOBJECT, explode: true}, "deposit_insurance": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "financial_addresses": {style: DEEPOBJECT, explode: true}, "inbound_transfers": {style: DEEPOBJECT, explode: true}, "intra_stripe_flows": {style: DEEPOBJECT, explode: true}, "outbound_payments": {style: DEEPOBJECT, explode: true}, "outbound_transfers": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -6988,11 +6764,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of InboundTransfers sent from the specified FinancialAccount.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/inbound_transfers(map<string|string[]> headers = {}, *GetTreasuryInboundTransfersQueries queries) returns TreasuryInboundTransfersResourceInboundTransferList|error {
+        string resourcePath = string `/treasury/inbound_transfers`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates an InboundTransfer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/inbound_transfers(treasury_inbound_transfers_body payload, map<string|string[]> headers = {}) returns Treasury\.inbound_transfer|error {
+    # + return - Successful response 
+    resource isolated function post treasury/inbound_transfers(TreasuryInboundTransfersBody payload, map<string|string[]> headers = {}) returns TreasuryInboundTransfer|error {
         string resourcePath = string `/treasury/inbound_transfers`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -7001,12 +6789,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing InboundTransfer.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/inbound_transfers/[string id](map<string|string[]> headers = {}, *GetTreasuryInboundTransfersIdQueries queries) returns TreasuryInboundTransfer|error {
+        string resourcePath = string `/treasury/inbound_transfers/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Cancels an InboundTransfer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/inbound_transfers/[string inbound_transfer]/cancel(inbound_transfer_cancel_body payload, map<string|string[]> headers = {}) returns Treasury\.inbound_transfer|error {
-        string resourcePath = string `/treasury/inbound_transfers/${getEncodedUri(inbound_transfer)}/cancel`;
+    # + return - Successful response 
+    resource isolated function post treasury/inbound_transfers/[string inboundTransfer]/cancel(InboundTransferCancelBody payload, map<string|string[]> headers = {}) returns TreasuryInboundTransfer|error {
+        string resourcePath = string `/treasury/inbound_transfers/${getEncodedUri(inboundTransfer)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -7014,11 +6814,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of OutboundPayments sent from the specified FinancialAccount.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/outbound_payments(map<string|string[]> headers = {}, *GetTreasuryOutboundPaymentsQueries queries) returns TreasuryOutboundPaymentsResourceOutboundPaymentList|error {
+        string resourcePath = string `/treasury/outbound_payments`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates an OutboundPayment.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/outbound_payments(treasury_outbound_payments_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_payment|error {
+    # + return - Successful response 
+    resource isolated function post treasury/outbound_payments(TreasuryOutboundPaymentsBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundPayment|error {
         string resourcePath = string `/treasury/outbound_payments`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"destination_payment_method_data": {style: DEEPOBJECT, explode: true}, "destination_payment_method_options": {style: DEEPOBJECT, explode: true}, "end_user_details": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -7027,11 +6839,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing OutboundPayment by passing the unique OutboundPayment ID from either the OutboundPayment creation request or OutboundPayment list.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/outbound_payments/[string id](map<string|string[]> headers = {}, *GetTreasuryOutboundPaymentsIdQueries queries) returns TreasuryOutboundPayment|error {
+        string resourcePath = string `/treasury/outbound_payments/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Cancel an OutboundPayment.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/outbound_payments/[string id]/cancel(id_cancel_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_payment|error {
+    # + return - Successful response 
+    resource isolated function post treasury/outbound_payments/[string id]/cancel(IdCancelBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundPayment|error {
         string resourcePath = string `/treasury/outbound_payments/${getEncodedUri(id)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
@@ -7040,11 +6864,23 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of OutboundTransfers sent from the specified FinancialAccount.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/outbound_transfers(map<string|string[]> headers = {}, *GetTreasuryOutboundTransfersQueries queries) returns TreasuryOutboundTransfersResourceOutboundTransferList|error {
+        string resourcePath = string `/treasury/outbound_transfers`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Creates an OutboundTransfer.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/outbound_transfers(treasury_outbound_transfers_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_transfer|error {
+    # + return - Successful response 
+    resource isolated function post treasury/outbound_transfers(TreasuryOutboundTransfersBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundTransfer|error {
         string resourcePath = string `/treasury/outbound_transfers`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"destination_payment_method_options": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -7053,12 +6889,24 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the details of an existing OutboundTransfer by passing the unique OutboundTransfer ID from either the OutboundTransfer creation request or OutboundTransfer list.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/outbound_transfers/[string outboundTransfer](map<string|string[]> headers = {}, *GetTreasuryOutboundTransfersOutboundTransferQueries queries) returns TreasuryOutboundTransfer|error {
+        string resourcePath = string `/treasury/outbound_transfers/${getEncodedUri(outboundTransfer)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>An OutboundTransfer can be canceled if the funds have not yet been paid out.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post treasury/outbound_transfers/[string outbound_transfer]/cancel(outbound_transfer_cancel_body payload, map<string|string[]> headers = {}) returns Treasury\.outbound_transfer|error {
-        string resourcePath = string `/treasury/outbound_transfers/${getEncodedUri(outbound_transfer)}/cancel`;
+    # + return - Successful response 
+    resource isolated function post treasury/outbound_transfers/[string outboundTransfer]/cancel(OutboundTransferCancelBody payload, map<string|string[]> headers = {}) returns TreasuryOutboundTransfer|error {
+        string resourcePath = string `/treasury/outbound_transfers/${getEncodedUri(outboundTransfer)}/cancel`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
@@ -7066,11 +6914,119 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Returns a list of ReceivedCredits.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/received_credits(map<string|string[]> headers = {}, *GetTreasuryReceivedCreditsQueries queries) returns TreasuryReceivedCreditsResourceReceivedCreditList|error {
+        string resourcePath = string `/treasury/received_credits`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}, "linked_flows": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an existing ReceivedCredit by passing the unique ReceivedCredit ID from the ReceivedCredit list.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/received_credits/[string id](map<string|string[]> headers = {}, *GetTreasuryReceivedCreditsIdQueries queries) returns TreasuryReceivedCredit|error {
+        string resourcePath = string `/treasury/received_credits/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of ReceivedDebits.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/received_debits(map<string|string[]> headers = {}, *GetTreasuryReceivedDebitsQueries queries) returns TreasuryReceivedDebitsResourceReceivedDebitList|error {
+        string resourcePath = string `/treasury/received_debits`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an existing ReceivedDebit by passing the unique ReceivedDebit ID from the ReceivedDebit list</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/received_debits/[string id](map<string|string[]> headers = {}, *GetTreasuryReceivedDebitsIdQueries queries) returns TreasuryReceivedDebit|error {
+        string resourcePath = string `/treasury/received_debits/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a list of TransactionEntry objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/transaction_entries(map<string|string[]> headers = {}, *GetTreasuryTransactionEntriesQueries queries) returns TreasuryTransactionsResourceTransactionEntryList|error {
+        string resourcePath = string `/treasury/transaction_entries`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "effective_at": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a TransactionEntry object.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/transaction_entries/[string id](map<string|string[]> headers = {}, *GetTreasuryTransactionEntriesIdQueries queries) returns TreasuryTransactionEntry|error {
+        string resourcePath = string `/treasury/transaction_entries/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves a list of Transaction objects.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/transactions(map<string|string[]> headers = {}, *GetTreasuryTransactionsQueries queries) returns TreasuryTransactionsResourceTransactionList|error {
+        string resourcePath = string `/treasury/transactions`;
+        map<Encoding> queryParamEncoding = {"created": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "status_transitions": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Retrieves the details of an existing Transaction.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get treasury/transactions/[string id](map<string|string[]> headers = {}, *GetTreasuryTransactionsIdQueries queries) returns TreasuryTransaction|error {
+        string resourcePath = string `/treasury/transactions/${getEncodedUri(id)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # <p>Returns a list of your webhook endpoints.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get webhook_endpoints(map<string|string[]> headers = {}, *GetWebhookEndpointsQueries queries) returns NotificationWebhookEndpointList|error {
+        string resourcePath = string `/webhook_endpoints`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>A webhook endpoint must have a <code>url</code> and a list of <code>enabled_events</code>. You may optionally specify the Boolean <code>connect</code> parameter. If set to true, then a Connect webhook endpoint that notifies the specified <code>url</code> about events from all connected accounts is created; otherwise an account webhook endpoint that notifies the specified <code>url</code> only about events from your account is created. You can also create webhook endpoints in the <a href="https://dashboard.stripe.com/account/webhooks">webhooks settings</a> section of the Dashboard.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post webhook_endpoints(webhook_endpoints_body payload, map<string|string[]> headers = {}) returns Webhook_endpoint|error {
+    # + return - Successful response 
+    resource isolated function post webhook_endpoints(WebhookEndpointsBody payload, map<string|string[]> headers = {}) returns WebhookEndpoint|error {
         string resourcePath = string `/webhook_endpoints`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"description": {style: DEEPOBJECT, explode: true}, "enabled_events": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
@@ -7079,16 +7035,37 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # <p>Retrieves the webhook endpoint with the given ID.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Successful response 
+    resource isolated function get webhook_endpoints/[string webhookEndpoint](map<string|string[]> headers = {}, *GetWebhookEndpointsWebhookEndpointQueries queries) returns WebhookEndpoint|error {
+        string resourcePath = string `/webhook_endpoints/${getEncodedUri(webhookEndpoint)}`;
+        map<Encoding> queryParamEncoding = {"expand": {style: DEEPOBJECT, explode: true}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
     # <p>Updates the webhook endpoint. You may edit the <code>url</code>, the list of <code>enabled_events</code>, and the status of your endpoint.</p>
     #
     # + headers - Headers to be sent with the request 
-    # + return - Successful response. 
-    resource isolated function post webhook_endpoints/[string webhook_endpoint](webhook_endpoints_webhook_endpoint_body payload, map<string|string[]> headers = {}) returns Webhook_endpoint|error {
-        string resourcePath = string `/webhook_endpoints/${getEncodedUri(webhook_endpoint)}`;
+    # + return - Successful response 
+    resource isolated function post webhook_endpoints/[string webhookEndpoint](WebhookEndpointswebhookEndpointBody payload, map<string|string[]> headers = {}) returns WebhookEndpoint|error {
+        string resourcePath = string `/webhook_endpoints/${getEncodedUri(webhookEndpoint)}`;
         http:Request request = new;
         map<Encoding> requestBodyEncoding = {"description": {style: DEEPOBJECT, explode: true}, "enabled_events": {style: DEEPOBJECT, explode: true}, "expand": {style: DEEPOBJECT, explode: true}, "metadata": {style: DEEPOBJECT, explode: true}};
         string encodedRequestBody = createFormURLEncodedRequestBody(payload, requestBodyEncoding);
         request.setPayload(encodedRequestBody, "application/x-www-form-urlencoded");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # <p>You can also delete webhook endpoints via the <a href="https://dashboard.stripe.com/account/webhooks">webhook endpoint management</a> page of the Stripe dashboard.</p>
+    #
+    # + headers - Headers to be sent with the request 
+    # + return - Successful response 
+    resource isolated function delete webhook_endpoints/[string webhookEndpoint](map<string|string[]> headers = {}) returns DeletedWebhookEndpoint|error {
+        string resourcePath = string `/webhook_endpoints/${getEncodedUri(webhookEndpoint)}`;
+        return self.clientEp->delete(resourcePath, headers = headers);
     }
 }
