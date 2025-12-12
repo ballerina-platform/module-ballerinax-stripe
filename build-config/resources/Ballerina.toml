@@ -5,7 +5,7 @@ name = "stripe"
 version = "@toml.version@"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["Finance/Payment", "Cost/Freemium"]
+keywords = ["Finance/Payment", "Cost/Freemium", "Vendor/Stripe", "Area/Finance", "Type/Connector"]
 icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-stripe"
 
