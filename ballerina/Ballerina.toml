@@ -2,10 +2,10 @@
 distribution = "2201.9.0"
 org = "ballerinax"
 name = "stripe"
-version = "2.0.0"
+version = "2.0.1"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["Finance/Payment", "Cost/Freemium"]
+keywords = ["Finance/Payment", "Cost/Freemium", "Vendor/Stripe", "Area/Finance", "Type/Connector"]
 icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-stripe"
 
