@@ -1,8 +1,16 @@
 ## Overview
 
-[Stripe](https://stripe.com/) is a leading online payment processing platform that simplifies the handling of financial transactions over the Internet. Stripe is renowned for its ease of integration, comprehensive documentation, and robust API that supports a wide range of payment operations including credit card transactions, subscription management, and direct payouts to user bank accounts.
+[Stripe](https://stripe.com/) is an online payment processing platform that simplifies the handling of financial transactions over the internet. It supports a wide range of payment operations including credit card transactions, subscription management, and direct payouts.
 
-The Ballerina Stripe Connector allows developers to interact with the [Stripe REST API V1](https://stripe.com/docs/api), enabling seamless integration of Stripe’s extensive payment processing capabilities into Ballerina applications. This connector facilitates the automation of various payment-related operations such as charge creation, customer management, billing, and direct payouts. By leveraging the Ballerina Stripe Connector, developers can build secure and scalable payment solutions that enhance the e-commerce capabilities of their applications.
+The Stripe connector allows developers to interact with the Stripe REST API V1, enabling seamless integration of Stripe’s extensive payment processing capabilities. This connector facilitates the automation of various payment-related operations such as charge creation, customer management, billing, and payouts.
+
+### Key Features
+
+- Support for Stripe REST API V1
+- Comprehensive payment processing (charges, refunds, payouts)
+- Efficient customer and subscription management
+- Automated billing and invoicing workflows
+- Secure handling of financial transactions
 
 ## Setup guide
 
