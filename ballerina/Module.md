@@ -4,6 +4,14 @@
 
 The Ballerina Stripe Connector allows developers to interact with the [Stripe REST API V1](https://stripe.com/docs/api), enabling seamless integration of Stripe’s extensive payment processing capabilities into Ballerina applications. This connector facilitates the automation of various payment-related operations such as charge creation, customer management, billing, and direct payouts. By leveraging the Ballerina Stripe Connector, developers can build secure and scalable payment solutions that enhance the e-commerce capabilities of their applications.
 
+
+### Key Features
+
+- Process payments and manage subscriptions
+- Handle customers, invoices, and payment methods
+- Access transaction and balance data
+- Support for refunds, disputes, and payouts
+
 ## Setup guide
 
 To use the Ballerina Stripe connector, you must have a Stripe account and an API token for authentication. Follow the steps below to set up the connector with your Stripe account. If you don't have an account, you can create one by visiting [Stripe Sign Up page](https://dashboard.stripe.com/register) and completing the registration process.
