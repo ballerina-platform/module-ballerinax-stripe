@@ -4,20 +4,16 @@
 # Log file
 *.log
 
-generated
-#Config file
-Config.toml
-
 # BlueJ files
 *.ctxt
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# .DS_Store files
+# macOS Files
 *.DS_Store
 
-# Package Files #
+# Package Files
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
 *.war
@@ -38,16 +34,16 @@ target
 *.iml
 *.iws
 *.ipr
-.idea
 .m2
 .vscode/
+.cursor/
+.idea
+
 # Ignore ballerina files
-accessToken.bal
-temp.bal.ballerina/
 target/
-.DS_Store
-*Ballerina.lock
+generated/
 .ballerina
+**/Config.toml
 
 # Ignore Gradle project-specific cache directory
 .gradle

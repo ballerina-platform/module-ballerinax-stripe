@@ -1,28 +1,24 @@
-# Sanitation: Ballerina Stripe connector
-
-_Author_: @ayeshLK \
-_Created_: 2024/07/18 \
-_Updated_: 2024/07/19 \
+_Author_:  <!-- TODO: Add author name --> \
+_Created_: <!-- TODO: Add date --> \
+_Updated_: <!-- TODO: Add date --> \
 _Edition_: Swan Lake
 
-## Sanitation for OpenAPI specification
+# Sanitation for OpenAPI specification
 
-This document records the sanitation done on top of the official OpenAPI specification from Stripe. The OpenAPI specification is obtained from the [Stripe GitHub repository](https://github.com/stripe/openapi/blob/master/openapi/spec3.json).
-These changes are done to improve the overall usability and to address some known language limitations.
+This document records the sanitation done on top of the official OpenAPI specification from Stripe. 
+The OpenAPI specification is obtained from (TODO: Add source link).
+These changes are done in order to improve the overall usability, and as workarounds for some known language limitations.
 
-1. Update Stripe Base URL to `https://api.stripe.com/v1`.
-2. The following sanitations are done using `sanitations.bal` script under the `docs/spec` directory.
-    - Remove `v1` prefix from the paths.
-    - Remove the `requestBody` definitions from HTTP GET endpoints defined in the specification.
-    - Remove the `requestBody` definition from HTTP DELETE endpoints which does not require a request payload.
-    - Update the component schema names by capitalizing the first letter of the schema name.
+[//]: # (TODO: Add sanitation details)
+1. 
+2. 
+3. 
 
-## OpenAPI CLI command
+## OpenAPI cli command
 
 The following command was used to generate the Ballerina client from the OpenAPI specification. The command should be executed from the repository root directory.
 
 ```bash
-bal openapi -i docs/spec/openapi.json --mode client --license docs/license.txt -o ballerina
+# TODO: Add OpenAPI CLI command used to generate the client
 ```
-
 Note: The license year is hardcoded to 2024, change if necessary.
