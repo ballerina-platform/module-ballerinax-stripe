@@ -5,7 +5,7 @@ _Created_: 2024/07/18 \
 _Updated_: 2026/09/30 \
 _Edition_: Swan Lake
 
-## Sanitation for OpenAPI specification
+# Sanitation for OpenAPI specification
 
 This document records the sanitation done on top of the official OpenAPI specification from Stripe. The OpenAPI specification is obtained from [wso2/api-specs](https://github.com/wso2/api-specs/blob/main/openapi/stripe/stripe/2026-09-30.endive/openapi.json) (Stripe API version `2026-09-30.endive`).
 These changes are done to improve the overall usability and to address some known language limitations.
@@ -18,12 +18,11 @@ These changes are done to improve the overall usability and to address some know
 6. `/v1/account` is exposed as `getCurrentAccount`, and the balance history endpoints as `listBalanceHistory` and `getBalanceHistoryItem`.
 7. Document every property and parameter. Stripe leaves many undocumented: bare `$ref` properties (a description beside a `$ref` is dropped in OpenAPI 3.0 tooling, so it never reached the generated record fields) and nested form parameters with no description. `docs/spec/fill_descriptions.py` fills them, idempotently, in the source `openapi.json` and the aligned spec, and wraps each described `$ref` property as `allOf: [{$ref}]` so the description survives. Sources, in order: the referenced schema's description, the single description that every documented property of the same name and type carries (in this spec, then the previous spec), and, as a last resort, a neutral sentence built from the field name and its parent. For the aligned spec this filled 736 properties from the referenced schema, 978 from the same-named property, 32 from the previous spec and 5,433 from the field name, plus 30 parameters from the same-named parameter and 392 from the parameter name. Re-run it after every alignment, before generating the client.
 
-## OpenAPI CLI command
+## OpenAPI cli command
 
 The following command was used to generate the Ballerina client from the OpenAPI specification. The command should be executed from the repository root directory.
 
 ```bash
 bal openapi -i docs/spec/aligned_ballerina_openapi.json --mode client --license docs/license.txt -o ballerina --client-methods remote
 ```
-
 Note: The license year is hardcoded to 2024, change if necessary.

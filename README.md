@@ -12,29 +12,7 @@ The Stripe connector lets Ballerina applications call the [Stripe REST API](http
 
 ## Setup guide
 
-To use the Ballerina Stripe connector, you must have a Stripe account and an API token for authentication. Follow the steps below to set up the connector with your Stripe account. If you don't have an account, you can create one by visiting [Stripe Sign Up page](https://dashboard.stripe.com/register) and completing the registration process.
-
-### Step 1: Log in to Stripe
-
-1. Sign in to your [Stripe dashboard](https://dashboard.stripe.com/login).
-
-### Step 2: Go to the developer portal
-
-1. Click on the **Developers** button in the top-right corner.
-
-    <img src=https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-stripe/main/docs/setup/resources/stripe-dashboard.png alt="Stripe dashboard" style="width: 70%;">   
-
-### Step 3: Retrieve the secret key
-
-1. Go to **API keys** section in the nav-bar.
-
-    <img src=https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-stripe/main/docs/setup/resources/stripe-developer-portal.png alt="Stripe dashboard" style="width: 70%;">   
-
-2. Retrieve the **Secret key**.
-
-    <img src=https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-stripe/main/docs/setup/resources/stripe-api-keys.png alt="Stripe dashboard" style="width: 70%;">   
-
-> **Note:** If you need to have more granular permissions for the keys, you could setup and use `Restricted keys`.
+[//]: # (TODO: Add detailed steps to obtain credentials and configure the module.)
 
 ## Quickstart
 
@@ -88,7 +66,7 @@ The `ballerinax/stripe` connector provides practical examples illustrating usage
 
 ### Setting up the prerequisites
 
-1. Download and install Java SE Development Kit (JDK) version 17. You can download it from either of the following sources:
+1. Download and install Java SE Development Kit (JDK) version 21. You can download it from either of the following sources:
 
     * [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
     * [OpenJDK](https://adoptium.net/)
