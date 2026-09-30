@@ -1,23 +1,16 @@
 # Examples
 
-The `ballerinax/stripe` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples), covering various Stripe functionalities.
+The `ballerinax/stripe` connector provides practical examples illustrating usage in various scenarios.
 
-1. [Manage stripe payments](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-payments) - Manage business payments with Stripe.
-
-2. [Manage one-time charges](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-one-time-charges) - Manage one-time charges with Stripe.
-
+[//]: # (TODO: Add examples)
+1. 
+2. 
 
 ## Prerequisites
 
-1. Retrieve Stripe API token to authenticate the connector as described in the [Setup guide](https://central.ballerina.io/ballerinax/stripe/latest#setup-guide).
+[//]: # (TODO: Add prerequisites)
 
-2. For each example, create a `Config.toml` file with the related configuration. Here's an example of how your `Config.toml` file should look:
-
-    ```toml
-    secretKey="<secret-key>"
-    ```
-
-## Running an Example
+## Running an example
 
 Execute the following commands to build an example from the source:
 
@@ -33,7 +26,7 @@ Execute the following commands to build an example from the source:
     bal run
     ```
 
-## Building the Examples with the Local Module
+## Building the examples with the local module
 
 **Warning**: Due to the absence of support for reading local repositories for single Ballerina files, the Bala of the module is manually written to the central repository as a workaround. Consequently, the bash script may modify your local Ballerina repositories.
 
