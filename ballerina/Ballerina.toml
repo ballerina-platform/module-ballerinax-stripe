@@ -5,12 +5,9 @@ name = "stripe"
 version = "3.0.0"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = []
-# icon = "icon.png" # TODO: update icon.png
+keywords = ["Finance/Payment", "Vendor/Stripe", "Area/Finance", "Type/Connector"]
+icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-stripe"
 
 [build-options]
 observabilityIncluded = true
-
-[platform.java21]
-graalvmCompatible = true
