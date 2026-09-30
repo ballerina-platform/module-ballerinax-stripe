@@ -36,6 +36,12 @@ public function main() returns error? {
     intent = check stripe->confirmPaymentIntent(intent.id, {paymentMethod: paymentMethodId, returnUrl});
     io:println("Payment intent status: ", intent.status);
 
+    // Only a succeeded payment can be refunded
+    if intent.status != "succeeded" {
+        io:println("Payment not completed. Action required: ", intent.status);
+        return;
+    }
+
     // Refund the confirmed payment
     stripe:Refund refund = check stripe->createRefund({paymentIntent: intent.id});
     io:println("Refund created: ", refund.id);

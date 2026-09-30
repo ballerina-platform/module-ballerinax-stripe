@@ -18,6 +18,8 @@ paymentMethodId = "<payment-method-id>"
 returnUrl = "<return-url>"
 ```
 
+The example confirms the payment and refunds it in one run, so it needs a payment method that succeeds without customer action. In a Stripe sandbox, use the test payment method `pm_card_visa`. A payment method that requires further action, such as 3D Secure, stops the example before the refund.
+
 ## Run the example
 
 ```bash

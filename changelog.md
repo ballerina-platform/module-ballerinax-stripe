@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The default service URL is `https://api.stripe.com/v1`.
 - Examples are renamed to `manage_payments` and `manage_one_time_charges` and use the new remote methods.
 
-Migration from 1.x:
+Migration from 2.x:
 
-| 1.x | 2.x |
+| 2.x | 3.x |
 |---|---|
 | `stripe->/customers.post(payload)` | `stripe->createCustomer(payload)` |
 | `stripe->/customers` | `stripe->listCustomers()` |
