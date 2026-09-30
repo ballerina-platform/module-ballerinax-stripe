@@ -1,12 +1,14 @@
 # Ballerina Stripe connector
 
 [![Build](https://github.com/ballerina-platform/module-ballerinax-stripe/actions/workflows/ci.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-stripe/actions/workflows/ci.yml)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerinax-stripe.svg)](https://github.com/ballerina-platform/module-ballerinax-stripe/commits/master)
-[![GitHub Issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-library/module/stripe.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-library/labels/module%stripe)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerinax-stripe.svg)](https://github.com/ballerina-platform/module-ballerinax-stripe/commits/main)
+[![GitHub Issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-library/module/stripe.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-library/labels/module%2Fstripe)
 
-[Stripe](https://stripe.com/) is a leading online payment processing platform that simplifies the handling of financial transactions over the Internet. Stripe is renowned for its ease of integration, comprehensive documentation, and robust API that supports a wide range of payment operations including credit card transactions, subscription management, and direct payouts to user bank accounts.
+## Overview
 
-The Ballerina Stripe Connector allows developers to interact with the [Stripe REST API V1](https://stripe.com/docs/api), enabling seamless integration of Stripe’s extensive payment processing capabilities into Ballerina applications. This connector facilitates the automation of various payment-related operations such as charge creation, customer management, billing, and direct payouts. By leveraging the Ballerina Stripe Connector, developers can build secure and scalable payment solutions that enhance the e-commerce capabilities of their applications.
+[Stripe](https://stripe.com/) is an online payment processing platform for accepting payments, managing customers and subscriptions, issuing invoices and paying out to bank accounts.
+
+The Stripe connector lets Ballerina applications call the [Stripe REST API](https://stripe.com/docs/api) to create and manage payments, customers, subscriptions, invoices, products and prices, refunds and payouts, and the Connect, Billing, Issuing, Terminal and Treasury products. It supports the `2026-09-30.endive` version of the API.
 
 ## Setup guide
 
@@ -36,65 +38,51 @@ To use the Ballerina Stripe connector, you must have a Stripe account and an API
 
 ## Quickstart
 
-To begin using the `Stripe` connector in your Ballerina application, you'll need to follow these steps:
+To use the Stripe connector in your Ballerina application, update the `.bal` file as follows.
 
 ### Step 1: Import the connector
 
-First, import the `ballerinax/stripe` package into your Ballerina project.
+Import the `ballerinax/stripe` package into your Ballerina project.
 
 ```ballerina
 import ballerinax/stripe;
 ```
 
-### Step 2: Instantiate a new connector
+### Step 2: Configure the credentials
 
-Create a `stripe:ConnectionConfig` object with API token, and initialize the connector.
+Create a `Config.toml` file with your Stripe secret key.
+
+```toml
+secretKey = "<secret-key>"
+```
+
+### Step 3: Instantiate a new connector
+
+Create a `stripe:ConnectionConfig` with the secret key and initialize the client.
 
 ```ballerina
 configurable string secretKey = ?;
 
-stripe:ConnectionConfig configuration = {
-    auth: {
-        token: secretKey
-    }
-};
-
-stripe:Client stripe = check new (configuration);
+stripe:Client stripe = check new ({auth: {token: secretKey}});
 ```
 
-### Step 3: Invoke the connector operation
+### Step 4: Invoke the connector operation
 
-Now, utilize the available connector operations.
-
-#### Create a new customer
+Create a customer.
 
 ```ballerina
-stripe:customers_body newCustomer = {
-    name: "John Doe",
-    email: "john.doe@sample.com",
-    address: {
-        city: "Colombo",
-        country: "Sri Lanka"
-    }
-};
-
-stripe:Customer customerDetails = check stripe->/customers.post(newCustomer);
-```
-
-#### List all customers
-
-```ballerina
-stripe:CustomerResourceCustomerList availableCustomers = check stripe->/customers;
+public function main() returns error? {
+    stripe:Customer _ = check stripe->createCustomer({name: "John Doe", email: "john.doe@sample.com"});
+}
 ```
 
 ## Examples
 
-The `ballerinax/stripe` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples), covering various Stripe functionalities.
+The `ballerinax/stripe` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples).
 
-1. [Manage Stripe payments](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-payments) - Manage business payments with Stripe.
+1. [Manage Stripe payments](examples/manage_payments/manage_payments.md) - Create a customer, take a payment with a payment intent, confirm it and refund it.
 
-2. [Manage one-time charges](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-one-time-charges) - Manage one-time charges with Stripe.
-
+2. [Manage one-time charges](examples/manage_one_time_charges/manage_one_time_charges.md) - Create, retrieve and refund a one-time charge.
 
 ## Build from the source
 

@@ -2,9 +2,9 @@
 
 The `ballerinax/stripe` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples), covering various Stripe functionalities.
 
-1. [Manage stripe payments](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-payments) - Manage business payments with Stripe.
+1. [Manage stripe payments](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage_payments) - Manage business payments with Stripe.
 
-2. [Manage one-time charges](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage-one-time-charges) - Manage one-time charges with Stripe.
+2. [Manage one-time charges](https://github.com/ballerina-platform/module-ballerinax-stripe/tree/main/examples/manage_one_time_charges) - Manage one-time charges with Stripe.
 
 
 ## Prerequisites
@@ -14,7 +14,7 @@ The `ballerinax/stripe` connector provides practical examples illustrating usage
 2. For each example, create a `Config.toml` file with the related configuration. Here's an example of how your `Config.toml` file should look:
 
     ```toml
-    secretKey="<secret-key>"
+    secretKey = "<secret-key>"
     ```
 
 ## Running an Example

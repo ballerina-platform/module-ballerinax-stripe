@@ -1,1 +1,0 @@
-../Manage Stripe Payments.md

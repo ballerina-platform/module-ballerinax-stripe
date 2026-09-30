@@ -1,8 +1,8 @@
 [package]
-org = "wso2"
+org = "ballerinax"
 name = "manage_one_time_charges"
 version = "0.1.0"
-distribution = "2201.9.2"
+distribution = "2201.12.0"
 
 [build-options]
 observabilityIncluded = true
