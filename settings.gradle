@@ -24,7 +24,7 @@ pluginManagement {
 }
 
 plugins {
-    id "com.gradle.enterprise" version "3.2"
+    id "com.gradle.develocity" version "3.19.2"
 }
 
 rootProject.name = 'module-ballerinax-stripe'
@@ -35,9 +35,9 @@ include ':stripe-sanitation'
 project(':stripe-ballerina').projectDir = file("ballerina")
 project(':stripe-sanitation').projectDir = file("docs/spec")
 
-gradleEnterprise {
+develocity {
     buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
+        termsOfUseUrl = 'https://gradle.com/help/legal-terms-of-use'
+        termsOfUseAgree = 'yes'
     }
 }
