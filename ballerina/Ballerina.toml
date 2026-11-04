@@ -5,7 +5,7 @@ name = "stripe"
 version = "3.0.0"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["Finance/Payment", "Vendor/Stripe", "Area/Finance", "Type/Connector"]
+keywords = ["Vendor/Stripe", "Area/Finance & Accounting", "Type/Connector"]
 icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-stripe"
 
