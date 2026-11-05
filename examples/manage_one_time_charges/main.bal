@@ -1,4 +1,4 @@
-// Copyright (c) 2024 WSO2 LLC. (http://www.wso2.com).
+// Copyright (c) 2024, WSO2 LLC. (http://www.wso2.com).
 //
 // WSO2 LLC. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -17,26 +17,21 @@
 import ballerina/io;
 import ballerinax/stripe;
 
-// Configuration for Stripe API access
 configurable string secretKey = ?;
+configurable string sourceToken = ?;
 
 public function main() returns error? {
     stripe:Client stripe = check new ({auth: {token: secretKey}});
 
     // Initiate a one-time charge
-    stripe:charges_body chargeDetails = {
-        amount: 100,
-        currency: "usd",
-        // Update the payment-source token here
-        'source: "tok_xxxx"
-    };
-    stripe:Charge charge = check stripe->/charges.post(chargeDetails);
-    io:println("Onetime charge was successful: ", charge.id);
+    stripe:Charge charge = check stripe->createCharge({amount: 1000, currency: "usd", 'source: sourceToken});
+    io:println("One-time charge created: ", charge.id);
 
-    // Refund a one-time charge
-    stripe:charge_refund_body chargeRefund = {
-        amount: 100
-    };
-    charge = check stripe->/charges/[charge.id]/refund.post(chargeRefund);
-    io:println("Onetime charge refund was successful: ", charge.id);
+    // Retrieve the charge to confirm its state
+    stripe:Charge retrieved = check stripe->getCharge(charge.id);
+    io:println("Charge paid: ", retrieved.paid);
+
+    // Refund the charge
+    stripe:Refund refund = check stripe->createRefund({charge: charge.id, amount: 1000});
+    io:println("Charge refunded: ", refund.id);
 }
